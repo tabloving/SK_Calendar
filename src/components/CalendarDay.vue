@@ -3,7 +3,7 @@
     class="calendar-day cursor-pointer"
     :class="[
       dayClasses,
-      { 'selected': isSelected, 'today': dayInfo.isToday }
+      { 'selected': isSelected, 'today': dayInfo.isToday, 'is-current-month': dayInfo.isCurrentMonth }
     ]"
     @click="handleClick"
   >
@@ -25,7 +25,7 @@
       {{ ganZhiInfo.dayGanZhi }}
     </div>
 
-    
+
     <!-- 戒期指示器 -->
     <div v-if="settingsStore.settings.showFastingIndicators && hasFasting" class="fasting-indicators mb-1">
       <div class="flex items-center flex-wrap gap-1">
@@ -72,7 +72,9 @@ import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
+import { FastingDataManager } from '@/utils/fasting-data'
 import * as lunar from 'lunar-javascript'
+import { Calendar, Bell } from '@element-plus/icons-vue'
 import type { CalendarDayInfo } from '@/types'
 
 interface Props {
@@ -92,6 +94,7 @@ const emit = defineEmits<{
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
+const fastingManager = FastingDataManager.getInstance()
 
 // 计算属性
 const dayClasses = computed(() => {
@@ -174,74 +177,236 @@ const getFastingLevelColor = (level: string) => {
 .calendar-day {
   position: relative;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  border: 1px solid #f0f0f0;
+  background: #ffffff;
+  min-height: 90px;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .calendar-day:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-color: #e5e7eb;
 }
 
 .calendar-day.selected {
-  ring: 2px;
-  ring-color: #3B82F6;
+  border: 1px solid #3B82F6;
   background-color: #EFF6FF;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+  transform: scale(1.01);
 }
 
 .calendar-day.today {
-  border: 2px solid #3B82F6;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+
+
+/* 今天日期文字低调强调 */
+.calendar-day.today .solar-date span {
+  color: #3B82F6;
+  font-weight: 600;
 }
 
 .calendar-day:not(.is-current-month) {
   opacity: 0.5;
 }
 
+/* 确保选中状态在非当前月份时也可见 */
+.calendar-day.selected:not(.is-current-month) {
+  opacity: 0.7;
+  border-color: #3B82F6;
+  background-color: #EFF6FF;
+}
+
+/* 恢复原有戒期等级填充色，去除左边框 */
+.calendar-day.fasting-major {
+  background-color: rgba(220, 38, 38, 0.08);
+}
+
+.calendar-day.fasting-moderate {
+  background-color: rgba(234, 88, 12, 0.08);
+}
+
+.calendar-day.fasting-minor {
+  background-color: rgba(202, 138, 4, 0.08);
+}
+
+.calendar-day.fasting-safe {
+  background-color: rgba(22, 163, 74, 0.08);
+}
+
+/* 选中状态与戒期状态的组合处理 */
+.calendar-day.selected.fasting-major {
+  background-color: rgba(220, 38, 38, 0.12);
+  border: 1px solid #DC2626;
+}
+
+.calendar-day.selected.fasting-moderate {
+  background-color: rgba(234, 88, 12, 0.12);
+  border: 1px solid #EA580C;
+}
+
+.calendar-day.selected.fasting-minor {
+  background-color: rgba(202, 138, 4, 0.12);
+  border: 1px solid #CA8A04;
+}
+
+.calendar-day.selected.fasting-safe {
+  background-color: rgba(22, 163, 74, 0.12);
+  border: 1px solid #16A34A;
+}
+
 .fasting-indicator {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   display: inline-block;
+  margin-right: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.fasting-indicator:hover {
+  transform: scale(1.2);
 }
 
 .fasting-indicator.major {
   background-color: #DC2626;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
 }
 
 .fasting-indicator.moderate {
   background-color: #EA580C;
+  box-shadow: 0 1px 3px rgba(234, 88, 12, 0.2);
 }
 
 .fasting-indicator.minor {
   background-color: #CA8A04;
+  box-shadow: 0 1px 3px rgba(202, 138, 4, 0.2);
 }
 
 .fasting-indicator.safe {
   background-color: #16A34A;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.2);
 }
 
 .weekend-indicator {
-  top: 2px;
-  right: 2px;
+  top: 4px;
+  right: 4px;
 }
 
 .fasting-item {
-  line-height: 1.2;
+  line-height: 1.3;
   word-break: break-all;
+  font-size: 11px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* 增强日期头部样式 */
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.solar-date span {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.lunar-date {
+  display: block;
+}
+
+.ganzhi-info {
+  margin: 6px 0;
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 4px;
+  background: rgba(147, 51, 234, 0.05);
+  border-radius: 4px;
+  border-left: 2px solid #9333ea;
+}
+
+.fasting-indicators {
+  margin: 5px 0;
+}
+
+.fasting-details {
+  margin-top: 6px;
+}
+
+.solar-term {
+  margin: 6px 0;
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 6px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+  border-radius: 4px;
+  border-left: 2px solid #9333ea;
 }
 
 @media (max-width: 640px) {
   .calendar-day {
-    min-height: 60px;
-    padding: 4px;
+    min-height: 75px;
+    padding: 6px;
+    border-radius: 6px;
   }
 
   .day-header {
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+  }
+
+  .solar-date {
+    font-size: 13px;
+  }
+
+  .lunar-date {
+    font-size: 10px;
   }
 
   .fasting-details {
     font-size: 10px;
+    margin-top: 4px;
+  }
+
+  .fasting-indicator {
+    width: 6px;
+    height: 6px;
+    margin-right: 2px;
+  }
+
+  .ganzhi-info,
+  .solar-term {
+    font-size: 10px;
+    margin: 3px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-day {
+    min-height: 65px;
+    padding: 4px;
+  }
+
+  .day-header {
+    margin-bottom: 3px;
+  }
+
+  .fasting-details {
+    margin-top: 3px;
   }
 }
 </style>

@@ -92,36 +92,137 @@ const handleAddToCalendar = (dayInfo: CalendarDayInfo) => {
 <style scoped>
 .calendar-grid {
   user-select: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
 }
 
 .week-header {
-  border-bottom: 1px solid #E5E7EB;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .week-day {
-  border-right: 1px solid #E5E7EB;
+  border-right: 1px solid #e2e8f0;
+  padding: 12px 8px;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.week-day:hover {
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .week-day:last-child {
   border-right: none;
 }
 
+.week-day:nth-child(1),
+.week-day:nth-child(7) {
+  color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.03) 0%, rgba(252, 165, 165, 0.03) 100%);
+}
+
 .calendar-body {
-  min-height: 420px;
+  min-height: 450px;
+  background: #ffffff;
+  padding: 6px;
+}
+
+.calendar-body .grid {
+  gap: 6px;
+}
+
+/* 格子之间的分隔 */
+.calendar-body .grid > * {
+  border-right: 1px solid #f8fafc;
+  border-bottom: 1px solid #f8fafc;
+}
+
+/* 移除每行最后一个格子的右边框 */
+.calendar-body .grid > *:nth-child(7n) {
+  border-right: none;
+}
+
+/* 移除最后一行格子的底边框 */
+.calendar-body .grid > *:nth-last-child {
+  border-bottom: none;
+}
+
+/* 整体容器内边距优化 */
+.calendar-grid .grid-cols-7 > * {
+  padding: 4px;
 }
 
 @media (max-width: 640px) {
   .calendar-grid {
     font-size: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  }
+
+  .week-day {
+    padding: 10px 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .calendar-body {
+    min-height: 350px;
+    padding: 4px;
+  }
+
+  .calendar-body .grid {
+    gap: 4px;
+  }
+
+  .calendar-body .grid > * {
+    border-right: 1px solid #f8fafc;
+    border-bottom: 1px solid #f8fafc;
+  }
+
+  .calendar-body .grid > *:nth-child(7n) {
+    border-right: none;
+  }
+
+  .calendar-body .grid > *:nth-last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-grid {
+    border-radius: 6px;
   }
 
   .week-day {
     padding: 8px 4px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .calendar-body {
     min-height: 300px;
+    padding: 2px;
+  }
+
+  .calendar-body .grid {
+    gap: 3px;
+  }
+
+  .calendar-body .grid > * {
+    border-right: 1px solid #f8fafc;
+    border-bottom: 1px solid #f8fafc;
+  }
+
+  .calendar-body .grid > *:nth-child(7n) {
+    border-right: none;
+  }
+
+  .calendar-body .grid > *:nth-last-child {
+    border-bottom: none;
   }
 }
 </style>
