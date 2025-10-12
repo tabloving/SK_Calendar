@@ -181,7 +181,7 @@ const getFastingLevelColor = (level: string) => {
   overflow: hidden;
   border: 1px solid #f0f0f0;
   background: #ffffff;
-  min-height: 90px;
+  min-height: 110px;
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
@@ -360,7 +360,7 @@ const getFastingLevelColor = (level: string) => {
 
 @media (max-width: 640px) {
   .calendar-day {
-    min-height: 75px;
+    min-height: 85px;
     padding: 6px;
     border-radius: 6px;
   }
@@ -397,7 +397,7 @@ const getFastingLevelColor = (level: string) => {
 
 @media (max-width: 480px) {
   .calendar-day {
-    min-height: 65px;
+    min-height: 75px;
     padding: 4px;
   }
 

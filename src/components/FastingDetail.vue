@@ -18,7 +18,12 @@
 
       <!-- 戒期信息 -->
       <div class="fasting-info">
-        <h4 class="text-lg font-semibold text-gray-800 mb-4">戒期信息</h4>
+        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <el-icon class="mr-2" :size="20">
+            <Document />
+          </el-icon>
+          戒期信息
+        </h4>
 
         <!-- 有斋日或戒期时显示 -->
         <div v-if="hasFastingDays || filteredFastingInfos.length > 0" class="space-y-3">
@@ -155,7 +160,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { FastingDataManager } from '@/utils/fasting-data'
 import * as lunar from 'lunar-javascript'
-import { Calendar, Bell } from '@element-plus/icons-vue'
+import { Calendar, Bell, Document } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()

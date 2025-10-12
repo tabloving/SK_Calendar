@@ -129,11 +129,11 @@ const handleAddToCalendar = (dayInfo: CalendarDayInfo) => {
 .calendar-body {
   min-height: 450px;
   background: #ffffff;
-  padding: 6px;
+  padding: 4px;
 }
 
 .calendar-body .grid {
-  gap: 6px;
+  gap: 3px;
 }
 
 /* 格子之间的分隔 */
@@ -172,11 +172,11 @@ const handleAddToCalendar = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body {
     min-height: 350px;
-    padding: 4px;
+    padding: 2px;
   }
 
   .calendar-body .grid {
-    gap: 4px;
+    gap: 2px;
   }
 
   .calendar-body .grid > * {
@@ -205,11 +205,11 @@ const handleAddToCalendar = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body {
     min-height: 300px;
-    padding: 2px;
+    padding: 1px;
   }
 
   .calendar-body .grid {
-    gap: 3px;
+    gap: 2px;
   }
 
   .calendar-body .grid > * {
