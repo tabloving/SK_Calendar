@@ -20,11 +20,9 @@
       <div class="fasting-info">
         <h4 class="text-lg font-semibold text-gray-800 mb-4">戒期信息</h4>
 
-        <div v-if="filteredFastingInfos.length === 0" class="text-gray-500 text-center py-4">
-          今日无戒期，保持平常心，慎勿放逸！
-        </div>
-
-        <div v-else class="space-y-3">
+        <!-- 有斋日或戒期时显示 -->
+        <div v-if="hasFastingDays || filteredFastingInfos.length > 0" class="space-y-3">
+          <!-- 普通戒期信息 -->
           <div
             v-for="(fasting, index) in filteredFastingInfos"
             :key="index"
@@ -50,24 +48,22 @@
                 <div class="text-sm text-gray-600">
                   <div>类型：{{ getFastingTypeText(fasting.type) }}</div>
                   <div v-if="fasting.description">说明：{{ fasting.description }}</div>
+                  <!-- 如果是斋日，添加斋日说明 -->
+                  <div v-if="hasFastingDays">诸天斋日，功德倍增</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 斋日信息 -->
-      <div v-if="hasFastingDays" class="fasting-days-info">
-        <h4 class="text-lg font-semibold text-gray-800 mb-4">斋日信息</h4>
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <div class="flex items-center">
-            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-            <span class="font-semibold text-blue-700">十斋日</span>
-          </div>
-          <div class="text-sm text-blue-600 mt-1">
+          <!-- 如果没有戒期但有斋日，单独显示斋日提示 -->
+          <div v-if="hasFastingDays && filteredFastingInfos.length === 0" class="text-blue-600 text-center py-4">
             诸天斋日，功德倍增
           </div>
+        </div>
+
+        <!-- 既无戒期也无斋日时的提示 -->
+        <div v-else class="text-gray-500 text-center py-4">
+          今日无戒期，保持平常心，慎勿放逸！
         </div>
       </div>
 
@@ -114,8 +110,8 @@
 
       <!-- 修行建议 -->
       <div class="practice-advice">
-        <!-- 有戒期时的建议 -->
-        <div v-if="filteredFastingInfos.length > 0" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <!-- 有戒期或斋日时的建议 -->
+        <div v-if="filteredFastingInfos.length > 0 || hasFastingDays" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div class="flex items-center mb-2">
             <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
@@ -130,7 +126,7 @@
           </ul>
         </div>
 
-        <!-- 无戒期时的精进鼓励 -->
+        <!-- 既无戒期也无斋日时的精进鼓励 -->
         <div v-else class="bg-green-50 border border-green-200 rounded-lg p-4">
           <div class="flex items-center mb-2">
             <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -160,7 +156,6 @@ import { CalendarUtil } from '@/utils/calendar'
 import { FastingDataManager } from '@/utils/fasting-data'
 import * as lunar from 'lunar-javascript'
 import { Calendar, Bell } from '@element-plus/icons-vue'
-import type { FastingInfo } from '@/types'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
