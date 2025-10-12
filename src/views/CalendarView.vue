@@ -14,80 +14,8 @@
     </div>
 
     <!-- 底部统计信息 -->
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- 本月戒期统计 -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-1 gap-4">
       <el-card class="stats-card">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span class="font-semibold text-base">本月戒期统计</span>
-            <div class="text-xs text-gray-500">{{ fastingPercentage }}% 戒期率</div>
-          </div>
-        </template>
-
-        <div class="compact-stats">
-          <!-- 主要数据概览 -->
-          <div class="stats-overview">
-            <div class="stat-item">
-              <div class="stat-icon total-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">{{ monthStats.total }}</div>
-                <div class="stat-label">总天数</div>
-              </div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-icon fasting-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">{{ monthStats.major + monthStats.moderate + monthStats.minor }}</div>
-                <div class="stat-label">戒期天数</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 戒期等级分布 -->
-          <div class="level-distribution">
-            <div class="level-item">
-              <div class="level-indicator major-indicator"></div>
-              <div class="level-info">
-                <div class="level-text">大罪</div>
-                <div class="level-count">{{ monthStats.major }}天</div>
-              </div>
-              <div class="level-bar">
-                <div class="level-fill major-fill" :style="{ width: `${(monthStats.major / monthStats.total) * 100}%` }"></div>
-              </div>
-            </div>
-            <div class="level-item">
-              <div class="level-indicator moderate-indicator"></div>
-              <div class="level-info">
-                <div class="level-text">中罪</div>
-                <div class="level-count">{{ monthStats.moderate }}天</div>
-              </div>
-              <div class="level-bar">
-                <div class="level-fill moderate-fill" :style="{ width: `${(monthStats.moderate / monthStats.total) * 100}%` }"></div>
-              </div>
-            </div>
-            <div class="level-item">
-              <div class="level-indicator minor-indicator"></div>
-              <div class="level-info">
-                <div class="level-text">小罪</div>
-                <div class="level-count">{{ monthStats.minor }}天</div>
-              </div>
-              <div class="level-bar">
-                <div class="level-fill minor-fill" :style="{ width: `${(monthStats.minor / monthStats.total) * 100}%` }"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-card>
-
-            <el-card class="stats-card">
         <template #header>
           <div class="flex items-center justify-between">
             <span class="font-semibold">近期戒期提醒</span>
@@ -167,14 +95,6 @@ const router = useRouter()
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
 
-// 计算属性
-const monthStats = computed(() => calendarStore.getMonthFastingStats)
-
-const fastingPercentage = computed(() => {
-  if (monthStats.value.total === 0) return 0
-  const fastingDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
-  return Math.round((fastingDays / monthStats.value.total) * 100)
-})
 
 const upcomingFastings = computed(() => {
   const today = new Date()
@@ -272,7 +192,7 @@ const exportCalendar = () => {
   const exportData = {
     year: calendarStore.selectedYear,
     month: calendarStore.selectedMonth,
-    fastingStats: monthStats.value,
+    fastingStats: calendarStore.getMonthFastingStats,
     days: currentMonthDays.value.filter(day => day.isCurrentMonth).map(day => ({
       date: CalendarUtil.formatDate(day.date),
       lunarDate: day.lunarDate,
@@ -321,146 +241,6 @@ onMounted(() => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* 新的紧凑统计样式 */
-.compact-stats {
-  padding: 0;
-}
-
-.stats-overview {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  flex: 1;
-  transition: all 0.2s ease;
-}
-
-.stat-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.stat-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.total-icon {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #3b82f6;
-}
-
-.fasting-icon {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  color: #ef4444;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 2px;
-  color: #1f2937;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #6b7280;
-  line-height: 1;
-}
-
-/* 等级分布样式 */
-.level-distribution {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.level-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 0;
-  gap: 12px;
-}
-
-.level-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.major-indicator {
-  background-color: #dc2626;
-}
-
-.moderate-indicator {
-  background-color: #ea580c;
-}
-
-.minor-indicator {
-  background-color: #ca8a04;
-}
-
-.level-info {
-  min-width: 50px;
-  text-align: left;
-}
-
-.level-text {
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
-}
-
-.level-count {
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.level-bar {
-  flex: 1;
-  height: 6px;
-  background: #f3f4f6;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.level-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.8s ease;
-}
-
-.major-fill {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
-}
-
-.moderate-fill {
-  background: linear-gradient(90deg, #ea580c, #f97316);
-}
-
-.minor-fill {
-  background: linear-gradient(90deg, #ca8a04, #eab308);
-}
 
 /* 近期戒期提醒卡片样式 */
 .fasting-reminder-card {
@@ -544,23 +324,6 @@ onMounted(() => {
 
 /* 响应式设计 */
 @media (max-width: 640px) {
-  .stats-overview {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .stat-item {
-    padding: 10px;
-  }
-
-  .stat-value {
-    font-size: 16px;
-  }
-
-  .level-info {
-    min-width: 45px;
-  }
-
   .fasting-reminder-card {
     padding: 10px;
   }
