@@ -96,3 +96,6 @@ Thumbs.db
 *.code-workspace
 *.sublime-project
 *.sublime-workspace
+
+# Vite cache
+.vite/

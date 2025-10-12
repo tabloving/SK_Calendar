@@ -63,21 +63,6 @@
           style="width: 160px"
         />
 
-        <el-dropdown @command="handleQuickJump">
-          <el-button type="text">
-            快速跳转<el-icon class="el-icon--right"><arrow-down /></el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="currentMonth">本月</el-dropdown-item>
-              <el-dropdown-item command="nextMonth">下月</el-dropdown-item>
-              <el-dropdown-item command="springFestival">春节</el-dropdown-item>
-              <el-dropdown-item command="qingming">清明</el-dropdown-item>
-              <el-dropdown-item command="dragonBoat">端午</el-dropdown-item>
-              <el-dropdown-item command="midAutumn">中秋</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
       </div>
     </div>
 
@@ -118,8 +103,7 @@ import {
   ArrowRight,
   CaretLeft,
   CaretRight,
-  Calendar,
-  ArrowDown
+  Calendar
 } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
@@ -180,39 +164,6 @@ const onMonthChange = (value: string) => {
   }
 }
 
-const handleQuickJump = (command: string) => {
-  const year = selectedYear.value
-  let targetMonth = selectedMonth.value
-
-  switch (command) {
-    case 'currentMonth':
-      goToToday()
-      break
-    case 'nextMonth':
-      calendarStore.goToNextMonth()
-      break
-    case 'springFestival':
-      // 春节通常在1-2月，这里简化处理为2月
-      targetMonth = 2
-      calendarStore.goToMonth(year, targetMonth)
-      break
-    case 'qingming':
-      // 清明通常在4月
-      targetMonth = 4
-      calendarStore.goToMonth(year, targetMonth)
-      break
-    case 'dragonBoat':
-      // 端午通常在5-6月，这里简化处理为6月
-      targetMonth = 6
-      calendarStore.goToMonth(year, targetMonth)
-      break
-    case 'midAutumn':
-      // 中秋通常在9-10月，这里简化处理为9月
-      targetMonth = 9
-      calendarStore.goToMonth(year, targetMonth)
-      break
-  }
-}
 </script>
 
 <style scoped>

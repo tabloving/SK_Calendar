@@ -87,8 +87,7 @@
         </div>
       </el-card>
 
-      <!-- 重要戒期提醒 -->
-      <el-card class="stats-card">
+            <el-card class="stats-card">
         <template #header>
           <div class="flex items-center justify-between">
             <span class="font-semibold">近期戒期提醒</span>
@@ -141,30 +140,7 @@
         </div>
       </el-card>
 
-      <!-- 快速操作 -->
-      <el-card class="stats-card">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span class="font-semibold">快速操作</span>
-            <el-icon><Operation /></el-icon>
           </div>
-        </template>
-        <div class="space-y-3">
-          <el-button type="primary" class="w-full" @click="goToToday">
-            <el-icon class="mr-2"><Calendar /></el-icon>
-            返回今天
-          </el-button>
-          <el-button type="default" class="w-full" @click="goToSettings">
-            <el-icon class="mr-2"><Setting /></el-icon>
-            应用设置
-          </el-button>
-          <el-button type="default" class="w-full" @click="exportCalendar">
-            <el-icon class="mr-2"><Download /></el-icon>
-            导出日历
-          </el-button>
-        </div>
-      </el-card>
-    </div>
   </div>
 </template>
 
