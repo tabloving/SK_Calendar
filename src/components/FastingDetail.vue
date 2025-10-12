@@ -71,6 +71,47 @@
         </div>
       </div>
 
+      <!-- 近期戒期提醒 -->
+      <div v-if="upcomingFastings.length > 0" class="upcoming-fastings">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <el-icon class="mr-2"><Bell /></el-icon>
+          近期戒期提醒
+        </h4>
+        <div class="space-y-2">
+          <div
+            v-for="(fasting, index) in upcomingFastings"
+            :key="index"
+            class="fasting-reminder-card"
+            :class="getFastingCardClass(fasting.level)"
+          >
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center mb-1">
+                  <div
+                    class="fasting-level-indicator mr-2"
+                    :class="getFastingIndicatorClass(fasting.level)"
+                  ></div>
+                  <span class="font-medium text-sm">{{ fasting.reason }}</span>
+                </div>
+                <div class="flex items-center text-xs text-gray-500">
+                  <span class="mr-1">{{ fasting.lunarDate }}</span>
+                  <svg class="w-3 h-3 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L10 10.414l2.293 2.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+                  </svg>
+                  <span>{{ getDaysText(fasting.daysFromNow) }}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="date-text font-semibold text-sm">{{ fasting.date }}</div>
+                <div class="weekday-text text-xs text-gray-400">
+                  {{ getWeekdayText(fasting.fullDate) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 修行建议 -->
       <div class="practice-advice">
         <!-- 有戒期时的建议 -->
@@ -118,7 +159,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { FastingDataManager } from '@/utils/fasting-data'
 import * as lunar from 'lunar-javascript'
-import { Calendar } from '@element-plus/icons-vue'
+import { Calendar, Bell } from '@element-plus/icons-vue'
 import type { FastingInfo } from '@/types'
 
 const calendarStore = useCalendarStore()
@@ -166,6 +207,52 @@ const isTenFastingDay = computed(() => {
   }
 })
 
+const upcomingFastings = computed(() => {
+  const today = new Date()
+  const weekLater = new Date(today)
+  weekLater.setDate(today.getDate() + 7)
+  const upcomingFastings: Array<{
+    reason: string;
+    date: string;
+    fullDate: Date;
+    lunarDate: string;
+    level: 'major' | 'moderate' | 'minor';
+    daysFromNow: number;
+  }> = []
+
+  // 获取当前月份和下个月的日历数据
+  const currentMonth = calendarStore.currentMonthInfo.days
+  const allDays = [...currentMonth]
+
+  allDays.forEach(day => {
+    if (day.date >= today && day.date <= weekLater) {
+      const enabledFastings = day.fastingInfos.filter(fasting =>
+        settingsStore.settings.enabledFastingTypes.includes(fasting.type)
+      )
+
+      if (enabledFastings.length > 0) {
+        const highestLevel = CalendarUtil.getHighestFastingLevel(enabledFastings)
+        const daysFromNow = Math.ceil((day.date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+
+        enabledFastings.forEach(fasting => {
+          const lunarInfo = CalendarUtil.getFullLunarMonthDay(day.date)
+          upcomingFastings.push({
+            reason: fasting.reason,
+            date: `${day.month}月${day.day}日`,
+            fullDate: day.date,
+            lunarDate: lunarInfo.full,
+            level: highestLevel as 'major' | 'moderate' | 'minor',
+            daysFromNow: daysFromNow
+          })
+        })
+      }
+    }
+  })
+
+  return upcomingFastings
+    .sort((a, b) => a.daysFromNow - b.daysFromNow)
+})
+
 // 方法
 const formatDate = (date: Date) => {
   return CalendarUtil.formatDate(date, 'YYYY-MM-DD')
@@ -205,6 +292,38 @@ const getFastingItemClass = (level: string) => {
   }
   return classMap[level as keyof typeof classMap] || 'bg-gray-50 border-gray-200'
 }
+
+// 近期戒期提醒相关方法
+const getFastingCardClass = (level: 'major' | 'moderate' | 'minor') => {
+  const classMap = {
+    major: 'major-fasting-card',
+    moderate: 'moderate-fasting-card',
+    minor: 'minor-fasting-card'
+  }
+  return classMap[level] || 'minor-fasting-card'
+}
+
+const getFastingIndicatorClass = (level: 'major' | 'moderate' | 'minor') => {
+  const classMap = {
+    major: 'major-indicator',
+    moderate: 'moderate-indicator',
+    minor: 'minor-indicator'
+  }
+  return classMap[level] || 'minor-indicator'
+}
+
+const getDaysText = (daysFromNow: number) => {
+  if (daysFromNow === 0) return '今天'
+  if (daysFromNow === 1) return '明天'
+  if (daysFromNow === 2) return '后天'
+  if (daysFromNow <= 7) return `${daysFromNow}天后`
+  return `${daysFromNow}天后`
+}
+
+const getWeekdayText = (date: Date) => {
+  const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+  return weekDays[date.getDay()]
+}
 </script>
 
 <style scoped>
@@ -235,6 +354,73 @@ const getFastingItemClass = (level: string) => {
   background-color: #16A34A;
 }
 
+/* 近期戒期提醒卡片样式 */
+.fasting-reminder-card {
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.fasting-reminder-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 大罪戒期卡片 */
+.major-fasting-card {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-left-color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* 中罪戒期卡片 */
+.moderate-fasting-card {
+  background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+  border-left-color: #ea580c;
+  border: 1px solid #fbd38d;
+}
+
+/* 小罪戒期卡片 */
+.minor-fasting-card {
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+  border-left-color: #ca8a04;
+  border: 1px solid #fde68a;
+}
+
+/* 戒期等级指示器 */
+.fasting-level-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.major-indicator {
+  background-color: #dc2626;
+}
+
+.moderate-indicator {
+  background-color: #ea580c;
+}
+
+.minor-indicator {
+  background-color: #ca8a04;
+}
+
+/* 日期样式 */
+.date-text {
+  color: #374151;
+  line-height: 1.2;
+}
+
+.weekday-text {
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
 @media (max-width: 640px) {
   .fasting-detail {
     padding: 16px;
@@ -242,6 +428,22 @@ const getFastingItemClass = (level: string) => {
 
   .grid.grid-cols-2 {
     grid-template-columns: 1fr;
+  }
+
+  .fasting-reminder-card {
+    padding: 8px;
+  }
+
+  .date-text {
+    font-size: 12px;
+  }
+
+  .weekday-text {
+    font-size: 10px;
+  }
+
+  .upcoming-fastings {
+    margin-top: 4;
   }
 }
 </style>
