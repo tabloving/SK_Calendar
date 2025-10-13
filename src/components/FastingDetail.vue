@@ -7,9 +7,12 @@
           {{ formatDate(selectedDayInfo.date) }}
           <span v-if="selectedDayInfo.isToday" class="ml-2 text-sm text-blue-600">(今天)</span>
         </h3>
-        <div class="text-gray-600">
+        <div class="text-gray-600 space-y-1">
           <div>农历：{{ lunarInfo.full }}</div>
           <div>星期：{{ weekDayText }}</div>
+          <div class="text-sm text-amber-600">
+            干支：{{ ganZhiInfo.year }}年 {{ ganZhiInfo.month }}月 {{ ganZhiInfo.day }}日
+          </div>
           <div v-if="selectedDayInfo.solarTerm" class="text-purple-600 font-semibold">
             节气：{{ selectedDayInfo.solarTerm }}
           </div>
@@ -181,6 +184,34 @@ const lunarInfo = computed(() => {
   if (!selectedDayInfo.value) return { month: '', day: '', full: '' }
 
   return CalendarUtil.getFullLunarMonthDay(selectedDayInfo.value.date)
+})
+
+// 干支信息计算
+const ganZhiInfo = computed(() => {
+  if (!selectedDayInfo.value) return { year: '', month: '', day: '' }
+
+  try {
+    const solar = lunar.Solar.fromDate(selectedDayInfo.value.date)
+    const lunarDate = solar.getLunar()
+
+    // 获取年干支
+    const yearGanZhi = lunarDate.getYearInGanZhi()
+
+    // 获取月干支
+    const monthGanZhi = lunarDate.getMonthInGanZhi()
+
+    // 获取日干支
+    const dayGanZhi = lunarDate.getDayInGanZhi()
+
+    return {
+      year: yearGanZhi,
+      month: monthGanZhi,
+      day: dayGanZhi
+    }
+  } catch (error) {
+    console.warn('获取干支信息失败', error)
+    return { year: '', month: '', day: '' }
+  }
 })
 
 const weekDayText = computed(() => {
