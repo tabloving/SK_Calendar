@@ -194,9 +194,10 @@ const getFastingLevelColor = (level: string) => {
 }
 
 .calendar-day.selected {
-  border: 1px solid #3B82F6;
+  border: none;
   background-color: #EFF6FF;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15),
+              inset 0 0 0 1px #3B82F6; /* 统一使用内阴影作为边框 */
   transform: scale(1.01);
 }
 
@@ -222,8 +223,9 @@ const getFastingLevelColor = (level: string) => {
 /* 确保选中状态在非当前月份时也可见 */
 .calendar-day.selected:not(.is-current-month) {
   opacity: 0.7;
-  border-color: #3B82F6;
+  border: none;
   background-color: #EFF6FF;
+  box-shadow: inset 0 0 0 1px #3B82F6;
 }
 
 /* 恢复原有戒期等级填充色，去除左边框 */
@@ -246,22 +248,26 @@ const getFastingLevelColor = (level: string) => {
 /* 选中状态与戒期状态的组合处理 */
 .calendar-day.selected.fasting-major {
   background-color: rgba(220, 38, 38, 0.12);
-  border: 1px solid #DC2626;
+  border: none;
+  box-shadow: inset 0 0 0 1px #DC2626;
 }
 
 .calendar-day.selected.fasting-moderate {
   background-color: rgba(234, 88, 12, 0.12);
-  border: 1px solid #EA580C;
+  border: none;
+  box-shadow: inset 0 0 0 1px #EA580C;
 }
 
 .calendar-day.selected.fasting-minor {
   background-color: rgba(202, 138, 4, 0.12);
-  border: 1px solid #CA8A04;
+  border: none;
+  box-shadow: inset 0 0 0 1px #CA8A04;
 }
 
 .calendar-day.selected.fasting-safe {
   background-color: rgba(22, 163, 74, 0.12);
-  border: 1px solid #16A34A;
+  border: none;
+  box-shadow: inset 0 0 0 1px #16A34A;
 }
 
 .fasting-indicator {
