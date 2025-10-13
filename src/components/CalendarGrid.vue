@@ -1,12 +1,15 @@
 <template>
   <div class="calendar-grid bg-white rounded-lg shadow-sm">
     <!-- 星期标题 -->
-    <div class="week-header grid grid-cols-7 bg-gray-50 border-b">
+    <div class="week-header grid grid-cols-7 bg-white border-b border-gray-100">
       <div
         v-for="(day, index) in weekDays"
         :key="index"
-        class="week-day py-3 text-center font-semibold text-sm"
-        :class="{ 'text-red-600': index === 0 || index === 6 }"
+        class="week-day text-center font-medium text-sm"
+        :class="{
+          'weekend': index === 0 || index === 6,
+          'weekday': index > 0 && index < 6
+        }"
       >
         {{ day }}
       </div>
@@ -68,31 +71,34 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 }
 
 .week-header {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 0;
 }
 
 .week-day {
-  border-right: 1px solid #e2e8f0;
-  padding: 12px 8px;
-  font-weight: 600;
-  color: #64748b;
-  transition: all 0.2s ease;
+  padding: 8px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.2s ease;
+  border-right: 1px solid #f8fafc;
 }
 
 .week-day:hover {
-  background: #f1f5f9;
-  color: #475569;
+  color: #374151;
 }
 
 .week-day:last-child {
   border-right: none;
 }
 
-.week-day:nth-child(1),
-.week-day:nth-child(7) {
-  color: #ef4444;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.03) 0%, rgba(252, 165, 165, 0.03) 100%);
+.weekday {
+  color: #6b7280;
+}
+
+.weekend {
+  color: #dc2626;
+  font-weight: 600;
 }
 
 .calendar-body {
@@ -142,9 +148,14 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .week-day {
-    padding: 10px 6px;
+    padding: 12px 6px;
     font-size: 12px;
     font-weight: 500;
+  }
+
+  .week-day {
+    padding: 6px;
+    font-size: 12px;
   }
 
   .calendar-body {
@@ -177,7 +188,12 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .week-day {
-    padding: 8px 4px;
+    padding: 10px 4px;
+    font-size: 11px;
+  }
+
+  .week-day {
+    padding: 5px;
     font-size: 11px;
   }
 
