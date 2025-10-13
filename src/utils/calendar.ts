@@ -65,9 +65,10 @@ export class CalendarUtil {
       allPreceptInfos.push({
         date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
         reason: '十斋日',
+        punishment: '犯者减寿',
         level: PreceptLevel.MODERATE,
         type: PreceptType.PRECEPT_DAY,
-        description: '十斋日 - 中罪'
+        description: '十斋日 - 犯者减寿 - 中罪'
       })
     }
 

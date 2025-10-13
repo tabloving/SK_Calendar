@@ -108,7 +108,11 @@
                     {{ getPreceptLevelText(precept.level) }}
                   </el-tag>
                 </div>
-                <div class="text-sm text-gray-600">
+                <div class="text-sm text-gray-600 space-y-1">
+                  <div class="flex items-center">
+                    <span class="font-medium text-gray-700 mr-2">惩罚：</span>
+                    <span class="text-red-600 font-medium">{{ precept.punishment }}</span>
+                  </div>
                   <div>类型：{{ getPreceptTypeText(precept.type) }}</div>
                   <div v-if="precept.description">说明：{{ precept.description }}</div>
                   <!-- 如果是斋日，添加斋日说明 -->

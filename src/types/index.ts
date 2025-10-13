@@ -17,7 +17,8 @@ export enum PreceptType {
 // 戒期信息接口
 export interface PreceptInfo {
   date: string;           // 农历日期 (格式: MM-DD)
-  reason: string;         // 戒期原因
+  reason: string;         // 戒期原因（如：四天王巡行、天地仓开日）
+  punishment: string;     // 犯戒惩罚（如：犯者减寿、犯者夺纪）
   level: PreceptLevel;    // 罪果等级
   type: PreceptType;      // 戒期类型
   description?: string;   // 详细描述
