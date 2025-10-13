@@ -2,19 +2,57 @@
   <div class="fasting-detail bg-white rounded-lg shadow-sm p-6">
     <div v-if="selectedDayInfo" class="space-y-6">
       <!-- 日期信息 -->
-      <div class="date-info border-b pb-4">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">
-          {{ formatDate(selectedDayInfo.date) }}
-          <span v-if="selectedDayInfo.isToday" class="ml-2 text-sm text-blue-600">(今天)</span>
-        </h3>
-        <div class="text-gray-600 space-y-1">
-          <div>农历：{{ lunarInfo.full }}</div>
-          <div>星期：{{ weekDayText }}</div>
-          <div class="text-sm text-amber-600">
-            干支：{{ ganZhiInfo.year }}年 {{ ganZhiInfo.month }}月 {{ ganZhiInfo.day }}日
+      <div class="date-info">
+        <div class="date-header flex items-center justify-between mb-4">
+          <div v-if="selectedDayInfo.isToday" class="today-badge">
+            今天
           </div>
-          <div v-if="selectedDayInfo.solarTerm" class="text-purple-600 font-semibold">
-            节气：{{ selectedDayInfo.solarTerm }}
+        </div>
+
+        <div class="info-grid grid grid-cols-1 gap-3">
+          <div class="info-card bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+            <div class="flex items-start justify-between">
+              <!-- 左侧：阳历信息（主要信息） -->
+              <div class="flex-1">
+                <div class="text-xs text-purple-600 font-medium mb-2">阳历</div>
+                <div class="text-2xl font-bold text-gray-800 mb-1">
+                  {{ selectedDayInfo.day }}
+                </div>
+                <div class="text-sm text-gray-700 mb-2">
+                  {{ weekDayText }}
+                </div>
+                <div class="text-xs text-gray-600">
+                  {{ getMonthYear(selectedDayInfo.date) }}
+                </div>
+              </div>
+
+              <!-- 右侧：农历和干支信息（次要信息） -->
+              <div class="text-right ml-4 pl-4 border-l border-purple-200">
+                <div class="text-xs text-purple-600 font-medium mb-2">农历</div>
+                <div class="text-sm text-gray-700 mb-2 font-medium">
+                  {{ lunarInfo.full }}
+                </div>
+                <div class="text-xs text-gray-600 leading-tight">
+                  {{ ganZhiInfo.year }}年<br>
+                  {{ ganZhiInfo.month }}月<br>
+                  {{ ganZhiInfo.day }}日
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="selectedDayInfo.solarTerm" class="info-card bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 border border-green-100">
+            <div class="flex items-center">
+              <div class="info-icon text-green-500 mr-3">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-green-600 font-medium">节气</div>
+                <div class="text-sm text-gray-700 font-semibold">{{ selectedDayInfo.solarTerm }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -163,7 +201,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { FastingDataManager } from '@/utils/fasting-data'
 import * as lunar from 'lunar-javascript'
-import { Calendar, Bell, Document } from '@element-plus/icons-vue'
+import { Calendar as CalendarIcon, Bell, Document } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
@@ -289,6 +327,15 @@ const formatDate = (date: Date) => {
   return CalendarUtil.formatDate(date, 'YYYY-MM-DD')
 }
 
+const getMonthYear = (date: Date) => {
+  const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+  return `${date.getFullYear()}年 ${months[date.getMonth()]}`
+}
+
+const getDaySuffix = (day: number) => {
+  return '日'
+}
+
 const getFastingLevelText = (level: string) => {
   return CalendarUtil.getFastingLevelText(level as any)
 }
@@ -360,6 +407,106 @@ const getWeekdayText = (date: Date) => {
 <style scoped>
 .fasting-detail {
   min-height: 400px;
+}
+
+/* 日期信息区域样式 */
+.date-header {
+  position: relative;
+}
+
+.today-badge {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  animation: pulse-blue 2s infinite;
+}
+
+@keyframes pulse-blue {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+
+
+.info-card {
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  opacity: 0.8;
+}
+
+/* 综合时间信息卡片（第一个info-card）- 紫色主题 */
+.info-grid:first-child .info-card::before {
+  background: linear-gradient(to bottom, #a855f7, #9333ea);
+}
+
+/* 节气卡片（第二个info-card）- 绿色主题 */
+.info-grid .info-card:nth-child(2)::before {
+  background: linear-gradient(to bottom, #10b981, #059669);
+}
+
+.info-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 综合时间信息卡片图标样式 - 紫色主题 */
+.info-grid:first-child .info-icon {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+}
+
+/* 节气卡片图标样式 - 绿色主题 */
+.info-grid .info-card:nth-child(2) .info-icon {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card {
+    padding: 12px;
+  }
+
+  .info-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .info-card .text-lg {
+    font-size: 1.125rem;
+  }
+
+  .info-card .text-sm {
+    font-size: 0.875rem;
+  }
 }
 
 .fasting-indicator {
