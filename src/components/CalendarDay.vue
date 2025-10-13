@@ -27,14 +27,14 @@
 
 
     <!-- 戒期指示器 -->
-    <div v-if="settingsStore.settings.showFastingIndicators && hasFasting" class="fasting-indicators mb-1">
+    <div v-if="settingsStore.settings.showPreceptIndicators && hasPrecept" class="precept-indicators mb-1">
       <div class="flex items-center flex-wrap gap-1">
         <div
-          v-for="(level, index) in uniqueFastingLevels"
+          v-for="(level, index) in uniquePreceptLevels"
           :key="index"
-          class="fasting-indicator"
+          class="precept-indicator"
           :class="level"
-          :title="getFastingLevelText(level)"
+          :title="getPreceptLevelText(level)"
         ></div>
       </div>
     </div>
@@ -45,21 +45,21 @@
     </div>
 
     <!-- 戒期详情 -->
-    <div v-if="displayFastingInfos.length > 0" class="fasting-details">
+    <div v-if="displayPreceptInfos.length > 0" class="precept-details">
       <div class="text-xs space-y-1">
         <div
-          v-for="(fasting, index) in displayFastingInfos.slice(0, maxDisplayItems)"
+          v-for="(precept, index) in displayPreceptInfos.slice(0, maxDisplayItems)"
           :key="index"
-          class="fasting-item"
-          :class="`text-${getFastingLevelColor(fasting.level)}-700`"
+          class="precept-item"
+          :class="`text-${getPreceptLevelColor(precept.level)}-700`"
         >
-          <span class="truncate">{{ fasting.reason }}</span>
+          <span class="truncate">{{ precept.reason }}</span>
         </div>
         <div
-          v-if="displayFastingInfos.length > maxDisplayItems"
+          v-if="displayPreceptInfos.length > maxDisplayItems"
           class="text-gray-500 text-xs"
         >
-          +{{ displayFastingInfos.length - maxDisplayItems }}项
+          +{{ displayPreceptInfos.length - maxDisplayItems }}项
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@ import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
-import { FastingDataManager } from '@/utils/fasting-data'
+import { PreceptDataManager } from '@/utils/precept-data'
 import * as lunar from 'lunar-javascript'
 import { Calendar, Bell } from '@element-plus/icons-vue'
 import type { CalendarDayInfo } from '@/types'
@@ -94,30 +94,30 @@ const emit = defineEmits<{
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
-const fastingManager = FastingDataManager.getInstance()
+const preceptManager = PreceptDataManager.getInstance()
 
 // 计算属性
 const dayClasses = computed(() => {
-  const highestLevel = CalendarUtil.getHighestFastingLevel(props.dayInfo.fastingInfos)
-  return CalendarUtil.getFastingLevelClass(highestLevel)
+  const highestLevel = CalendarUtil.getHighestPreceptLevel(props.dayInfo.preceptInfos)
+  return CalendarUtil.getPreceptLevelClass(highestLevel)
 })
 
-const hasFasting = computed(() => {
-  return filteredFastingInfos.value.length > 0
+const hasPrecept = computed(() => {
+  return filteredPreceptInfos.value.length > 0
 })
 
-const filteredFastingInfos = computed(() => {
-  return props.dayInfo.fastingInfos.filter(fasting =>
-    settingsStore.settings.enabledFastingTypes.includes(fasting.type)
+const filteredPreceptInfos = computed(() => {
+  return props.dayInfo.preceptInfos.filter(precept =>
+    settingsStore.settings.enabledPreceptTypes.includes(precept.type)
   )
 })
 
-const displayFastingInfos = computed(() => {
-  return filteredFastingInfos.value
+const displayPreceptInfos = computed(() => {
+  return filteredPreceptInfos.value
 })
 
-const uniqueFastingLevels = computed(() => {
-  const levels = displayFastingInfos.value.map(info => info.level)
+const uniquePreceptLevels = computed(() => {
+  const levels = displayPreceptInfos.value.map(info => info.level)
   return [...new Set(levels)]
 })
 
@@ -158,11 +158,11 @@ const handleClick = () => {
   emit('click', props.dayInfo)
 }
 
-const getFastingLevelText = (level: 'major' | 'moderate' | 'minor' | 'safe') => {
-  return CalendarUtil.getFastingLevelText(level)
+const getPreceptLevelText = (level: 'major' | 'moderate' | 'minor' | 'safe') => {
+  return CalendarUtil.getPreceptLevelText(level)
 }
 
-const getFastingLevelColor = (level: string) => {
+const getPreceptLevelColor = (level: string) => {
   const colorMap = {
     major: 'red',
     moderate: 'orange',
@@ -229,63 +229,63 @@ const getFastingLevelColor = (level: string) => {
 }
 
 /* 恢复原有戒期等级填充色，去除左边框 */
-.calendar-day.fasting-major {
+.calendar-day.precept-major {
   background-color: rgba(220, 38, 38, 0.08);
 }
 
-.calendar-day.fasting-moderate {
+.calendar-day.precept-moderate {
   background-color: rgba(234, 88, 12, 0.08);
 }
 
-.calendar-day.fasting-minor {
+.calendar-day.precept-minor {
   background-color: rgba(202, 138, 4, 0.08);
 }
 
-.calendar-day.fasting-safe {
+.calendar-day.precept-safe {
   background-color: rgba(22, 163, 74, 0.08);
 }
 
 /* 戒期状态的悬停效果 */
-.calendar-day.fasting-major:hover {
+.calendar-day.precept-major:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(220, 38, 38, 0.25);
 }
 
-.calendar-day.fasting-moderate:hover {
+.calendar-day.precept-moderate:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(234, 88, 12, 0.25);
 }
 
-.calendar-day.fasting-minor:hover {
+.calendar-day.precept-minor:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(202, 138, 4, 0.25);
 }
 
-.calendar-day.fasting-safe:hover {
+.calendar-day.precept-safe:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(22, 163, 74, 0.25);
 }
 
 /* 选中状态与戒期状态的组合处理 */
-.calendar-day.selected.fasting-major {
+.calendar-day.selected.precept-major {
   background-color: rgba(220, 38, 38, 0.12);
   border: none;
   box-shadow: inset 0 0 0 1px #DC2626;
 }
 
-.calendar-day.selected.fasting-moderate {
+.calendar-day.selected.precept-moderate {
   background-color: rgba(234, 88, 12, 0.12);
   border: none;
   box-shadow: inset 0 0 0 1px #EA580C;
 }
 
-.calendar-day.selected.fasting-minor {
+.calendar-day.selected.precept-minor {
   background-color: rgba(202, 138, 4, 0.12);
   border: none;
   box-shadow: inset 0 0 0 1px #CA8A04;
 }
 
-.calendar-day.selected.fasting-safe {
+.calendar-day.selected.precept-safe {
   background-color: rgba(22, 163, 74, 0.12);
   border: none;
   box-shadow: inset 0 0 0 1px #16A34A;
@@ -297,7 +297,7 @@ const getFastingLevelColor = (level: string) => {
               inset 0 0 0 1px #3B82F6;
 }
 
-.fasting-indicator {
+.precept-indicator {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -307,26 +307,26 @@ const getFastingLevelColor = (level: string) => {
   transition: all 0.2s ease;
 }
 
-.fasting-indicator:hover {
+.precept-indicator:hover {
   transform: scale(1.2);
 }
 
-.fasting-indicator.major {
+.precept-indicator.major {
   background-color: #DC2626;
   box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
 }
 
-.fasting-indicator.moderate {
+.precept-indicator.moderate {
   background-color: #EA580C;
   box-shadow: 0 1px 3px rgba(234, 88, 12, 0.2);
 }
 
-.fasting-indicator.minor {
+.precept-indicator.minor {
   background-color: #CA8A04;
   box-shadow: 0 1px 3px rgba(202, 138, 4, 0.2);
 }
 
-.fasting-indicator.safe {
+.precept-indicator.safe {
   background-color: #16A34A;
   box-shadow: 0 1px 3px rgba(22, 163, 74, 0.2);
 }
@@ -336,7 +336,7 @@ const getFastingLevelColor = (level: string) => {
   right: 4px;
 }
 
-.fasting-item {
+.precept-item {
   line-height: 1.3;
   word-break: break-all;
   font-size: 11px;
@@ -373,11 +373,11 @@ const getFastingLevelColor = (level: string) => {
   border-left: 2px solid #9333ea;
 }
 
-.fasting-indicators {
+.precept-indicators {
   margin: 5px 0;
 }
 
-.fasting-details {
+.precept-details {
   margin-top: 6px;
 }
 
@@ -411,12 +411,12 @@ const getFastingLevelColor = (level: string) => {
     font-size: 10px;
   }
 
-  .fasting-details {
+  .precept-details {
     font-size: 10px;
     margin-top: 4px;
   }
 
-  .fasting-indicator {
+  .precept-indicator {
     width: 6px;
     height: 6px;
     margin-right: 2px;
@@ -440,7 +440,7 @@ const getFastingLevelColor = (level: string) => {
     margin-bottom: 3px;
   }
 
-  .fasting-details {
+  .precept-details {
     margin-top: 3px;
   }
 }

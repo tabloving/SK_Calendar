@@ -1,5 +1,5 @@
 <template>
-  <div class="fasting-detail bg-white rounded-lg shadow-sm p-6">
+  <div class="precept-detail bg-white rounded-lg shadow-sm p-6">
     <div v-if="selectedDayInfo" class="space-y-6">
       <!-- 日期信息 -->
       <div class="date-info">
@@ -74,7 +74,7 @@
       </div>
 
       <!-- 戒期信息 -->
-      <div class="fasting-info">
+      <div class="precept-info">
         <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
           <el-icon class="mr-2" :size="20">
             <Document />
@@ -83,42 +83,42 @@
         </h4>
 
         <!-- 有斋日或戒期时显示 -->
-        <div v-if="hasFastingDays || filteredFastingInfos.length > 0" class="space-y-3">
+        <div v-if="hasPreceptDays || filteredPreceptInfos.length > 0" class="space-y-3">
           <!-- 普通戒期信息 -->
           <div
-            v-for="(fasting, index) in filteredFastingInfos"
+            v-for="(precept, index) in filteredPreceptInfos"
             :key="index"
-            class="fasting-item border rounded-lg p-4"
-            :class="getFastingItemClass(fasting.level)"
+            class="precept-item border rounded-lg p-4"
+            :class="getPreceptItemClass(precept.level)"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center mb-2">
                   <div
-                    class="fasting-indicator mr-2"
-                    :class="fasting.level"
+                    class="precept-indicator mr-2"
+                    :class="precept.level"
                   ></div>
-                  <span class="font-semibold">{{ fasting.reason }}</span>
+                  <span class="font-semibold">{{ precept.reason }}</span>
                   <el-tag
-                    :type="getTagType(fasting.level)"
+                    :type="getTagType(precept.level)"
                     size="small"
                     class="ml-2"
                   >
-                    {{ getFastingLevelText(fasting.level) }}
+                    {{ getPreceptLevelText(precept.level) }}
                   </el-tag>
                 </div>
                 <div class="text-sm text-gray-600">
-                  <div>类型：{{ getFastingTypeText(fasting.type) }}</div>
-                  <div v-if="fasting.description">说明：{{ fasting.description }}</div>
+                  <div>类型：{{ getPreceptTypeText(precept.type) }}</div>
+                  <div v-if="precept.description">说明：{{ precept.description }}</div>
                   <!-- 如果是斋日，添加斋日说明 -->
-                  <div v-if="hasFastingDays">诸天斋日，功德倍增</div>
+                  <div v-if="hasPreceptDays">诸天斋日，功德倍增</div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 如果没有戒期但有斋日，单独显示斋日提示 -->
-          <div v-if="hasFastingDays && filteredFastingInfos.length === 0" class="text-blue-600 text-center py-4">
+          <div v-if="hasPreceptDays && filteredPreceptInfos.length === 0" class="text-blue-600 text-center py-4">
             诸天斋日，功德倍增
           </div>
         </div>
@@ -130,24 +130,24 @@
       </div>
 
       <!-- 近期戒期提醒 -->
-      <div v-if="upcomingFastings.length > 0" class="upcoming-fastings">
+      <div v-if="upcomingPrecepts.length > 0" class="upcoming-fastings">
         <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
           <el-icon class="mr-2"><Bell /></el-icon>
           近期戒期提醒
         </h4>
         <div class="space-y-2">
           <div
-            v-for="(fasting, index) in upcomingFastings"
+            v-for="(fasting, index) in upcomingPrecepts"
             :key="index"
-            class="fasting-reminder-card"
-            :class="getFastingCardClass(fasting.level)"
+            class="precept-reminder-card"
+            :class="getPreceptCardClass(fasting.level)"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center mb-1">
                   <div
-                    class="fasting-level-indicator mr-2"
-                    :class="getFastingIndicatorClass(fasting.level)"
+                    class="precept-level-indicator mr-2"
+                    :class="getPreceptIndicatorClass(fasting.level)"
                   ></div>
                   <span class="font-medium text-sm">{{ fasting.reason }}</span>
                 </div>
@@ -173,7 +173,7 @@
       <!-- 修行建议 -->
       <div class="practice-advice">
         <!-- 有戒期或斋日时的建议 -->
-        <div v-if="filteredFastingInfos.length > 0 || hasFastingDays" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div v-if="filteredPreceptInfos.length > 0 || hasPreceptDays" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div class="flex items-center mb-2">
             <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
@@ -215,22 +215,22 @@ import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
-import { FastingDataManager } from '@/utils/fasting-data'
+import { PreceptDataManager } from '@/utils/precept-data'
 import * as lunar from 'lunar-javascript'
 import { Calendar as CalendarIcon, Bell, Document } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
-const fastingManager = FastingDataManager.getInstance()
+const preceptManager = PreceptDataManager.getInstance()
 
 // 计算属性
 const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
 
-const filteredFastingInfos = computed(() => {
+const filteredPreceptInfos = computed(() => {
   if (!selectedDayInfo.value) return []
 
-  return selectedDayInfo.value.fastingInfos.filter(fasting =>
-    settingsStore.settings.enabledFastingTypes.includes(fasting.type)
+  return selectedDayInfo.value.preceptInfos.filter(precept =>
+    settingsStore.settings.enabledPreceptTypes.includes(precept.type)
   )
 })
 
@@ -275,28 +275,28 @@ const weekDayText = computed(() => {
   return weekDays[selectedDayInfo.value.weekday]
 })
 
-const hasFastingDays = computed(() => {
-  return isTenFastingDay.value
+const hasPreceptDays = computed(() => {
+  return isTenPreceptDay.value
 })
 
-const isTenFastingDay = computed(() => {
+const isTenPreceptDay = computed(() => {
   if (!selectedDayInfo.value) return false
 
   try {
     const solar = lunar.Solar.fromDate(selectedDayInfo.value.date)
     const lunarDate = solar.getLunar()
-    return fastingManager.isTenFastingDay(lunarDate.getDay())
+    return preceptManager.isTenPreceptDay(lunarDate.getDay())
   } catch (error) {
     console.warn('检查十斋日失败', error)
     return false
   }
 })
 
-const upcomingFastings = computed(() => {
+const upcomingPrecepts = computed(() => {
   const today = new Date()
   const weekLater = new Date(today)
   weekLater.setDate(today.getDate() + 7)
-  const upcomingFastings: Array<{
+  const upcomingPrecepts: Array<{
     reason: string;
     date: string;
     fullDate: Date;
@@ -311,18 +311,18 @@ const upcomingFastings = computed(() => {
 
   allDays.forEach(day => {
     if (day.date >= today && day.date <= weekLater) {
-      const enabledFastings = day.fastingInfos.filter(fasting =>
-        settingsStore.settings.enabledFastingTypes.includes(fasting.type)
+      const enabledPrecepts = day.preceptInfos.filter(precept =>
+        settingsStore.settings.enabledPreceptTypes.includes(precept.type)
       )
 
-      if (enabledFastings.length > 0) {
-        const highestLevel = CalendarUtil.getHighestFastingLevel(enabledFastings)
+      if (enabledPrecepts.length > 0) {
+        const highestLevel = CalendarUtil.getHighestPreceptLevel(enabledPrecepts)
         const daysFromNow = Math.ceil((day.date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 
-        enabledFastings.forEach(fasting => {
+        enabledPrecepts.forEach(precept => {
           const lunarInfo = CalendarUtil.getFullLunarMonthDay(day.date)
-          upcomingFastings.push({
-            reason: fasting.reason,
+          upcomingPrecepts.push({
+            reason: precept.reason,
             date: `${day.month}月${day.day}日`,
             fullDate: day.date,
             lunarDate: lunarInfo.full,
@@ -334,7 +334,7 @@ const upcomingFastings = computed(() => {
     }
   })
 
-  return upcomingFastings
+  return upcomingPrecepts
     .sort((a, b) => a.daysFromNow - b.daysFromNow)
 })
 
@@ -351,11 +351,11 @@ const getDaySuffix = (day: number) => {
   return '日'
 }
 
-const getFastingLevelText = (level: string) => {
-  return CalendarUtil.getFastingLevelText(level as any)
+const getPreceptLevelText = (level: string) => {
+  return CalendarUtil.getPreceptLevelText(level as any)
 }
 
-const getFastingTypeText = (type: string) => {
+const getPreceptTypeText = (type: string) => {
   const typeMap = {
     regular: '常规戒期',
     special: '特殊戒期',
@@ -376,7 +376,7 @@ const getTagType = (level: string) => {
   return typeMap[level as keyof typeof typeMap] || 'info'
 }
 
-const getFastingItemClass = (level: string) => {
+const getPreceptItemClass = (level: string) => {
   const classMap = {
     major: 'bg-red-50 border-red-200',
     moderate: 'bg-orange-50 border-orange-200',
@@ -387,16 +387,16 @@ const getFastingItemClass = (level: string) => {
 }
 
 // 近期戒期提醒相关方法
-const getFastingCardClass = (level: 'major' | 'moderate' | 'minor') => {
+const getPreceptCardClass = (level: 'major' | 'moderate' | 'minor') => {
   const classMap = {
-    major: 'major-fasting-card',
-    moderate: 'moderate-fasting-card',
-    minor: 'minor-fasting-card'
+    major: 'major-precept-card',
+    moderate: 'moderate-precept-card',
+    minor: 'minor-precept-card'
   }
-  return classMap[level] || 'minor-fasting-card'
+  return classMap[level] || 'minor-precept-card'
 }
 
-const getFastingIndicatorClass = (level: 'major' | 'moderate' | 'minor') => {
+const getPreceptIndicatorClass = (level: 'major' | 'moderate' | 'minor') => {
   const classMap = {
     major: 'major-indicator',
     moderate: 'moderate-indicator',
@@ -420,7 +420,7 @@ const getWeekdayText = (date: Date) => {
 </script>
 
 <style scoped>
-.fasting-detail {
+.precept-detail {
   min-height: 400px;
 }
 
@@ -594,31 +594,31 @@ const getWeekdayText = (date: Date) => {
 
   }
 
-.fasting-indicator {
+.precept-indicator {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   display: inline-block;
 }
 
-.fasting-indicator.major {
+.precept-indicator.major {
   background-color: #DC2626;
 }
 
-.fasting-indicator.moderate {
+.precept-indicator.moderate {
   background-color: #EA580C;
 }
 
-.fasting-indicator.minor {
+.precept-indicator.minor {
   background-color: #CA8A04;
 }
 
-.fasting-indicator.safe {
+.precept-indicator.safe {
   background-color: #16A34A;
 }
 
 /* 近期戒期提醒卡片样式 */
-.fasting-reminder-card {
+.precept-reminder-card {
   padding: 10px;
   border-radius: 8px;
   border-left: 4px solid;
@@ -627,34 +627,34 @@ const getWeekdayText = (date: Date) => {
   overflow: hidden;
 }
 
-.fasting-reminder-card:hover {
+.precept-reminder-card:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* 大罪戒期卡片 */
-.major-fasting-card {
+.major-precept-card {
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
   border-left-color: #dc2626;
   border: 1px solid #fecaca;
 }
 
 /* 中罪戒期卡片 */
-.moderate-fasting-card {
+.moderate-precept-card {
   background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
   border-left-color: #ea580c;
   border: 1px solid #fbd38d;
 }
 
 /* 小罪戒期卡片 */
-.minor-fasting-card {
+.minor-precept-card {
   background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
   border-left-color: #ca8a04;
   border: 1px solid #fde68a;
 }
 
 /* 戒期等级指示器 */
-.fasting-level-indicator {
+.precept-level-indicator {
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -685,7 +685,7 @@ const getWeekdayText = (date: Date) => {
 }
 
 @media (max-width: 640px) {
-  .fasting-detail {
+  .precept-detail {
     padding: 16px;
   }
 
@@ -693,7 +693,7 @@ const getWeekdayText = (date: Date) => {
     grid-template-columns: 1fr;
   }
 
-  .fasting-reminder-card {
+  .precept-reminder-card {
     padding: 8px;
   }
 

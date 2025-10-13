@@ -1,21 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { AppSettings, PersonalFasting, FastingType } from '@/types'
-import { FastingType as FastingTypeEnum } from '@/types'
+import type { AppSettings, PersonalPrecept, PreceptType } from '@/types'
+import { PreceptType as PreceptTypeEnum } from '@/types'
 
 export const useSettingsStore = defineStore('settings', () => {
   // 默认设置
   const defaultSettings: AppSettings = {
     theme: 'light',
-    showFastingIndicators: true,
+    showPreceptIndicators: true,
     showLunarDates: true,
-    enabledFastingTypes: [
-      FastingTypeEnum.REGULAR,
-      FastingTypeEnum.SPECIAL,
-      FastingTypeEnum.SOLAR_TERM,
-      FastingTypeEnum.FASTING_DAY
+    enabledPreceptTypes: [
+      PreceptTypeEnum.REGULAR,
+      PreceptTypeEnum.SPECIAL,
+      PreceptTypeEnum.SOLAR_TERM,
+      PreceptTypeEnum.PRECEPT_DAY
     ],
-    personalFastings: []
+    personalPrecepts: []
   }
 
   // 状态
@@ -52,8 +52,8 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   // 显示设置
-  const setShowFastingIndicators = (show: boolean) => {
-    settings.value.showFastingIndicators = show
+  const setShowPreceptIndicators = (show: boolean) => {
+    settings.value.showPreceptIndicators = show
     saveSettings()
   }
 
@@ -63,53 +63,53 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   // 戒期类型设置
-  const setEnabledFastingTypes = (types: FastingType[]) => {
-    settings.value.enabledFastingTypes = types
+  const setEnabledPreceptTypes = (types: PreceptType[]) => {
+    settings.value.enabledPreceptTypes = types
     saveSettings()
   }
 
-  const toggleFastingType = (type: FastingType) => {
-    const index = settings.value.enabledFastingTypes.indexOf(type)
+  const togglePreceptType = (type: PreceptType) => {
+    const index = settings.value.enabledPreceptTypes.indexOf(type)
     if (index > -1) {
-      settings.value.enabledFastingTypes.splice(index, 1)
+      settings.value.enabledPreceptTypes.splice(index, 1)
     } else {
-      settings.value.enabledFastingTypes.push(type)
+      settings.value.enabledPreceptTypes.push(type)
     }
     saveSettings()
   }
 
   // 个人戒期管理
-  const addPersonalFasting = (fasting: Omit<PersonalFasting, 'id'>) => {
-    const newFasting: PersonalFasting = {
+  const addPersonalPrecept = (fasting: Omit<PersonalPrecept, 'id'>) => {
+    const newFasting: PersonalPrecept = {
       ...fasting,
       id: Date.now().toString()
     }
-    settings.value.personalFastings.push(newFasting)
+    settings.value.personalPrecepts.push(newFasting)
     saveSettings()
     return newFasting
   }
 
-  const updatePersonalFasting = (id: string, updates: Partial<PersonalFasting>) => {
-    const index = settings.value.personalFastings.findIndex(f => f.id === id)
+  const updatePersonalPrecept = (id: string, updates: Partial<PersonalPrecept>) => {
+    const index = settings.value.personalPrecepts.findIndex(f => f.id === id)
     if (index > -1) {
-      settings.value.personalFastings[index] = {
-        ...settings.value.personalFastings[index],
+      settings.value.personalPrecepts[index] = {
+        ...settings.value.personalPrecepts[index],
         ...updates
       }
       saveSettings()
     }
   }
 
-  const deletePersonalFasting = (id: string) => {
-    const index = settings.value.personalFastings.findIndex(f => f.id === id)
+  const deletePersonalPrecept = (id: string) => {
+    const index = settings.value.personalPrecepts.findIndex(f => f.id === id)
     if (index > -1) {
-      settings.value.personalFastings.splice(index, 1)
+      settings.value.personalPrecepts.splice(index, 1)
       saveSettings()
     }
   }
 
-  const togglePersonalFasting = (id: string) => {
-    const fasting = settings.value.personalFastings.find(f => f.id === id)
+  const togglePersonalPrecept = (id: string) => {
+    const fasting = settings.value.personalPrecepts.find(f => f.id === id)
     if (fasting) {
       fasting.enabled = !fasting.enabled
       saveSettings()
@@ -152,14 +152,14 @@ export const useSettingsStore = defineStore('settings', () => {
     loadSettings,
     setTheme,
     toggleTheme,
-    setShowFastingIndicators,
+    setShowPreceptIndicators,
     setShowLunarDates,
-    setEnabledFastingTypes,
-    toggleFastingType,
-    addPersonalFasting,
-    updatePersonalFasting,
-    deletePersonalFasting,
-    togglePersonalFasting,
+    setEnabledPreceptTypes,
+    togglePreceptType,
+    addPersonalPrecept,
+    updatePersonalPrecept,
+    deletePersonalPrecept,
+    togglePersonalPrecept,
     resetSettings,
     exportSettings,
     importSettings

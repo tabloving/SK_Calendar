@@ -1,4 +1,4 @@
-import type { CalendarDayInfo, FastingInfo } from '@/types'
+import type { CalendarDayInfo, PreceptInfo } from '@/types'
 import { debug } from './debug'
 import * as lunar from 'lunar-javascript'
 
@@ -46,7 +46,7 @@ export class LunarCalendarUtil {
         weekday: solar.getWeek(),
         isToday,
         isCurrentMonth: true, // 这个值在使用时需要根据上下文确定
-        fastingInfos: [],
+        preceptInfos: [],
         solarTerm: lunarDate.getJieQi()?.getName() || undefined,
         ganZhi: ganZhi
       }
@@ -65,7 +65,7 @@ export class LunarCalendarUtil {
         weekday: solarDate.getDay(),
         isToday,
         isCurrentMonth: true,
-        fastingInfos: [],
+        preceptInfos: [],
         solarTerm: undefined,
         ganZhi: undefined
       }

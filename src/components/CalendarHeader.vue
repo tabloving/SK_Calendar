@@ -115,7 +115,7 @@ const monthPicker = ref('')
 // 计算属性
 const selectedYear = computed(() => calendarStore.selectedYear)
 const selectedMonth = computed(() => calendarStore.selectedMonth)
-const monthStats = computed(() => calendarStore.getMonthFastingStats)
+const monthStats = computed(() => calendarStore.getMonthPreceptStats)
 
 const fastingPercentage = computed(() => {
   if (monthStats.value.total === 0) return 0

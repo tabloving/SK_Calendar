@@ -36,7 +36,7 @@
           >
             <div class="font-semibold">{{ fasting.reason }}</div>
             <div class="text-sm">{{ fasting.description }}</div>
-            <div class="text-xs mt-1">等级：{{ getFastingLevelText(fasting.level) }}</div>
+            <div class="text-xs mt-1">等级：{{ getPreceptLevelText(fasting.level) }}</div>
           </div>
         </div>
       </el-card>
@@ -80,7 +80,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { CalendarUtil } from '@/utils/calendar'
 import { LunarCalendarUtil } from '@/utils/lunar'
-import { FastingDataManager } from '@/utils/fasting-data'
+import { PreceptDataManager } from '@/utils/precept-data'
 import * as lunar from 'lunar-javascript'
 
 const currentDate = ref(new Date())
@@ -116,10 +116,10 @@ const todayFasting = computed(() => {
     weekday: currentDate.value.getDay(),
     isToday: true,
     isCurrentMonth: true,
-    fastingInfos: []
+    preceptInfos: []
   }
 
-  return CalendarUtil.getDayFastingInfos(dayInfo)
+  return CalendarUtil.getDayPreceptInfos(dayInfo)
 })
 
 const getFastingClass = (level: string) => {
@@ -132,7 +132,7 @@ const getFastingClass = (level: string) => {
   return classMap[level as keyof typeof classMap] || 'bg-gray-50 border-gray-200'
 }
 
-const getFastingLevelText = (level: string) => {
+const getPreceptLevelText = (level: string) => {
   const levelMap = {
     major: '大罪',
     moderate: '中罪',

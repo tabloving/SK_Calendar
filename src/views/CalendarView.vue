@@ -9,7 +9,7 @@
 
       <!-- 右侧边栏区域 -->
       <div class="lg:col-span-1">
-        <FastingDetail />
+        <PreceptDetail />
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import CalendarHeader from '@/components/CalendarHeader.vue'
 import CalendarGrid from '@/components/CalendarGrid.vue'
-import FastingDetail from '@/components/FastingDetail.vue'
+import PreceptDetail from '@/components/PreceptDetail.vue'
 import {
   DataAnalysis,
   Operation,
@@ -56,12 +56,12 @@ const exportCalendar = () => {
   const exportData = {
     year: calendarStore.selectedYear,
     month: calendarStore.selectedMonth,
-    fastingStats: calendarStore.getMonthFastingStats,
+    preceptStats: calendarStore.getMonthPreceptStats,
     days: currentMonthDays.value.filter(day => day.isCurrentMonth).map(day => ({
       date: CalendarUtil.formatDate(day.date),
       lunarDate: day.lunarDate,
-      fastingInfos: day.fastingInfos.filter(fasting =>
-        settingsStore.settings.enabledFastingTypes.includes(fasting.type)
+      preceptInfos: day.preceptInfos.filter(fasting =>
+        settingsStore.settings.enabledPreceptTypes.includes(fasting.type)
       ),
       solarTerm: day.solarTerm
     }))

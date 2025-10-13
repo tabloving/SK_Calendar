@@ -22,7 +22,7 @@
 
         <el-form-item label="显示戒期标识">
           <el-switch
-            v-model="settings.showFastingIndicators"
+            v-model="settings.showPreceptIndicators"
             @change="handleShowFastingIndicatorsChange"
           />
           <div class="text-sm text-gray-500 mt-1">
@@ -45,13 +45,13 @@
 
         <el-form-item label="启用的戒期">
           <el-checkbox-group
-            v-model="settings.enabledFastingTypes"
-            @change="handleEnabledFastingTypesChange"
+            v-model="settings.enabledPreceptTypes"
+            @change="handleEnabledPreceptTypesChange"
           >
             <el-checkbox value="regular" class="mb-2">常规戒期</el-checkbox>
             <el-checkbox value="special" class="mb-2">特殊戒期（佛菩萨圣诞）</el-checkbox>
             <el-checkbox value="solar_term" class="mb-2">节气戒期</el-checkbox>
-            <el-checkbox value="fasting_day" class="mb-2">斋日（六斋日、十斋日）</el-checkbox>
+            <el-checkbox value="precept_day" class="mb-2">斋日（六斋日、十斋日）</el-checkbox>
             <el-checkbox value="personal" class="mb-2">个人戒期</el-checkbox>
           </el-checkbox-group>
           <div class="text-sm text-gray-500 mt-1">
@@ -97,14 +97,14 @@
             <el-icon class="mr-2"><User /></el-icon>
             <span class="text-lg font-semibold">个人戒期</span>
           </div>
-          <el-button type="primary" @click="showAddPersonalFastingDialog">
+          <el-button type="primary" @click="showAddPersonalPreceptDialog">
             <el-icon class="mr-1"><Plus /></el-icon>
             添加个人戒期
           </el-button>
         </div>
       </template>
 
-      <div v-if="personalFastings.length === 0" class="text-center text-gray-500 py-8">
+      <div v-if="personalPrecepts.length === 0" class="text-center text-gray-500 py-8">
         <el-icon size="48" class="mb-4"><Document /></el-icon>
         <p>暂无个人戒期</p>
         <p class="text-sm mt-2">点击上方按钮添加您的个人戒期</p>
@@ -112,9 +112,9 @@
 
       <div v-else class="space-y-3">
         <div
-          v-for="fasting in personalFastings"
+          v-for="fasting in personalPrecepts"
           :key="fasting.id"
-          class="personal-fasting-item border rounded-lg p-4"
+          class="personal-precept-item border rounded-lg p-4"
           :class="{ 'opacity-50': !fasting.enabled }"
         >
           <div class="flex items-center justify-between">
@@ -126,7 +126,7 @@
                   size="small"
                   class="ml-2"
                 >
-                  {{ getFastingLevelText(fasting.level) }}
+                  {{ getPreceptLevelText(fasting.level) }}
                 </el-tag>
                 <el-tag
                   v-if="!fasting.enabled"
@@ -146,14 +146,14 @@
               <el-button
                 type="text"
                 size="small"
-                @click="togglePersonalFasting(fasting.id)"
+                @click="togglePersonalPrecept(fasting.id)"
               >
                 {{ fasting.enabled ? '禁用' : '启用' }}
               </el-button>
               <el-button
                 type="text"
                 size="small"
-                @click="editPersonalFasting(fasting)"
+                @click="editPersonalPrecept(fasting)"
               >
                 编辑
               </el-button>
@@ -161,7 +161,7 @@
                 type="text"
                 size="small"
                 class="text-red-600"
-                @click="deletePersonalFasting(fasting.id)"
+                @click="deletePersonalPrecept(fasting.id)"
               >
                 删除
               </el-button>
@@ -219,26 +219,26 @@
 
     <!-- 添加/编辑个人戒期对话框 -->
     <el-dialog
-      v-model="personalFastingDialog.visible"
-      :title="personalFastingDialog.isEdit ? '编辑个人戒期' : '添加个人戒期'"
+      v-model="personalPreceptDialog.visible"
+      :title="personalPreceptDialog.isEdit ? '编辑个人戒期' : '添加个人戒期'"
       width="500px"
     >
       <el-form
         ref="personalFastingFormRef"
-        :model="personalFastingDialog.form"
+        :model="personalPreceptDialog.form"
         :rules="personalFastingRules"
         label-width="80px"
       >
         <el-form-item label="名称" prop="name">
           <el-input
-            v-model="personalFastingDialog.form.name"
+            v-model="personalPreceptDialog.form.name"
             placeholder="请输入戒期名称"
           />
         </el-form-item>
 
         <el-form-item label="农历日期" prop="date">
           <el-input
-            v-model="personalFastingDialog.form.date"
+            v-model="personalPreceptDialog.form.date"
             placeholder="格式：MM-DD，如：01-15"
           />
           <div class="text-sm text-gray-500 mt-1">
@@ -248,7 +248,7 @@
 
         <el-form-item label="原因" prop="reason">
           <el-input
-            v-model="personalFastingDialog.form.reason"
+            v-model="personalPreceptDialog.form.reason"
             type="textarea"
             :rows="3"
             placeholder="请输入戒期原因"
@@ -256,7 +256,7 @@
         </el-form-item>
 
         <el-form-item label="等级" prop="level">
-          <el-radio-group v-model="personalFastingDialog.form.level">
+          <el-radio-group v-model="personalPreceptDialog.form.level">
             <el-radio value="major">大罪</el-radio>
             <el-radio value="moderate">中罪</el-radio>
             <el-radio value="minor">小罪</el-radio>
@@ -266,9 +266,9 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelPersonalFastingDialog">取消</el-button>
-          <el-button type="primary" @click="savePersonalFasting">
-            {{ personalFastingDialog.isEdit ? '保存' : '添加' }}
+          <el-button @click="cancelPersonalPreceptDialog">取消</el-button>
+          <el-button type="primary" @click="savePersonalPrecept">
+            {{ personalPreceptDialog.isEdit ? '保存' : '添加' }}
           </el-button>
         </span>
       </template>
@@ -290,16 +290,16 @@ import {
   Upload,
   RefreshLeft
 } from '@element-plus/icons-vue'
-import type { PersonalFasting } from '@/types'
+import type { PersonalPrecept } from '@/types'
 
 const settingsStore = useSettingsStore()
 
 // 响应式数据
 const settings = computed(() => settingsStore.settings)
-const personalFastings = computed(() => settingsStore.settings.personalFastings)
+const personalPrecepts = computed(() => settingsStore.settings.personalPrecepts)
 
 // 个人戒期对话框
-const personalFastingDialog = reactive({
+const personalPreceptDialog = reactive({
   visible: false,
   isEdit: false,
   form: {
@@ -337,18 +337,18 @@ const handleThemeChange = (theme: 'light' | 'dark') => {
 }
 
 const handleShowFastingIndicatorsChange = (value: boolean) => {
-  settingsStore.setShowFastingIndicators(value)
+  settingsStore.setShowPreceptIndicators(value)
 }
 
 const handleShowLunarDatesChange = (value: boolean) => {
   settingsStore.setShowLunarDates(value)
 }
 
-const handleEnabledFastingTypesChange = (types: string[]) => {
-  settingsStore.setEnabledFastingTypes(types as any)
+const handleEnabledPreceptTypesChange = (types: string[]) => {
+  settingsStore.setEnabledPreceptTypes(types as any)
 }
 
-const getFastingLevelText = (level: string) => {
+const getPreceptLevelText = (level: string) => {
   const levelMap = {
     major: '大罪',
     moderate: '中罪',
@@ -366,20 +366,20 @@ const getTagType = (level: string) => {
   return typeMap[level as keyof typeof typeMap] || 'info'
 }
 
-const showAddPersonalFastingDialog = () => {
-  personalFastingDialog.visible = true
-  personalFastingDialog.isEdit = false
-  resetPersonalFastingForm()
+const showAddPersonalPreceptDialog = () => {
+  personalPreceptDialog.visible = true
+  personalPreceptDialog.isEdit = false
+  resetPersonalPreceptForm()
 }
 
-const editPersonalFasting = (fasting: PersonalFasting) => {
-  personalFastingDialog.visible = true
-  personalFastingDialog.isEdit = true
-  Object.assign(personalFastingDialog.form, fasting)
+const editPersonalPrecept = (fasting: PersonalPrecept) => {
+  personalPreceptDialog.visible = true
+  personalPreceptDialog.isEdit = true
+  Object.assign(personalPreceptDialog.form, fasting)
 }
 
-const resetPersonalFastingForm = () => {
-  Object.assign(personalFastingDialog.form, {
+const resetPersonalPreceptForm = () => {
+  Object.assign(personalPreceptDialog.form, {
     id: '',
     name: '',
     date: '',
@@ -389,54 +389,54 @@ const resetPersonalFastingForm = () => {
   })
 }
 
-const cancelPersonalFastingDialog = () => {
-  personalFastingDialog.visible = false
-  resetPersonalFastingForm()
+const cancelPersonalPreceptDialog = () => {
+  personalPreceptDialog.visible = false
+  resetPersonalPreceptForm()
 }
 
-const savePersonalFasting = async () => {
+const savePersonalPrecept = async () => {
   if (!personalFastingFormRef.value) return
 
   try {
     await personalFastingFormRef.value.validate()
 
-    if (personalFastingDialog.isEdit) {
-      settingsStore.updatePersonalFasting(personalFastingDialog.form.id, {
-        name: personalFastingDialog.form.name,
-        date: personalFastingDialog.form.date,
-        reason: personalFastingDialog.form.reason,
-        level: personalFastingDialog.form.level as any
+    if (personalPreceptDialog.isEdit) {
+      settingsStore.updatePersonalPrecept(personalPreceptDialog.form.id, {
+        name: personalPreceptDialog.form.name,
+        date: personalPreceptDialog.form.date,
+        reason: personalPreceptDialog.form.reason,
+        level: personalPreceptDialog.form.level as any
       })
       ElMessage.success('个人戒期更新成功')
     } else {
-      settingsStore.addPersonalFasting({
-        name: personalFastingDialog.form.name,
-        date: personalFastingDialog.form.date,
-        reason: personalFastingDialog.form.reason,
-        level: personalFastingDialog.form.level as any,
+      settingsStore.addPersonalPrecept({
+        name: personalPreceptDialog.form.name,
+        date: personalPreceptDialog.form.date,
+        reason: personalPreceptDialog.form.reason,
+        level: personalPreceptDialog.form.level as any,
         type: 'personal' as any,
         enabled: true
       })
       ElMessage.success('个人戒期添加成功')
     }
 
-    personalFastingDialog.visible = false
-    resetPersonalFastingForm()
+    personalPreceptDialog.visible = false
+    resetPersonalPreceptForm()
   } catch (error) {
     console.error('保存个人戒期失败:', error)
   }
 }
 
-const togglePersonalFasting = (id: string) => {
-  settingsStore.togglePersonalFasting(id)
+const togglePersonalPrecept = (id: string) => {
+  settingsStore.togglePersonalPrecept(id)
 }
 
-const deletePersonalFasting = async (id: string) => {
+const deletePersonalPrecept = async (id: string) => {
   try {
     await ElMessageBox.confirm('确定要删除这个个人戒期吗？', '确认删除', {
       type: 'warning'
     })
-    settingsStore.deletePersonalFasting(id)
+    settingsStore.deletePersonalPrecept(id)
     ElMessage.success('个人戒期删除成功')
   } catch (error) {
     // 用户取消删除
@@ -502,11 +502,11 @@ const resetSettings = async () => {
   margin-bottom: 24px;
 }
 
-.personal-fasting-item {
+.personal-precept-item {
   transition: all 0.2s ease;
 }
 
-.personal-fasting-item:hover {
+.personal-precept-item:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 

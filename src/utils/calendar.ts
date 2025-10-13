@@ -1,14 +1,14 @@
 import { LunarCalendarUtil } from './lunar'
-import { FastingDataManager } from './fasting-data'
+import { PreceptDataManager } from './precept-data'
 import * as lunarLib from 'lunar-javascript'
-import type { CalendarDayInfo, FastingInfo } from '@/types'
-import { FastingLevel, FastingType } from '@/types'
+import type { CalendarDayInfo, PreceptInfo } from '@/types'
+import { PreceptLevel, PreceptType } from '@/types'
 
 /**
  * 日历工具类
  */
 export class CalendarUtil {
-  private static fastingManager = FastingDataManager.getInstance()
+  private static preceptManager = PreceptDataManager.getInstance()
 
   /**
    * 检查指定日期是否为节气
@@ -25,10 +25,10 @@ export class CalendarUtil {
 
     // 为每一天添加戒期信息
     return days.map(day => {
-      const fastingInfos = this.getDayFastingInfos(day)
+      const preceptInfos = this.getDayPreceptInfos(day)
       return {
         ...day,
-        fastingInfos
+        preceptInfos
       }
     })
   }
@@ -36,8 +36,8 @@ export class CalendarUtil {
   /**
    * 获取指定日期的戒期信息
    */
-  static getDayFastingInfos(dayInfo: CalendarDayInfo): FastingInfo[] {
-    const allFastingInfos: FastingInfo[] = []
+  static getDayPreceptInfos(dayInfo: CalendarDayInfo): PreceptInfo[] {
+    const allPreceptInfos: PreceptInfo[] = []
 
     // 获取农历日期
     let lunarMonth = 1
@@ -52,31 +52,31 @@ export class CalendarUtil {
     }
 
     // 1. 获取每月固定戒期
-    const monthlyFastings = this.fastingManager.getFastingByLunarDate(lunarMonth, lunarDay)
-    allFastingInfos.push(...monthlyFastings)
+    const monthlyFastings = this.preceptManager.getPreceptByLunarDate(lunarMonth, lunarDay)
+    allPreceptInfos.push(...monthlyFastings)
 
     // 2. 获取特殊戒期（佛菩萨圣诞等）
-    const specialFastings = this.fastingManager.getSpecialFastingByLunarDate(lunarMonth, lunarDay)
-    allFastingInfos.push(...specialFastings)
+    const specialFastings = this.preceptManager.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
+    allPreceptInfos.push(...specialFastings)
 
     // 3. 获取节气戒期
     if (dayInfo.solarTerm) {
-      const solarTermFastings = this.fastingManager.getFastingBySolarTerm(dayInfo.solarTerm)
-      allFastingInfos.push(...solarTermFastings)
+      const solarTermFastings = this.preceptManager.getPreceptBySolarTerm(dayInfo.solarTerm)
+      allPreceptInfos.push(...solarTermFastings)
     }
 
     // 4. 检查十斋日
-    if (this.fastingManager.isTenFastingDay(lunarDay)) {
-      allFastingInfos.push({
+    if (this.preceptManager.isTenPreceptDay(lunarDay)) {
+      allPreceptInfos.push({
         date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
         reason: '十斋日',
-        level: FastingLevel.MODERATE,
-        type: FastingType.FASTING_DAY,
+        level: PreceptLevel.MODERATE,
+        type: PreceptType.PRECEPT_DAY,
         description: '十斋日 - 中罪'
       })
     }
 
-    return allFastingInfos
+    return allPreceptInfos
   }
 
   /**
@@ -99,7 +99,7 @@ export class CalendarUtil {
         grid.push({
           ...day,
           isCurrentMonth: false,
-          fastingInfos: this.getDayFastingInfos(day)
+          preceptInfos: this.getDayPreceptInfos(day)
         })
       }
     }
@@ -119,7 +119,7 @@ export class CalendarUtil {
         grid.push({
           ...nextMonthDays[i],
           isCurrentMonth: false,
-          fastingInfos: this.getDayFastingInfos(nextMonthDays[i])
+          preceptInfos: this.getDayPreceptInfos(nextMonthDays[i])
         })
       }
     }
@@ -130,25 +130,25 @@ export class CalendarUtil {
   /**
    * 获取最高戒期等级
    */
-  static getHighestFastingLevel(fastingInfos: FastingInfo[]): 'major' | 'moderate' | 'minor' | 'safe' {
-    if (fastingInfos.length === 0) return 'safe'
+  static getHighestPreceptLevel(preceptInfos: PreceptInfo[]): 'major' | 'moderate' | 'minor' | 'safe' {
+    if (preceptInfos.length === 0) return 'safe'
 
-    const levels = fastingInfos.map(info => info.level)
-    if (levels.includes(FastingLevel.MAJOR)) return FastingLevel.MAJOR
-    if (levels.includes(FastingLevel.MODERATE)) return FastingLevel.MODERATE
-    if (levels.includes(FastingLevel.MINOR)) return FastingLevel.MINOR
-    return FastingLevel.SAFE
+    const levels = preceptInfos.map(info => info.level)
+    if (levels.includes(PreceptLevel.MAJOR)) return PreceptLevel.MAJOR
+    if (levels.includes(PreceptLevel.MODERATE)) return PreceptLevel.MODERATE
+    if (levels.includes(PreceptLevel.MINOR)) return PreceptLevel.MINOR
+    return PreceptLevel.SAFE
   }
 
   /**
    * 获取戒期等级的CSS类名
    */
-  static getFastingLevelClass(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
+  static getPreceptLevelClass(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
     const classMap = {
-      major: 'fasting-major',
-      moderate: 'fasting-moderate',
-      minor: 'fasting-minor',
-      safe: 'fasting-safe'
+      major: 'precept-major',
+      moderate: 'precept-moderate',
+      minor: 'precept-minor',
+      safe: 'precept-safe'
     }
     return classMap[level] || 'fasting-safe'
   }
@@ -156,7 +156,7 @@ export class CalendarUtil {
   /**
    * 获取戒期等级的显示文本
    */
-  static getFastingLevelText(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
+  static getPreceptLevelText(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
     const textMap = {
       major: '大罪',
       moderate: '中罪',

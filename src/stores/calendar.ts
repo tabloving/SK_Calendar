@@ -156,7 +156,7 @@ export const useCalendarStore = defineStore('calendar', () => {
 
   // 获取指定日期的戒期信息
   const getDayFastingInfo = (date: Date) => {
-    return CalendarUtil.getDayFastingInfos({
+    return CalendarUtil.getDayPreceptInfos({
       date,
       lunarDate: '',
       year: date.getFullYear(),
@@ -165,12 +165,12 @@ export const useCalendarStore = defineStore('calendar', () => {
       weekday: date.getDay(),
       isToday: CalendarUtil.isToday(date),
       isCurrentMonth: true,
-      fastingInfos: []
+      preceptInfos: []
     })
   }
 
   // 获取当前月份的戒期统计
-  const getMonthFastingStats = computed(() => {
+  const getMonthPreceptStats = computed(() => {
     const stats = {
       major: 0,
       moderate: 0,
@@ -181,7 +181,7 @@ export const useCalendarStore = defineStore('calendar', () => {
 
     currentMonthInfo.value.days.forEach(day => {
       if (day.isCurrentMonth) {
-        const highestLevel = CalendarUtil.getHighestFastingLevel(day.fastingInfos)
+        const highestLevel = CalendarUtil.getHighestPreceptLevel(day.preceptInfos)
         stats[highestLevel]++
         stats.total++
       }
@@ -201,7 +201,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     currentMonthInfo,
     selectedDayInfo,
     todayInfo,
-    getMonthFastingStats,
+    getMonthPreceptStats,
 
     // 方法
     goToToday,

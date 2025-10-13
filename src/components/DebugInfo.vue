@@ -9,7 +9,7 @@
       <div>月干支: {{ dayInfo.ganZhi.monthGanZhi }}</div>
       <div>日干支: {{ dayInfo.ganZhi.dayGanZhi }}</div>
     </div>
-    <div>戒期数量: {{ dayInfo.fastingInfos.length }}</div>
+    <div>戒期数量: {{ dayInfo.preceptInfos.length }}</div>
   </div>
 </template>
 
