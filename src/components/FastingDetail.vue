@@ -3,20 +3,19 @@
     <div v-if="selectedDayInfo" class="space-y-6">
       <!-- 日期信息 -->
       <div class="date-info">
-        <div class="date-header flex items-center justify-between mb-4">
-          <div v-if="selectedDayInfo.isToday" class="today-badge">
-            今天
-          </div>
-        </div>
-
         <div class="info-grid grid grid-cols-1 gap-3">
           <div class="info-card bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
             <div class="flex items-start justify-between">
               <!-- 左侧：阳历信息（主要信息） -->
               <div class="flex-1">
                 <div class="text-xs text-purple-600 font-medium mb-2">阳历</div>
-                <div class="text-2xl font-bold text-gray-800 mb-1">
-                  {{ selectedDayInfo.day }}
+                <div class="flex items-center mb-1">
+                  <div class="text-2xl font-bold text-gray-800">
+                    {{ selectedDayInfo.day }}
+                  </div>
+                  <div v-if="selectedDayInfo.isToday" class="today-badge-circle ml-2">
+                    今
+                  </div>
                 </div>
                 <div class="text-sm text-gray-700 mb-2">
                   {{ weekDayText }}
@@ -29,13 +28,30 @@
               <!-- 右侧：农历和干支信息（次要信息） -->
               <div class="text-right ml-4 pl-4 border-l border-purple-200">
                 <div class="text-xs text-purple-600 font-medium mb-2">农历</div>
-                <div class="text-sm text-gray-700 mb-2 font-medium">
-                  {{ lunarInfo.full }}
-                </div>
-                <div class="text-xs text-gray-600 leading-tight">
-                  {{ ganZhiInfo.year }}年<br>
-                  {{ ganZhiInfo.month }}月<br>
-                  {{ ganZhiInfo.day }}日
+                <div class="space-y-2">
+                  <!-- 农历日期 -->
+                  <div class="text-sm text-gray-700 mb-2 font-medium text-right">
+                    {{ lunarInfo.full }}
+                  </div>
+
+                  <!-- 干支信息 -->
+                  <div class="flex flex-col items-end space-y-1">
+                    <div class="flex items-center space-x-1">
+                      <span class="ganzhi-year-badge">
+                        {{ ganZhiInfo.year }}年
+                      </span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <span class="ganzhi-month-badge">
+                        {{ ganZhiInfo.month }}月
+                      </span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <span class="ganzhi-day-badge">
+                        {{ ganZhiInfo.day }}日
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -328,8 +344,7 @@ const formatDate = (date: Date) => {
 }
 
 const getMonthYear = (date: Date) => {
-  const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
-  return `${date.getFullYear()}年 ${months[date.getMonth()]}`
+  return `${date.getFullYear()}年 ${date.getMonth() + 1}月`
 }
 
 const getDaySuffix = (day: number) => {
@@ -414,20 +429,74 @@ const getWeekdayText = (date: Date) => {
   position: relative;
 }
 
-.today-badge {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+.today-badge-sm {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 10px;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-  animation: pulse-blue 2s infinite;
+  box-shadow: 0 1px 3px rgba(139, 92, 246, 0.3);
+  animation: pulse-purple 2s infinite;
 }
 
-@keyframes pulse-blue {
+.today-badge-circle {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+  animation: pulse-purple 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+
+@keyframes pulse-purple {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* 干支 Badge 样式 */
+
+.ganzhi-year-badge {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  color: #7c3aed;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid #d8b4fe;
+  box-shadow: 0 1px 2px rgba(139, 92, 246, 0.15);
+  display: inline-block;
+}
+
+.ganzhi-month-badge {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid #93c5fd;
+  box-shadow: 0 1px 2px rgba(147, 197, 253, 0.2);
+  display: inline-block;
+}
+
+.ganzhi-day-badge {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid #86efac;
+  box-shadow: 0 1px 2px rgba(134, 239, 172, 0.2);
+  display: inline-block;
 }
 
 
@@ -507,7 +576,23 @@ const getWeekdayText = (date: Date) => {
   .info-card .text-sm {
     font-size: 0.875rem;
   }
-}
+
+  /* 移动端今天标志调整 */
+  .today-badge-circle {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+
+  /* 移动端干支Badge调整 */
+  .ganzhi-year-badge,
+  .ganzhi-month-badge,
+  .ganzhi-day-badge {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  }
 
 .fasting-indicator {
   width: 12px;
