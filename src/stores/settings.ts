@@ -12,7 +12,6 @@ export const useSettingsStore = defineStore('settings', () => {
     enabledPreceptTypes: [
       PreceptTypeEnum.REGULAR,
       PreceptTypeEnum.SPECIAL,
-      PreceptTypeEnum.SOLAR_TERM,
       PreceptTypeEnum.PRECEPT_DAY
     ],
     personalPrecepts: []

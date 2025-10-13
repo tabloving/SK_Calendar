@@ -50,7 +50,6 @@
           >
             <el-checkbox value="regular" class="mb-2">常规戒期</el-checkbox>
             <el-checkbox value="special" class="mb-2">特殊戒期（佛菩萨圣诞）</el-checkbox>
-            <el-checkbox value="solar_term" class="mb-2">节气戒期</el-checkbox>
             <el-checkbox value="precept_day" class="mb-2">斋日（六斋日、十斋日）</el-checkbox>
             <el-checkbox value="personal" class="mb-2">个人戒期</el-checkbox>
           </el-checkbox-group>

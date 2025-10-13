@@ -59,13 +59,8 @@ export class CalendarUtil {
     const specialFastings = this.preceptManager.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
     allPreceptInfos.push(...specialFastings)
 
-    // 3. 获取节气戒期
-    if (dayInfo.solarTerm) {
-      const solarTermFastings = this.preceptManager.getPreceptBySolarTerm(dayInfo.solarTerm)
-      allPreceptInfos.push(...solarTermFastings)
-    }
-
-    // 4. 检查十斋日
+  
+    // 3. 检查十斋日
     if (this.preceptManager.isTenPreceptDay(lunarDay)) {
       allPreceptInfos.push({
         date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,

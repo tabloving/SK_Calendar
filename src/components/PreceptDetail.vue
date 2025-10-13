@@ -57,20 +57,7 @@
             </div>
           </div>
 
-          <div v-if="selectedDayInfo.solarTerm" class="info-card bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 border border-green-100">
-            <div class="flex items-center">
-              <div class="info-icon text-green-500 mr-3">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="text-xs text-green-600 font-medium">节气</div>
-                <div class="text-sm text-gray-700 font-semibold">{{ selectedDayInfo.solarTerm }}</div>
-              </div>
-            </div>
           </div>
-        </div>
       </div>
 
       <!-- 戒期信息 -->
@@ -360,8 +347,7 @@ const getPreceptTypeText = (type: string) => {
     regular: '常规戒期',
     special: '特殊戒期',
     personal: '个人戒期',
-    solar_term: '节气戒期',
-    fasting_day: '斋日'
+  fasting_day: '斋日'
   }
   return typeMap[type as keyof typeof typeMap] || '未知类型'
 }
@@ -523,10 +509,6 @@ const getWeekdayText = (date: Date) => {
   background: linear-gradient(to bottom, #a855f7, #9333ea);
 }
 
-/* 节气卡片（第二个info-card）- 绿色主题 */
-.info-grid .info-card:nth-child(2)::before {
-  background: linear-gradient(to bottom, #10b981, #059669);
-}
 
 .info-card:hover {
   transform: translateY(-1px);
@@ -549,10 +531,6 @@ const getWeekdayText = (date: Date) => {
   background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
 }
 
-/* 节气卡片图标样式 - 绿色主题 */
-.info-grid .info-card:nth-child(2) .info-icon {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-}
 
 /* 响应式设计 */
 @media (max-width: 640px) {

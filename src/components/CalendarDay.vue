@@ -150,9 +150,9 @@ const filteredPreceptInfos = computed(() => {
   )
 })
 
-// 用于显示戒期指示器的戒期信息（排除节气相关的戒期）
+// 用于显示戒期指示器的戒期信息
 const indicatorPreceptInfos = computed(() => {
-  return filteredPreceptInfos.value.filter(precept => precept.type !== 'solar_term')
+  return filteredPreceptInfos.value
 })
 
 const displayPreceptInfos = computed(() => {

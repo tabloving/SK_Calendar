@@ -7,7 +7,6 @@ export class PreceptDataManager {
   private static instance: PreceptDataManager
   private monthlyPrecepts: Map<string, PreceptInfo[]> = new Map()
   private specialPrecepts: Map<string, PreceptInfo[]> = new Map()
-  private solarTermPrecepts: Map<string, PreceptInfo[]> = new Map()
 
   private constructor() {
     this.initializePreceptData()
@@ -26,7 +25,6 @@ export class PreceptDataManager {
   private initializePreceptData(): void {
     this.initMonthlyPrecepts()
     this.initSpecialPrecepts()
-    this.initSolarTermPrecepts()
   }
 
   /**
@@ -184,48 +182,6 @@ export class PreceptDataManager {
     }
   }
 
-  /**
-   * 初始化节气戒期
-   */
-  private initSolarTermPrecepts(): void {
-    const solarTermData: { [key: string]: { reason: string; level: PreceptLevel } } = {
-      '立春': { reason: '岁首', level: 'major' as PreceptLevel },
-      '雨水': { reason: '天一生水', level: 'moderate' as PreceptLevel },
-      '惊蛰': { reason: '万物复苏', level: 'major' as PreceptLevel },
-      '春分': { reason: '阴阳平分', level: 'major' as PreceptLevel },
-      '清明': { reason: '扫墓祭祖', level: 'major' as PreceptLevel },
-      '谷雨': { reason: '雨生百谷', level: 'moderate' as PreceptLevel },
-      '立夏': { reason: '万物生长', level: 'moderate' as PreceptLevel },
-      '小满': { reason: '物致于此小得盈满', level: 'moderate' as PreceptLevel },
-      '芒种': { reason: '有芒之种谷可稼种', level: 'moderate' as PreceptLevel },
-      '夏至': { reason: '阳气最盛', level: 'major' as PreceptLevel },
-      '小暑': { reason: '暑气渐热', level: 'moderate' as PreceptLevel },
-      '大暑': { reason: '暑气最盛', level: 'moderate' as PreceptLevel },
-      '立秋': { reason: '秋始', level: 'moderate' as PreceptLevel },
-      '处暑': { reason: '暑气止', level: 'moderate' as PreceptLevel },
-      '白露': { reason: '露凝而白', level: 'moderate' as PreceptLevel },
-      '秋分': { reason: '昼夜平分', level: 'major' as PreceptLevel },
-      '寒露': { reason: '露气寒冷', level: 'moderate' as PreceptLevel },
-      '霜降': { reason: '霜始降', level: 'major' as PreceptLevel },
-      '立冬': { reason: '冬始', level: 'major' as PreceptLevel },
-      '小雪': { reason: '雪始小', level: 'moderate' as PreceptLevel },
-      '大雪': { reason: '雪始大', level: 'moderate' as PreceptLevel },
-      '冬至': { reason: '阴气最盛', level: 'major' as PreceptLevel },
-      '小寒': { reason: '寒气渐小', level: 'moderate' as PreceptLevel },
-      '大寒': { reason: '寒气最盛', level: 'moderate' as PreceptLevel }
-    }
-
-    for (const [solarTerm, info] of Object.entries(solarTermData)) {
-      const fastingInfo: PreceptInfo = {
-        date: solarTerm, // 节气名称作为日期标识
-        reason: info.reason,
-        level: info.level,
-        type: 'solar_term' as PreceptType,
-        description: this.getPreceptDescription(solarTerm, info.level)
-      }
-      this.solarTermPrecepts.set(solarTerm, [fastingInfo])
-    }
-  }
 
   /**
    * 获取戒期描述
@@ -257,12 +213,6 @@ export class PreceptDataManager {
     return this.specialPrecepts.get(dateKey) || []
   }
 
-  /**
-   * 根据节气名称获取戒期信息
-   */
-  public getPreceptBySolarTerm(solarTerm: string): PreceptInfo[] {
-    return this.solarTermPrecepts.get(solarTerm) || []
-  }
 
   /**
    * 获取十斋日

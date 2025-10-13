@@ -11,7 +11,6 @@ export enum PreceptType {
   REGULAR = 'regular',   // 常规戒期
   SPECIAL = 'special',   // 特殊戒期
   PERSONAL = 'personal', // 个人戒期
-  SOLAR_TERM = 'solar_term', // 节气戒期
   PRECEPT_DAY = 'precept_day'  // 斋日
 }
 
