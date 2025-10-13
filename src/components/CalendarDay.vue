@@ -25,6 +25,13 @@
       {{ ganZhiInfo.dayGanZhi }}
     </div>
 
+    <!-- 节气信息 -->
+    <div v-if="dayInfo.solarTerm" class="solar-term mb-1">
+      <div class="solar-term-content">
+        <span class="solar-term-icon">{{ solarTermIcon }}</span>
+        <span class="solar-term-text">{{ dayInfo.solarTerm }}</span>
+      </div>
+    </div>
 
     <!-- 戒期指示器 -->
     <div v-if="settingsStore.settings.showPreceptIndicators && hasPrecept" class="precept-indicators mb-1">
@@ -39,11 +46,7 @@
       </div>
     </div>
 
-    <!-- 节气信息 -->
-    <div v-if="dayInfo.solarTerm" class="solar-term text-xs font-semibold text-purple-600 mb-1">
-      {{ dayInfo.solarTerm }}
-    </div>
-
+    
     <!-- 戒期详情 -->
     <div v-if="displayPreceptInfos.length > 0" class="precept-details">
       <div class="text-xs space-y-1">
@@ -77,6 +80,41 @@ import * as lunar from 'lunar-javascript'
 import { Calendar, Bell } from '@element-plus/icons-vue'
 import type { CalendarDayInfo } from '@/types'
 
+// 二十四节气icon映射
+const SOLAR_TERM_ICONS: Record<string, string> = {
+  // 春季节气
+  '立春': '🌱',  // 春天开始，新芽
+  '雨水': '💧',  // 雨水增多
+  '惊蛰': '🐛',  // 昆虫苏醒
+  '春分': '🌸',  // 春分时节花开
+  '清明': '🍃',  // 清明时节，绿芽
+  '谷雨': '🌾',  // 谷雨时节，谷物
+
+  // 夏季节气
+  '立夏': '☀️',  // 夏天开始，阳光
+  '小满': '🌻',  // 小满时节，向日葵
+  '芒种': '🌾',  // 芒种时节，麦穗
+  '夏至': '🌞',  // 夏至日长，太阳
+  '小暑': '🔥',  // 小暑炎热
+  '大暑': '🥵',  // 大暑极热
+
+  // 秋季节气
+  '立秋': '🍂',  // 秋天开始，落叶
+  '处暑': '🌤️',  // 处暑结束炎热
+  '白露': '💧',  // 白露时节，露水
+  '秋分': '🌰',  // 秋分时节，果实
+  '寒露': '❄️',  // 寒露时节，寒意
+  '霜降': '🌨️',  // 霜降时节，霜雪
+
+  // 冬季节气
+  '立冬': '❄️',  // 冬天开始，雪花
+  '小雪': '🌨️',  // 小雪时节，小雪
+  '大雪': '⛄',  // 大雪时节，大雪
+  '冬至': '🌨️',  // 冬至日短，寒雪
+  '小寒': '🧊',  // 小寒寒冷，冰块
+  '大寒': '🥶',  // 大寒极寒，冰雪
+}
+
 interface Props {
   dayInfo: CalendarDayInfo
   isSelected?: boolean
@@ -103,7 +141,7 @@ const dayClasses = computed(() => {
 })
 
 const hasPrecept = computed(() => {
-  return filteredPreceptInfos.value.length > 0
+  return indicatorPreceptInfos.value.length > 0
 })
 
 const filteredPreceptInfos = computed(() => {
@@ -112,12 +150,17 @@ const filteredPreceptInfos = computed(() => {
   )
 })
 
+// 用于显示戒期指示器的戒期信息（排除节气相关的戒期）
+const indicatorPreceptInfos = computed(() => {
+  return filteredPreceptInfos.value.filter(precept => precept.type !== 'solar_term')
+})
+
 const displayPreceptInfos = computed(() => {
   return filteredPreceptInfos.value
 })
 
 const uniquePreceptLevels = computed(() => {
-  const levels = displayPreceptInfos.value.map(info => info.level)
+  const levels = indicatorPreceptInfos.value.map(info => info.level)
   return [...new Set(levels)]
 })
 
@@ -152,6 +195,12 @@ const ganZhiInfo = computed(() => {
   }
 })
 
+// 获取节气对应的icon
+const solarTermIcon = computed(() => {
+  if (!props.dayInfo.solarTerm) return '🌿'
+  return SOLAR_TERM_ICONS[props.dayInfo.solarTerm] || '🌿'
+})
+
 
 // 方法
 const handleClick = () => {
@@ -171,6 +220,7 @@ const getPreceptLevelColor = (level: string) => {
   }
   return colorMap[level as keyof typeof colorMap] || 'gray'
 }
+
 </script>
 
 <style scoped>
@@ -382,13 +432,37 @@ const getPreceptLevelColor = (level: string) => {
 }
 
 .solar-term {
-  margin: 6px 0;
-  font-size: 10px;
-  text-align: center;
-  padding: 3px 6px;
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+  margin: 4px 0;
+}
+
+.solar-term-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  padding: 2px 5px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
   border-radius: 4px;
-  border-left: 2px solid #9333ea;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.solar-term-content:hover {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+.solar-term-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.solar-term-text {
+  font-weight: 600;
+  color: #7c3aed;
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
@@ -422,10 +496,23 @@ const getPreceptLevelColor = (level: string) => {
     margin-right: 2px;
   }
 
-  .ganzhi-info,
-  .solar-term {
+  .ganzhi-info {
     font-size: 10px;
     margin: 3px 0;
+  }
+
+  .solar-term {
+    margin: 2px 0;
+  }
+
+  .solar-term-content {
+    padding: 1px 4px;
+    font-size: 8px;
+    gap: 1px;
+  }
+
+  .solar-term-icon {
+    font-size: 9px;
   }
 }
 

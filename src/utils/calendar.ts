@@ -96,11 +96,11 @@ export class CalendarUtil {
       const prevMonthLastDays = prevMonthDays.slice(-firstDayWeekday)
 
       for (const day of prevMonthLastDays) {
-        grid.push({
-          ...day,
-          isCurrentMonth: false,
-          preceptInfos: this.getDayPreceptInfos(day)
-        })
+        // 重新获取完整的日期信息，确保包含节气数据
+        const fullDayInfo = LunarCalendarUtil.getLunarInfo(day.date)
+        fullDayInfo.isCurrentMonth = false
+        fullDayInfo.preceptInfos = this.getDayPreceptInfos(fullDayInfo)
+        grid.push(fullDayInfo)
       }
     }
 
@@ -116,11 +116,11 @@ export class CalendarUtil {
       const nextMonthDays = LunarCalendarUtil.getMonthDays(nextYear, nextMonth)
 
       for (let i = 0; i < remainingCells && i < nextMonthDays.length; i++) {
-        grid.push({
-          ...nextMonthDays[i],
-          isCurrentMonth: false,
-          preceptInfos: this.getDayPreceptInfos(nextMonthDays[i])
-        })
+        // 重新获取完整的日期信息，确保包含节气数据
+        const fullDayInfo = LunarCalendarUtil.getLunarInfo(nextMonthDays[i].date)
+        fullDayInfo.isCurrentMonth = false
+        fullDayInfo.preceptInfos = this.getDayPreceptInfos(fullDayInfo)
+        grid.push(fullDayInfo)
       }
     }
 

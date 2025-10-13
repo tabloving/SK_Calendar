@@ -53,6 +53,15 @@
           今天
         </el-button>
 
+        <el-button
+          type="warning"
+          :icon="Sunny"
+          @click="goToNextSolarTerm"
+          title="跳转到下一个节气"
+        >
+          下节气
+        </el-button>
+
         <el-date-picker
           v-model="monthPicker"
           type="month"
@@ -98,13 +107,16 @@
 import { ref, computed, watch } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { CalendarUtil } from '@/utils/calendar'
+import { LunarCalendarUtil } from '@/utils/lunar'
 import * as lunar from 'lunar-javascript'
+import { ElMessage } from 'element-plus'
 import {
   ArrowLeft,
   ArrowRight,
   CaretLeft,
   CaretRight,
-  Calendar
+  Calendar,
+  Sunny
 } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
@@ -159,6 +171,37 @@ const goToNextYear = () => {
 
 const goToToday = () => {
   calendarStore.goToToday()
+}
+
+const goToNextSolarTerm = () => {
+  try {
+    const today = new Date()
+    const currentSolar = lunar.Solar.fromDate(today)
+    const currentLunar = currentSolar.getLunar()
+
+    // 从今天开始查找下一个节气
+    for (let days = 1; days <= 365; days++) {
+      const futureDate = new Date(today)
+      futureDate.setDate(today.getDate() + days)
+
+      const futureSolar = lunar.Solar.fromDate(futureDate)
+      const futureLunar = futureSolar.getLunar()
+      const jieQi = futureLunar.getJieQi()
+
+      if (jieQi) {
+        // 跳转到有节气的月份和日期
+        calendarStore.goToMonth(futureDate.getFullYear(), futureDate.getMonth() + 1)
+        calendarStore.selectDate(futureDate)
+        ElMessage.success(`已跳转到下一个节气：${jieQi}（${futureDate.getFullYear()}年${futureDate.getMonth() + 1}月${futureDate.getDate()}日）`)
+        return
+      }
+    }
+
+    ElMessage.warning('未找到下一个节气')
+  } catch (error) {
+    console.error('跳转到节气失败:', error)
+    ElMessage.error('跳转失败，请重试')
+  }
 }
 
 const onMonthChange = (value: string) => {

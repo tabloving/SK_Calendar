@@ -47,7 +47,7 @@ export class LunarCalendarUtil {
         isToday,
         isCurrentMonth: true, // 这个值在使用时需要根据上下文确定
         preceptInfos: [],
-        solarTerm: lunarDate.getJieQi()?.getName() || undefined,
+        solarTerm: lunarDate.getJieQi() || undefined,
         ganZhi: ganZhi
       }
     } catch (error) {
@@ -126,19 +126,24 @@ export class LunarCalendarUtil {
     try {
       const terms: Array<{ name: string; date: Date }> = []
 
-      // 获取当年的24个节气
+      // 遍历全年每一天，检查是否有节气
       for (let month = 1; month <= 12; month++) {
-        const solar = lunar.Solar.fromYmd(year, month, 1)
-        const lunarDate = solar.getLunar()
+        const daysInMonth = new Date(year, month, 0).getDate()
 
-        // 获取当月的节气
-        const jieQiList = lunarDate.getJieQiList()
-        for (const jieQi of jieQiList) {
-          if (jieQi.getSolar().getYear() === year) {
-            terms.push({
-              name: jieQi.getName(),
-              date: jieQi.getSolar().toDate()
-            })
+        for (let day = 1; day <= daysInMonth; day++) {
+          try {
+            const solar = lunar.Solar.fromYmd(year, month, day)
+            const lunarDate = solar.getLunar()
+            const jieQi = lunarDate.getJieQi()
+
+            if (jieQi) {
+              terms.push({
+                name: jieQi,
+                date: new Date(year, month - 1, day)
+              })
+            }
+          } catch (e) {
+            // 忽略错误，继续处理下一天
           }
         }
       }
