@@ -98,6 +98,7 @@
 import { ref, computed, watch } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { CalendarUtil } from '@/utils/calendar'
+import * as lunar from 'lunar-javascript'
 import {
   ArrowLeft,
   ArrowRight,
@@ -123,12 +124,15 @@ const fastingPercentage = computed(() => {
 })
 
 const lunarMonthName = computed(() => {
-  // 这里可以通过lunar.js获取农历月份名称
-  const monthNames = [
-    '正月', '二月', '三月', '四月', '五月', '六月',
-    '七月', '八月', '九月', '十月', '冬月', '腊月'
-  ]
-  return monthNames[selectedMonth.value - 1] || '未知'
+  try {
+    // 使用lunar.js获取该月第一天的农历月份名称
+    const solar = lunar.Solar.fromYmd(selectedYear.value, selectedMonth.value, 1)
+    const lunarDate = solar.getLunar()
+    return `${lunarDate.getYearInChinese()}年${lunarDate.getMonthInChinese()}月`
+  } catch (error) {
+    // 如果出错，降级显示公历年份
+    return `${selectedYear.value}年`
+  }
 })
 
 // 监听选择的年月变化
