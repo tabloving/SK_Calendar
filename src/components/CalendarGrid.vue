@@ -25,32 +25,19 @@
       </div>
     </div>
 
-    <!-- 日期详情弹出模态框 -->
-    <DayDetailModal
-      :visible="showDayDetail"
-      :day-info="selectedDayForModal"
-      @close="closeDayDetail"
-      @add-to-calendar="handleAddToCalendar"
-    />
-  </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
-import { ElMessage } from 'element-plus'
 import CalendarDay from './CalendarDay.vue'
-import DayDetailModal from './DayDetailModal.vue'
 import type { CalendarDayInfo } from '@/types'
 
 const calendarStore = useCalendarStore()
 
 // 星期标题
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
-
-// 响应式数据
-const showDayDetail = ref(false)
-const selectedDayForModal = ref<CalendarDayInfo | null>(null)
 
 // 计算属性
 const currentMonthDays = computed(() => {
@@ -69,23 +56,6 @@ const isSelected = (dayInfo: CalendarDayInfo) => {
 const handleDayClick = (dayInfo: CalendarDayInfo) => {
   // 选中日期并在右侧边栏显示
   calendarStore.selectDate(dayInfo.date)
-  // 同时打开详情弹窗
-  selectedDayForModal.value = dayInfo
-  showDayDetail.value = true
-}
-
-const closeDayDetail = () => {
-  showDayDetail.value = false
-  selectedDayForModal.value = null
-}
-
-const handleAddToCalendar = (dayInfo: CalendarDayInfo) => {
-  // 这里可以集成系统日历或提醒功能
-  ElMessage.success('已添加到提醒事项')
-
-  // 可以在这里实现实际的日历集成
-  // 例如：调用系统日历API或导出.ics文件
-  console.log('添加到日历:', dayInfo)
 }
 </script>
 
