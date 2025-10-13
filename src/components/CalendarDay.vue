@@ -413,6 +413,8 @@ const getPreceptLevelColor = (level: string) => {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.2;
+  font-family: 'Gravitas One', cursive;
+  color: #6b7280;
 }
 
 .lunar-date {

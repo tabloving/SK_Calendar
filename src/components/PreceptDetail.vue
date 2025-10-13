@@ -10,7 +10,7 @@
               <div class="flex-1">
                 <div class="text-xs text-purple-600 font-medium mb-2">阳历</div>
                 <div class="flex items-center mb-1">
-                  <div class="text-2xl font-bold text-gray-800">
+                  <div class="solar-number-large">
                     {{ selectedDayInfo.day }}
                   </div>
                   <div v-if="selectedDayInfo.isToday" class="today-badge-circle ml-2">
@@ -522,6 +522,15 @@ const getWeekdayText = (date: Date) => {
 @keyframes pulse-purple {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* 阳历数字大字体样式 */
+.solar-number-large {
+  font-size: 32px;
+  font-weight: bold;
+  color: #4b5563;
+  line-height: 1;
+  font-family: 'Gravitas One', cursive;
 }
 
 /* 干支 Badge 样式 */
