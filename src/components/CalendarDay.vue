@@ -177,20 +177,20 @@ const getFastingLevelColor = (level: string) => {
 .calendar-day {
   position: relative;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   border: 1px solid #f0f0f0;
   background: #ffffff;
   min-height: 110px;
-  padding: 8px;
+  padding: 10px 14px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
 }
 
 .calendar-day:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  border-color: #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              inset 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
 .calendar-day.selected {
@@ -245,6 +245,27 @@ const getFastingLevelColor = (level: string) => {
   background-color: rgba(22, 163, 74, 0.08);
 }
 
+/* 戒期状态的悬停效果 */
+.calendar-day.fasting-major:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              inset 0 0 0 1px rgba(220, 38, 38, 0.25);
+}
+
+.calendar-day.fasting-moderate:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              inset 0 0 0 1px rgba(234, 88, 12, 0.25);
+}
+
+.calendar-day.fasting-minor:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              inset 0 0 0 1px rgba(202, 138, 4, 0.25);
+}
+
+.calendar-day.fasting-safe:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              inset 0 0 0 1px rgba(22, 163, 74, 0.25);
+}
+
 /* 选中状态与戒期状态的组合处理 */
 .calendar-day.selected.fasting-major {
   background-color: rgba(220, 38, 38, 0.12);
@@ -268,6 +289,12 @@ const getFastingLevelColor = (level: string) => {
   background-color: rgba(22, 163, 74, 0.12);
   border: none;
   box-shadow: inset 0 0 0 1px #16A34A;
+}
+
+/* 选中状态下的悬停效果 */
+.calendar-day.selected:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
+              inset 0 0 0 1px #3B82F6;
 }
 
 .fasting-indicator {
@@ -367,8 +394,9 @@ const getFastingLevelColor = (level: string) => {
 @media (max-width: 640px) {
   .calendar-day {
     min-height: 85px;
-    padding: 6px;
+    padding: 7px 10px;
     border-radius: 6px;
+    box-sizing: border-box;
   }
 
   .day-header {
@@ -404,7 +432,8 @@ const getFastingLevelColor = (level: string) => {
 @media (max-width: 480px) {
   .calendar-day {
     min-height: 75px;
-    padding: 4px;
+    padding: 5px 8px;
+    box-sizing: border-box;
   }
 
   .day-header {

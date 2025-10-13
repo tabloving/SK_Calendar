@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar-grid bg-white rounded-lg shadow-sm overflow-hidden">
+  <div class="calendar-grid bg-white rounded-lg shadow-sm">
     <!-- 星期标题 -->
     <div class="week-header grid grid-cols-7 bg-gray-50 border-b">
       <div
@@ -63,7 +63,6 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 .calendar-grid {
   user-select: none;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #f1f5f9;
 }
@@ -99,11 +98,13 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 .calendar-body {
   min-height: 450px;
   background: #ffffff;
-  padding: 4px;
+  padding: 6px 10px;
+  overflow: visible;
 }
 
 .calendar-body .grid {
   gap: 3px;
+  margin-right: 2px;
 }
 
 /* 格子之间的分隔 */
@@ -124,7 +125,13 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
 /* 整体容器内边距优化 */
 .calendar-grid .grid-cols-7 > * {
-  padding: 4px;
+  padding: 4px 7px;
+  box-sizing: border-box;
+}
+
+/* 确保最后一列格子的右边框完整显示 */
+.calendar-grid .grid-cols-7 > *:nth-child(7n) {
+  padding-right: 8px;
 }
 
 @media (max-width: 640px) {
@@ -142,7 +149,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body {
     min-height: 350px;
-    padding: 2px;
+    padding: 4px 8px;
   }
 
   .calendar-body .grid {
@@ -156,6 +163,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body .grid > *:nth-child(7n) {
     border-right: none;
+    padding-right: 6px;
   }
 
   .calendar-body .grid > *:nth-last-child {
@@ -175,7 +183,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body {
     min-height: 300px;
-    padding: 1px;
+    padding: 3px 7px;
   }
 
   .calendar-body .grid {
@@ -189,6 +197,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
   .calendar-body .grid > *:nth-child(7n) {
     border-right: none;
+    padding-right: 5px;
   }
 
   .calendar-body .grid > *:nth-last-child {
