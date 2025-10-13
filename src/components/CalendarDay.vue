@@ -389,7 +389,7 @@ const getPreceptLevelColor = (level: string) => {
 .precept-item {
   line-height: 1.3;
   word-break: break-all;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: #374151;
 }
@@ -439,7 +439,7 @@ const getPreceptLevelColor = (level: string) => {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  font-size: 9px;
+  font-size: 12px;
   padding: 2px 5px;
   background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
   border-radius: 4px;
@@ -455,7 +455,7 @@ const getPreceptLevelColor = (level: string) => {
 }
 
 .solar-term-icon {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
 }
 
