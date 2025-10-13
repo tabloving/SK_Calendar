@@ -99,3 +99,44 @@ Thumbs.db
 
 # Vite cache
 .vite/
+
+# Test files
+test-*.html
+test-*.js
+test-*.ts
+test-*.vue
+*.test.html
+*.test.js
+*.test.ts
+*.test.vue
+__tests__/
+test-results/
+coverage/
+
+# Build and distribution
+dist/
+build/
+.output/
+.nuxt/
+.next/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Rollup
+*.rollup.cache/
+
+# Test coverage
+coverage/
+.nyc_output/
+junit.xml
+
+# Test temp files
+.tmp/
+temp-test/
+
+# E2E test artifacts
+playwright-report/
+test-results/
+screenshots/
+videos/
