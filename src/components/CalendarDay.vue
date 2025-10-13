@@ -10,7 +10,7 @@
     <!-- 日期头部 -->
     <div class="day-header flex items-center justify-between mb-1">
       <div class="solar-date">
-        <span class="font-semibold" :class="{ 'text-blue-600': dayInfo.isToday }">
+        <span class="solar-day-text" :class="{ 'text-blue-600': dayInfo.isToday }">
           {{ dayInfo.day }}
         </span>
       </div>
@@ -23,14 +23,6 @@
     <!-- 干支信息 -->
     <div v-if="ganZhiInfo && ganZhiInfo.dayGanZhi" class="ganzhi-info text-xs text-purple-600 mb-1">
       {{ ganZhiInfo.dayGanZhi }}
-    </div>
-
-    <!-- 节气信息 -->
-    <div v-if="dayInfo.solarTerm" class="solar-term mb-1">
-      <div class="solar-term-content">
-        <span class="solar-term-icon">{{ solarTermIcon }}</span>
-        <span class="solar-term-text">{{ dayInfo.solarTerm }}</span>
-      </div>
     </div>
 
     <!-- 戒期指示器 -->
@@ -46,7 +38,7 @@
       </div>
     </div>
 
-    
+
     <!-- 戒期详情 -->
     <div v-if="displayPreceptInfos.length > 0" class="precept-details">
       <div class="text-xs space-y-1">
@@ -64,6 +56,14 @@
         >
           +{{ displayPreceptInfos.length - maxDisplayItems }}项
         </div>
+      </div>
+    </div>
+
+    <!-- 节气信息 - 右下角 -->
+    <div v-if="dayInfo.solarTerm" class="solar-term-corner">
+      <div class="solar-term-content">
+        <span class="solar-term-icon">{{ solarTermIcon }}</span>
+        <span class="solar-term-text">{{ dayInfo.solarTerm }}</span>
       </div>
     </div>
 
@@ -409,6 +409,12 @@ const getPreceptLevelColor = (level: string) => {
   margin-bottom: 2px;
 }
 
+.solar-day-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
 .lunar-date {
   display: block;
 }
@@ -465,6 +471,44 @@ const getPreceptLevelColor = (level: string) => {
   white-space: nowrap;
 }
 
+/* 右下角节气样式 */
+.solar-term-corner {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 2;
+}
+
+.solar-term-corner .solar-term-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  padding: 2px 5px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.solar-term-corner .solar-term-content:hover {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+.solar-term-corner .solar-term-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.solar-term-corner .solar-term-text {
+  font-weight: 600;
+  color: #7c3aed;
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .calendar-day {
     min-height: 85px;
@@ -477,8 +521,8 @@ const getPreceptLevelColor = (level: string) => {
     margin-bottom: 4px;
   }
 
-  .solar-date {
-    font-size: 13px;
+  .solar-day-text {
+    font-size: 16px;
   }
 
   .lunar-date {
@@ -512,6 +556,20 @@ const getPreceptLevelColor = (level: string) => {
   }
 
   .solar-term-icon {
+    font-size: 9px;
+  }
+
+  .solar-term-corner {
+    bottom: 4px;
+    right: 4px;
+  }
+
+  .solar-term-corner .solar-term-content {
+    font-size: 9px;
+    padding: 1px 3px;
+  }
+
+  .solar-term-corner .solar-term-icon {
     font-size: 9px;
   }
 }
