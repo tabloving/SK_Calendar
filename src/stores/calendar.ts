@@ -50,6 +50,65 @@ export const useCalendarStore = defineStore('calendar', () => {
     currentDate.value = today
   }
 
+  // 智能选中辅助函数：月份切换后更新选中日期
+  const updateSelectedDateAfterMonthChange = () => {
+    const today = new Date()
+    const todayYear = today.getFullYear()
+    const todayMonth = today.getMonth() + 1
+
+    // 如果切换后的年份和月份包含今天，则选中今天
+    if (selectedYear.value === todayYear && selectedMonth.value === todayMonth) {
+      selectedDate.value = today
+    } else {
+      // 如果不是当前月份，尝试保持之前选中的日期逻辑
+      // 如果之前有选中日期，尝试在新月份中选择对应日期
+      if (selectedDate.value) {
+        const selectedDay = selectedDate.value.getDate()
+        const newDate = new Date(selectedYear.value, selectedMonth.value - 1, selectedDay)
+
+        // 检查日期是否有效（防止出现2月30日等无效日期）
+        if (newDate.getFullYear() === selectedYear.value &&
+            newDate.getMonth() === selectedMonth.value - 1 &&
+            newDate.getDate() === selectedDay) {
+          selectedDate.value = newDate
+        } else {
+          // 如果日期无效，选中该月第一天
+          selectedDate.value = new Date(selectedYear.value, selectedMonth.value - 1, 1)
+        }
+      } else {
+        // 如果之前没有选中日期，选中该月第一天
+        selectedDate.value = new Date(selectedYear.value, selectedMonth.value - 1, 1)
+      }
+    }
+  }
+
+  // 智能选中辅助函数：年份切换后更新选中日期
+  const updateSelectedDateAfterYearChange = () => {
+    const today = new Date()
+    const todayMonth = today.getMonth() + 1
+    const todayDay = today.getDate()
+    const todayYear = today.getFullYear()
+
+    // 如果切换到当前年份，选中今天
+    if (selectedYear.value === todayYear) {
+      selectedDate.value = today
+    } else {
+      // 如果不是当前年份，尝试选中对应的月份和日期
+      // 保持当前选中的月份，选择对应日期
+      const newDate = new Date(selectedYear.value, selectedMonth.value - 1, todayDay)
+
+      // 检查日期是否有效（防止出现2月30日等无效日期）
+      if (newDate.getFullYear() === selectedYear.value &&
+          newDate.getMonth() === selectedMonth.value - 1 &&
+          newDate.getDate() === todayDay) {
+        selectedDate.value = newDate
+      } else {
+        // 如果日期无效，选中该月第一天
+        selectedDate.value = new Date(selectedYear.value, selectedMonth.value - 1, 1)
+      }
+    }
+  }
+
   const goToPreviousMonth = () => {
     if (selectedMonth.value === 1) {
       selectedMonth.value = 12
@@ -57,7 +116,8 @@ export const useCalendarStore = defineStore('calendar', () => {
     } else {
       selectedMonth.value -= 1
     }
-    selectedDate.value = null
+    // 智能选中：如果切换后的月份包含今天，则选中今天
+    updateSelectedDateAfterMonthChange()
   }
 
   const goToNextMonth = () => {
@@ -67,17 +127,20 @@ export const useCalendarStore = defineStore('calendar', () => {
     } else {
       selectedMonth.value += 1
     }
-    selectedDate.value = null
+    // 智能选中：如果切换后的月份包含今天，则选中今天
+    updateSelectedDateAfterMonthChange()
   }
 
   const goToPreviousYear = () => {
     selectedYear.value -= 1
-    selectedDate.value = null
+    // 智能选中：选中当年的本月今天
+    updateSelectedDateAfterYearChange()
   }
 
   const goToNextYear = () => {
     selectedYear.value += 1
-    selectedDate.value = null
+    // 智能选中：选中当年的本月今天
+    updateSelectedDateAfterYearChange()
   }
 
   const selectDate = (date: Date) => {
@@ -87,7 +150,8 @@ export const useCalendarStore = defineStore('calendar', () => {
   const goToMonth = (year: number, month: number) => {
     selectedYear.value = year
     selectedMonth.value = month
-    selectedDate.value = null
+    // 智能选中：应用月份切换后的选中逻辑
+    updateSelectedDateAfterMonthChange()
   }
 
   // 获取指定日期的戒期信息
