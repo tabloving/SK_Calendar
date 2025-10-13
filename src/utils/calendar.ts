@@ -246,4 +246,11 @@ export class CalendarUtil {
       }
     }
   }
+
+  /**
+   * 获取下一个节气
+   */
+  static getNextSolarTerm(date: Date): { name: string; date: Date; daysFromNow: number } | null {
+    return LunarCalendarUtil.getNextSolarTerm(date)
+  }
 }

@@ -216,4 +216,46 @@ export class LunarCalendarUtil {
 
     return `${ganZhi.yearGanZhi}年 ${ganZhi.monthGanZhi}月 ${ganZhi.dayGanZhi}日`
   }
+
+  /**
+   * 获取下一个节气
+   */
+  static getNextSolarTerm(date: Date): { name: string; date: Date; daysFromNow: number } | null {
+    try {
+      const year = date.getFullYear()
+      const solarTerms = this.getSolarTerms(year)
+
+      // 如果当前年份的节气已经过完，需要查看下一年的节气
+      if (solarTerms.length === 0) return null
+
+      // 找到当前日期之后的第一个节气
+      for (const term of solarTerms) {
+        if (term.date > date) {
+          const daysFromNow = Math.ceil((term.date.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+          return {
+            name: term.name,
+            date: term.date,
+            daysFromNow
+          }
+        }
+      }
+
+      // 如果当前年份没有找到，需要查找下一年的第一个节气
+      const nextYearTerms = this.getSolarTerms(year + 1)
+      if (nextYearTerms.length > 0) {
+        const firstTerm = nextYearTerms[0]
+        const daysFromNow = Math.ceil((firstTerm.date.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+        return {
+          name: firstTerm.name,
+          date: firstTerm.date,
+          daysFromNow
+        }
+      }
+
+      return null
+    } catch (error) {
+      debug.error('获取下一个节气失败', error)
+      return null
+    }
+  }
 }

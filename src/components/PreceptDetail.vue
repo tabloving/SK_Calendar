@@ -23,6 +23,20 @@
                 <div class="text-xs text-gray-600">
                   {{ getMonthYear(selectedDayInfo.date) }}
                 </div>
+
+                <!-- 节气信息 -->
+                <div v-if="solarTermInfo" class="mt-2">
+                  <div v-if="solarTermInfo.isToday" class="solar-term-content">
+                    <span class="solar-term-icon">{{ solarTermInfo.icon }}</span>
+                    <span class="solar-term-text">{{ solarTermInfo.name }}</span>
+                  </div>
+                  <div v-else class="next-solar-term">
+                    <span class="text-xs text-purple-600 flex items-center">
+                      <span class="solar-term-icon">{{ solarTermInfo.icon }}</span>
+                      <span>下一节气：{{ solarTermInfo.name }}（{{ solarTermInfo.daysFromNow }}天后）</span>
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <!-- 右侧：农历和干支信息（次要信息） -->
@@ -111,7 +125,7 @@
         </div>
 
         <!-- 既无戒期也无斋日时的提示 -->
-        <div v-else class="text-gray-500 text-center py-4">
+        <div v-if="!(hasPreceptDays || filteredPreceptInfos.length > 0)" class="text-gray-500 text-center py-4">
           今日无戒期，保持平常心，慎勿放逸！
         </div>
       </div>
@@ -206,6 +220,41 @@ import { PreceptDataManager } from '@/utils/precept-data'
 import * as lunar from 'lunar-javascript'
 import { Calendar as CalendarIcon, Bell, Document } from '@element-plus/icons-vue'
 
+// 二十四节气icon映射
+const SOLAR_TERM_ICONS: Record<string, string> = {
+  // 春季节气
+  '立春': '🌱',  // 春天开始，新芽
+  '雨水': '💧',  // 雨水增多
+  '惊蛰': '🐛',  // 昆虫苏醒
+  '春分': '🌸',  // 春分时节花开
+  '清明': '🍃',  // 清明时节，绿芽
+  '谷雨': '🌾',  // 谷雨时节，谷物
+
+  // 夏季节气
+  '立夏': '☀️',  // 夏天开始，阳光
+  '小满': '🌻',  // 小满时节，向日葵
+  '芒种': '🌾',  // 芒种时节，麦穗
+  '夏至': '🌞',  // 夏至日长，太阳
+  '小暑': '🔥',  // 小暑炎热
+  '大暑': '🥵',  // 大暑极热
+
+  // 秋季节气
+  '立秋': '🍂',  // 秋天开始，落叶
+  '处暑': '🌤️',  // 处暑结束炎热
+  '白露': '💧',  // 白露时节，露水
+  '秋分': '🌰',  // 秋分时节，果实
+  '寒露': '❄️',  // 寒露时节，寒意
+  '霜降': '🌨️',  // 霜降时节，霜雪
+
+  // 冬季节气
+  '立冬': '❄️',  // 冬天开始，雪花
+  '小雪': '🌨️',  // 小雪时节，小雪
+  '大雪': '⛄',  // 大雪时节，大雪
+  '冬至': '🌨️',  // 冬至日短，寒雪
+  '小寒': '🧊',  // 小寒寒冷，冰块
+  '大寒': '🥶',  // 大寒极寒，冰雪
+}
+
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
 const preceptManager = PreceptDataManager.getInstance()
@@ -277,6 +326,34 @@ const isTenPreceptDay = computed(() => {
     console.warn('检查十斋日失败', error)
     return false
   }
+})
+
+// 节气信息计算
+const solarTermInfo = computed(() => {
+  if (!selectedDayInfo.value) return null
+
+  // 如果当天有节气，返回当天节气信息
+  if (selectedDayInfo.value.solarTerm) {
+    return {
+      isToday: true,
+      name: selectedDayInfo.value.solarTerm,
+      icon: SOLAR_TERM_ICONS[selectedDayInfo.value.solarTerm] || '🌿',
+      daysFromNow: 0
+    }
+  }
+
+  // 如果当天没有节气，获取下一个节气
+  const nextSolarTerm = CalendarUtil.getNextSolarTerm(selectedDayInfo.value.date)
+  if (nextSolarTerm) {
+    return {
+      isToday: false,
+      name: nextSolarTerm.name,
+      icon: SOLAR_TERM_ICONS[nextSolarTerm.name] || '🌿',
+      daysFromNow: nextSolarTerm.daysFromNow
+    }
+  }
+
+  return null
 })
 
 const upcomingPrecepts = computed(() => {
@@ -452,9 +529,9 @@ const getWeekdayText = (date: Date) => {
 .ganzhi-year-badge {
   background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
   color: #7c3aed;
-  padding: 1px 6px;
-  border-radius: 6px;
-  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   border: 1px solid #d8b4fe;
   box-shadow: 0 1px 2px rgba(139, 92, 246, 0.15);
@@ -464,9 +541,9 @@ const getWeekdayText = (date: Date) => {
 .ganzhi-month-badge {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   color: #1d4ed8;
-  padding: 1px 6px;
-  border-radius: 6px;
-  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   border: 1px solid #93c5fd;
   box-shadow: 0 1px 2px rgba(147, 197, 253, 0.2);
@@ -476,9 +553,9 @@ const getWeekdayText = (date: Date) => {
 .ganzhi-day-badge {
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   color: #15803d;
-  padding: 1px 6px;
-  border-radius: 6px;
-  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   border: 1px solid #86efac;
   box-shadow: 0 1px 2px rgba(134, 239, 172, 0.2);
@@ -566,7 +643,7 @@ const getWeekdayText = (date: Date) => {
   .ganzhi-year-badge,
   .ganzhi-month-badge,
   .ganzhi-day-badge {
-    font-size: 9px;
+    font-size: 10px;
     padding: 1px 4px;
   }
 
@@ -662,6 +739,62 @@ const getWeekdayText = (date: Date) => {
   margin-top: 2px;
 }
 
+/* 节气显示样式 */
+.solar-term-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  padding: 2px 5px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.solar-term-content:hover {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+.solar-term-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.solar-term-content .solar-term-icon {
+  margin-right: 0;
+  font-size: 12px;
+}
+
+.solar-term-text {
+  font-weight: 600;
+  color: #7c3aed;
+  white-space: nowrap;
+}
+
+.next-solar-term {
+  display: inline-block;
+  padding: 2px 5px;
+  background: rgba(147, 51, 234, 0.05);
+  border-radius: 4px;
+  border: 1px solid rgba(147, 51, 234, 0.1);
+  transition: all 0.2s ease;
+}
+
+.next-solar-term:hover {
+  background: rgba(147, 51, 234, 0.08);
+  border-color: rgba(147, 51, 234, 0.15);
+}
+
+.next-solar-term .solar-term-icon {
+  margin-right: 2px;
+  font-size: 10px;
+  line-height: 1;
+}
+
 @media (max-width: 640px) {
   .precept-detail {
     padding: 16px;
@@ -685,6 +818,21 @@ const getWeekdayText = (date: Date) => {
 
   .upcoming-fastings {
     margin-top: 4;
+  }
+
+  /* 移动端节气样式调整 */
+  .solar-term-content {
+    padding: 1px 4px;
+    font-size: 8px;
+    gap: 1px;
+  }
+
+  .solar-term-icon {
+    font-size: 9px;
+  }
+
+  .next-solar-term {
+    padding: 1px 4px;
   }
 }
 </style>
