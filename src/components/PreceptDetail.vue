@@ -1,6 +1,48 @@
 <template>
-  <div class="precept-detail bg-white rounded-lg shadow-sm p-6">
-    <div v-if="selectedDayInfo" class="space-y-6">
+  <div class="precept-detail bg-white rounded-lg shadow-sm p-4">
+    <!-- 月度统计信息 -->
+    <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-2 border border-blue-100">
+      <div class="flex items-center justify-between gap-2">
+        <!-- 左侧标题 -->
+        <div class="flex items-center gap-1">
+          <el-icon class="text-xs text-blue-600"><DataAnalysis /></el-icon>
+          <span class="text-xs font-medium text-gray-700">{{ selectedMonth }}月</span>
+        </div>
+
+        <!-- 中间统计项 -->
+        <div class="flex items-center gap-1.5 flex-1 justify-center">
+          <div class="flex items-center gap-1" title="大戒：重罪戒期，需严格持戒">
+            <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+            <span class="text-xs text-gray-600">大戒 {{ monthStats.major }}</span>
+          </div>
+          <div class="flex items-center gap-1" title="中戒：中罪戒期，应当谨慎">
+            <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+            <span class="text-xs text-gray-600">中戒 {{ monthStats.moderate }}</span>
+          </div>
+          <div class="flex items-center gap-1" title="宜戒：小罪戒期，建议避免">
+            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+            <span class="text-xs text-gray-600">宜戒 {{ monthStats.minor }}</span>
+          </div>
+          <div class="flex items-center gap-1" title="安全：无明显戒期，可安心行事">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+            <span class="text-xs text-gray-600">安全 {{ monthStats.safe }}</span>
+          </div>
+        </div>
+
+        <!-- 右侧进度条 -->
+        <div class="flex items-center gap-1">
+          <div class="w-8 bg-gray-200 rounded-full h-1">
+            <div
+              class="bg-gradient-to-r from-orange-400 to-red-500 h-1 rounded-full transition-all duration-300"
+              :style="{ width: `${fastingPercentage}%` }"
+            ></div>
+          </div>
+          <span class="text-xs font-medium text-gray-700">{{ fastingPercentage }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="selectedDayInfo" class="space-y-4">
       <!-- 日期信息 -->
       <div class="date-info">
         <div class="info-grid grid grid-cols-1 gap-3">
@@ -281,7 +323,7 @@ import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
 import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { Calendar as CalendarIcon, Bell, Document, Star } from '@element-plus/icons-vue'
+import { Calendar as CalendarIcon, Bell, Document, Star, DataAnalysis } from '@element-plus/icons-vue'
 
 // 二十四节气icon映射
 const SOLAR_TERM_ICONS: Record<string, string> = {
@@ -324,6 +366,17 @@ const preceptManager = PreceptDataManager.getInstance()
 
 // 计算属性
 const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
+
+// 统计相关计算属性
+const selectedYear = computed(() => calendarStore.selectedYear)
+const selectedMonth = computed(() => calendarStore.selectedMonth)
+const monthStats = computed(() => calendarStore.getMonthPreceptStats)
+
+const fastingPercentage = computed(() => {
+  if (monthStats.value.total === 0) return 0
+  const fastingDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
+  return Math.round((fastingDays / monthStats.value.total) * 100)
+})
 
 const filteredPreceptInfos = computed(() => {
   if (!selectedDayInfo.value) return []
@@ -625,6 +678,94 @@ const getPreceptLevelStyle = (level: string) => {
 <style scoped>
 .precept-detail {
   min-height: 400px;
+}
+
+/* 月度统计卡片样式 */
+.month-stats-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.month-stats-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 统计项样式 */
+.month-stats-card .flex.items-center.gap-1\.5 > div {
+  transition: all 0.2s ease;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
+
+.month-stats-card .flex.items-center.gap-1\.5 > div:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 进度条动画 */
+.month-stats-card .bg-gradient-to-r {
+  transition: width 0.5s ease;
+}
+
+/* 指示器动画 */
+.month-stats-card .w-1\.5 {
+  transition: transform 0.2s ease;
+}
+
+.month-stats-card .flex.items-center.gap-1:hover .w-1\.5 {
+  transform: scale(1.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .month-stats-card {
+    padding: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .month-stats-card .flex.items-center.gap-1\.5 {
+    gap: 0.25rem;
+  }
+
+  .month-stats-card .flex.items-center.gap-1\.5 > div {
+    padding: 1px 3px;
+  }
+
+  .month-stats-card .w-8 {
+    width: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .month-stats-card {
+    padding: 0.125rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .month-stats-card .flex.items-center.gap-1\.5 {
+    gap: 0.125rem;
+  }
+
+  .month-stats-card .flex.items-center.gap-1\.5 > div {
+    padding: 1px 2px;
+  }
+
+  .month-stats-card .flex.items-center.gap-1 {
+    gap: 0.125rem;
+  }
+
+  .month-stats-card .w-8 {
+    width: 1rem;
+  }
+
+  .month-stats-card .text-xs {
+    font-size: 0.625rem;
+  }
 }
 
 /* 日期信息区域样式 */

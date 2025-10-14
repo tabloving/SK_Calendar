@@ -1,8 +1,8 @@
 <template>
   <div class="calendar-view">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <!-- 左侧日历区域 -->
-      <div class="lg:col-span-3 space-y-4">
+      <div class="lg:col-span-3 space-y-3">
         <CalendarHeader />
         <CalendarGrid />
       </div>
@@ -109,15 +109,33 @@ onMounted(() => {
 @media (max-width: 1024px) {
   /* 平板布局：右侧边栏移动到下方 */
   .calendar-view .grid {
-    @apply grid-cols-1;
+    @apply grid-cols-1 gap-3;
   }
 
-  .calendar-view .space-y-4 {
-    @apply space-y-0;
+  .calendar-view .space-y-3 {
+    @apply space-y-2;
   }
 
   .lg\:col-span-1 {
-    @apply mt-6;
+    @apply mt-3;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-view {
+    @apply px-2;
+  }
+
+  .calendar-view .grid {
+    @apply gap-2;
+  }
+
+  .calendar-view .space-y-3 {
+    @apply space-y-1;
+  }
+
+  .lg\:col-span-1 {
+    @apply mt-2;
   }
 }
 </style>

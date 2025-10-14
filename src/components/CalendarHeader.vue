@@ -1,54 +1,58 @@
 <template>
-  <div class="calendar-header bg-white rounded-lg shadow-sm p-4 mb-4">
+  <div class="calendar-header bg-white rounded-lg shadow-sm px-4 py-2 mb-3">
     <div class="flex items-center justify-between">
-      <!-- 年月导航 -->
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
+      <!-- 左侧：导航和标题 -->
+      <div class="flex items-center gap-3">
+        <!-- 导航按钮组 -->
+        <div class="flex items-center gap-1">
           <el-button
-            type="text"
             :icon="ArrowLeft"
             @click="goToPreviousYear"
             title="上一年"
+            class="nav-btn"
           />
           <el-button
-            type="text"
             :icon="CaretLeft"
             @click="goToPreviousMonth"
             title="上个月"
+            class="nav-btn"
           />
         </div>
 
-        <div class="text-center min-w-[200px]">
-          <h2 class="text-xl font-bold text-gray-800">
+        <!-- 标题区域 -->
+        <div class="text-center min-w-[140px]">
+          <h2 class="text-lg font-bold text-gray-800 leading-tight">
             {{ selectedYear }}年{{ selectedMonth }}月
           </h2>
-          <div class="text-sm text-gray-500">
-            农历{{ lunarMonthName }}
+          <div class="text-xs text-gray-500 leading-tight">
+            {{ lunarMonthName }}
           </div>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <!-- 右侧导航按钮组 -->
+        <div class="flex items-center gap-1">
           <el-button
-            type="text"
             :icon="CaretRight"
             @click="goToNextMonth"
             title="下个月"
+            class="nav-btn"
           />
           <el-button
-            type="text"
             :icon="ArrowRight"
             @click="goToNextYear"
             title="下一年"
+            class="nav-btn"
           />
         </div>
       </div>
 
-      <!-- 操作按钮 -->
-      <div class="flex items-center space-x-2">
+      <!-- 右侧：操作按钮 -->
+      <div class="flex items-center gap-2">
         <el-button
-          type="primary"
+          size="small"
           :icon="Calendar"
           @click="goToToday"
+          class="today-btn"
         >
           今天
         </el-button>
@@ -60,35 +64,10 @@
           format="YYYY年MM月"
           value-format="YYYY-MM"
           @change="onMonthChange"
-          style="width: 160px"
+          size="small"
+          style="width: 140px"
+          class="month-picker"
         />
-
-      </div>
-    </div>
-
-    <!-- 戒期统计 -->
-    <div class="mt-4 flex items-center justify-between">
-      <div class="flex items-center space-x-4 text-sm">
-        <div class="flex items-center">
-          <span class="w-3 h-3 bg-red-500 rounded-full mr-1"></span>
-          <span>大戒 {{ monthStats.major }}天</span>
-        </div>
-        <div class="flex items-center">
-          <span class="w-3 h-3 bg-purple-500 rounded-full mr-1"></span>
-          <span>中戒 {{ monthStats.moderate }}天</span>
-        </div>
-        <div class="flex items-center">
-          <span class="w-3 h-3 bg-blue-500 rounded-full mr-1"></span>
-          <span>宜戒 {{ monthStats.minor }}天</span>
-        </div>
-        <div class="flex items-center">
-          <span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
-          <span>安全 {{ monthStats.safe }}天</span>
-        </div>
-      </div>
-
-      <div class="text-sm text-gray-500">
-        共{{ monthStats.total }}天，戒期占比 {{ fastingPercentage }}%
       </div>
     </div>
   </div>
@@ -116,13 +95,6 @@ const monthPicker = ref('')
 // 计算属性
 const selectedYear = computed(() => calendarStore.selectedYear)
 const selectedMonth = computed(() => calendarStore.selectedMonth)
-const monthStats = computed(() => calendarStore.getMonthPreceptStats)
-
-const fastingPercentage = computed(() => {
-  if (monthStats.value.total === 0) return 0
-  const fastingDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
-  return Math.round((fastingDays / monthStats.value.total) * 100)
-})
 
 const lunarMonthName = computed(() => {
   try {
@@ -175,13 +147,75 @@ const onMonthChange = (value: string) => {
 <style scoped>
 .calendar-header {
   user-select: none;
+  border: 1px solid #f0f0f0;
 }
 
-.el-button {
+/* 导航按钮样式 */
+.nav-btn {
+  @apply !p-2 !h-8 !w-8 rounded-md bg-gray-50 hover:bg-gray-100 border-0;
   transition: all 0.2s ease;
 }
 
-.el-button:hover {
+.nav-btn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 今天按钮特殊样式 */
+.today-btn {
+  @apply !bg-gradient-to-r !from-blue-500 !to-blue-600 !text-white !border-0;
+  transition: all 0.2s ease;
+}
+
+.today-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* 月份选择器样式 */
+.month-picker :deep(.el-input__wrapper) {
+  @apply !bg-gray-50 !border-gray-200 !rounded-md;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.month-picker :deep(.el-input__wrapper:hover) {
+  @apply !border-blue-400;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .calendar-header {
+    @apply px-3 py-2 mb-2;
+  }
+
+  .calendar-header > div {
+    @apply gap-2;
+  }
+
+  .text-center.min-w-\[140px\] {
+    @apply min-w-[120px];
+  }
+
+  h2 {
+    @apply text-base;
+  }
+
+  .text-xs {
+    @apply text-[10px];
+  }
+
+  }
+
+@media (max-width: 768px) {
+  .calendar-header > div {
+    @apply flex-col gap-2;
+  }
+
+  .calendar-header > div > div:nth-child(2) {
+    @apply order-2;
+  }
 }
 </style>
