@@ -79,7 +79,7 @@ export class CalendarUtil {
         detail: tenPreceptDetail,
         reason: tenPreceptDetail.reason,        // 向后兼容
         punishment: tenPreceptDetail.punishment, // 向后兼容
-        description: '十斋日 - 犯者减寿 - 中罪\n说明：十斋日是佛教传统的重要斋戒日，持戒清净可得大功德\n建议：十斋日应严格持戒，可诵经礼佛，修身养性，广修善业\n分类：佛教斋日'
+        description: '十斋日 - 犯者减寿 - 中戒\n说明：十斋日是佛教传统的重要斋戒日，持戒清净可得大功德\n建议：十斋日应严格持戒，可诵经礼佛，修身养性，广修善业\n分类：佛教斋日'
       })
     }
 
@@ -165,9 +165,9 @@ export class CalendarUtil {
    */
   static getPreceptLevelText(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
     const textMap = {
-      major: '大罪',
-      moderate: '中罪',
-      minor: '小罪',
+      major: '大戒',
+      moderate: '中戒',
+      minor: '宜戒',
       safe: '安全'
     }
     return textMap[level] || '安全'

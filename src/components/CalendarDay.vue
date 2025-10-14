@@ -214,8 +214,8 @@ const getPreceptLevelText = (level: 'major' | 'moderate' | 'minor' | 'safe') => 
 const getPreceptLevelColor = (level: string) => {
   const colorMap = {
     major: 'red',
-    moderate: 'orange',
-    minor: 'yellow',
+    moderate: 'purple',
+    minor: 'blue',
     safe: 'green'
   }
   return colorMap[level as keyof typeof colorMap] || 'gray'
@@ -421,11 +421,11 @@ const getDisplayReason = (reason: string): string => {
 }
 
 .calendar-day.precept-moderate {
-  background-color: rgba(234, 88, 12, 0.08);
+  background-color: rgba(139, 92, 246, 0.08);
 }
 
 .calendar-day.precept-minor {
-  background-color: rgba(202, 138, 4, 0.08);
+  background-color: rgba(59, 130, 246, 0.08);
 }
 
 .calendar-day.precept-safe {
@@ -440,12 +440,12 @@ const getDisplayReason = (reason: string): string => {
 
 .calendar-day.precept-moderate:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
-              inset 0 0 0 1px rgba(234, 88, 12, 0.25);
+              inset 0 0 0 1px rgba(139, 92, 246, 0.25);
 }
 
 .calendar-day.precept-minor:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
-              inset 0 0 0 1px rgba(202, 138, 4, 0.25);
+              inset 0 0 0 1px rgba(59, 130, 246, 0.25);
 }
 
 .calendar-day.precept-safe:hover {
@@ -461,15 +461,15 @@ const getDisplayReason = (reason: string): string => {
 }
 
 .calendar-day.selected.precept-moderate {
-  background-color: rgba(234, 88, 12, 0.12);
+  background-color: rgba(139, 92, 246, 0.12);
   border: none;
-  box-shadow: inset 0 0 0 1px #EA580C;
+  box-shadow: inset 0 0 0 1px #8B5CF6;
 }
 
 .calendar-day.selected.precept-minor {
-  background-color: rgba(202, 138, 4, 0.12);
+  background-color: rgba(59, 130, 246, 0.12);
   border: none;
-  box-shadow: inset 0 0 0 1px #CA8A04;
+  box-shadow: inset 0 0 0 1px #3B82F6;
 }
 
 .calendar-day.selected.precept-safe {
@@ -504,13 +504,13 @@ const getDisplayReason = (reason: string): string => {
 }
 
 .precept-indicator.moderate {
-  background-color: #EA580C;
-  box-shadow: 0 1px 3px rgba(234, 88, 12, 0.2);
+  background-color: #8B5CF6;
+  box-shadow: 0 1px 3px rgba(139, 92, 246, 0.2);
 }
 
 .precept-indicator.minor {
-  background-color: #CA8A04;
-  box-shadow: 0 1px 3px rgba(202, 138, 4, 0.2);
+  background-color: #3B82F6;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
 }
 
 .precept-indicator.safe {

@@ -71,15 +71,15 @@
       <div class="flex items-center space-x-4 text-sm">
         <div class="flex items-center">
           <span class="w-3 h-3 bg-red-500 rounded-full mr-1"></span>
-          <span>大罪 {{ monthStats.major }}天</span>
+          <span>大戒 {{ monthStats.major }}天</span>
         </div>
         <div class="flex items-center">
-          <span class="w-3 h-3 bg-orange-500 rounded-full mr-1"></span>
-          <span>中罪 {{ monthStats.moderate }}天</span>
+          <span class="w-3 h-3 bg-purple-500 rounded-full mr-1"></span>
+          <span>中戒 {{ monthStats.moderate }}天</span>
         </div>
         <div class="flex items-center">
-          <span class="w-3 h-3 bg-yellow-500 rounded-full mr-1"></span>
-          <span>小罪 {{ monthStats.minor }}天</span>
+          <span class="w-3 h-3 bg-blue-500 rounded-full mr-1"></span>
+          <span>宜戒 {{ monthStats.minor }}天</span>
         </div>
         <div class="flex items-center">
           <span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span>

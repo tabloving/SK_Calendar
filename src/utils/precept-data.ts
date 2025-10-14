@@ -821,18 +821,20 @@ export class PreceptDataManager {
   /**
    * 辅助方法：为指定月份和日期添加戒期
    */
-  private addMonthPrecepts(month: number, day: number, reasons: { reason: string; level: PreceptLevel }[]): void {
+  private addMonthPrecepts(month: number, day: number, reasons: { reason: string; level?: PreceptLevel }[]): void {
     const dateKey = `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
     const preceptInfos: PreceptInfo[] = reasons.map(precept => {
-      const detail = this.parsePreceptDetail(precept.reason, precept.level)
+      const detail = this.parsePreceptDetail(precept.reason, precept.level || 'minor' as PreceptLevel)
+      // 使用动态判断的等级而不是传入的等级
+      const dynamicLevel = this.determinePreceptLevel(detail.punishment)
       return {
         date: dateKey,
-        level: precept.level,
+        level: dynamicLevel,
         type: 'regular' as PreceptType,
         detail: detail,
         reason: detail.reason,        // 向后兼容
         punishment: detail.punishment, // 向后兼容
-        description: this.generateDescription(detail, precept.level)
+        description: this.generateDescription(detail, dynamicLevel)
       }
     })
     this.monthlyPrecepts.set(dateKey, preceptInfos)
@@ -841,7 +843,7 @@ export class PreceptDataManager {
   /**
    * 解析戒期原因和惩罚，返回详细的结构化数据
    */
-  private parsePreceptDetail(text: string, level: PreceptLevel): PreceptDetail {
+  private parsePreceptDetail(text: string, originalLevel: PreceptLevel): PreceptDetail {
     const result: PreceptDetail = {
       reason: text,
       punishment: '宜戒',
@@ -854,10 +856,12 @@ export class PreceptDataManager {
       if (match) {
         result.reason = match[1].trim()
         result.punishment = `犯者${match[2].trim()}`
+        // 使用新的等级判断逻辑
+        const newLevel = this.determinePreceptLevel(result.punishment)
         result.category = this.categorizeByReason(result.reason)
         result.tags = this.extractTags(result.reason)
         result.explanation = this.getExplanation(result.reason)
-        result.suggestion = this.getSuggestion(result.reason, level)
+        result.suggestion = this.getSuggestion(result.reason, newLevel)
         return result
       }
     }
@@ -868,10 +872,12 @@ export class PreceptDataManager {
       if (match) {
         result.reason = match[1].trim()
         result.punishment = '犯者削禄夺纪'
+        // 使用新的等级判断逻辑
+        const newLevel = this.determinePreceptLevel(result.punishment)
         result.category = this.categorizeByReason(result.reason)
         result.tags = this.extractTags(result.reason)
         result.explanation = this.getExplanation(result.reason)
-        result.suggestion = this.getSuggestion(result.reason, level)
+        result.suggestion = this.getSuggestion(result.reason, newLevel)
         return result
       }
     }
@@ -882,10 +888,12 @@ export class PreceptDataManager {
       if (match) {
         result.reason = match[1].trim()
         result.punishment = match[2].trim().startsWith('犯者') ? match[2].trim() : `犯者${match[2].trim()}`
+        // 使用新的等级判断逻辑
+        const newLevel = this.determinePreceptLevel(result.punishment)
         result.category = this.categorizeByReason(result.reason)
         result.tags = this.extractTags(result.reason)
         result.explanation = this.getExplanation(result.reason)
-        result.suggestion = this.getSuggestion(result.reason, level)
+        result.suggestion = this.getSuggestion(result.reason, newLevel)
         return result
       }
     }
@@ -896,10 +904,12 @@ export class PreceptDataManager {
       if (match) {
         result.reason = match[1].trim()
         result.punishment = match[2].trim().startsWith('犯者') ? match[2].trim() : `犯者${match[2].trim()}`
+        // 使用新的等级判断逻辑
+        const newLevel = this.determinePreceptLevel(result.punishment)
         result.category = this.categorizeByReason(result.reason)
         result.tags = this.extractTags(result.reason)
         result.explanation = this.getExplanation(result.reason)
-        result.suggestion = this.getSuggestion(result.reason, level)
+        result.suggestion = this.getSuggestion(result.reason, newLevel)
         return result
       }
     }
@@ -916,10 +926,12 @@ export class PreceptDataManager {
       } else if (text.includes('宜斋戒')) {
         result.punishment = '宜戒'
       }
+      // 使用新的等级判断逻辑
+      const newLevel = this.determinePreceptLevel(result.punishment)
       result.category = this.categorizeByReason(result.reason)
       result.tags = this.extractTags(result.reason)
       result.explanation = this.getExplanation(result.reason)
-      result.suggestion = this.getSuggestion(result.reason, level)
+      result.suggestion = this.getSuggestion(result.reason, newLevel)
       return result
     }
 
@@ -938,6 +950,8 @@ export class PreceptDataManager {
     // 处理神明诞辰
     if (text.includes('诞')) {
       result.punishment = '犯者夺纪'
+      // 使用新的等级判断逻辑
+      const newLevel = this.determinePreceptLevel(result.punishment)
       result.category = '神明诞辰'
       result.tags = this.extractTags(text)
       result.explanation = this.getBirthExplanation(text)
@@ -948,6 +962,8 @@ export class PreceptDataManager {
     // 处理神明降世事件
     if (text.includes('降')) {
       result.punishment = '犯者夺纪'
+      // 使用新的等级判断逻辑
+      const newLevel = this.determinePreceptLevel(result.punishment)
       result.category = '神明降世'
       result.tags = this.extractTags(text)
       result.explanation = this.getDescentExplanation(text)
@@ -965,6 +981,8 @@ export class PreceptDataManager {
       } else {
         result.punishment = text.includes('，') ? text.split('，')[1] : '犯者减寿'
       }
+      // 使用新的等级判断逻辑
+      const newLevel = this.determinePreceptLevel(result.punishment)
       result.category = '特殊忌日'
       result.tags = this.extractTags(result.reason)
       result.explanation = this.getSpecialEventExplanation(result.reason)
@@ -987,10 +1005,12 @@ export class PreceptDataManager {
         result.punishment = '宜戒'
       }
 
+      // 使用新的等级判断逻辑
+      const newLevel = this.determinePreceptLevel(result.punishment)
       result.category = this.categorizeByReason(result.reason)
       result.tags = this.extractTags(result.reason)
       result.explanation = this.getExplanation(result.reason)
-      result.suggestion = this.getSuggestion(result.reason, level)
+      result.suggestion = this.getSuggestion(result.reason, newLevel)
       return result
     }
 
@@ -1116,9 +1136,9 @@ export class PreceptDataManager {
    */
   private getSuggestion(reason: string, level: PreceptLevel): string {
     const baseSuggestions = {
-      major: '大罪之日，应严格持戒，可诵经礼忏，广修善业，以求消灾祈福',
-      moderate: '中罪之日，应谨慎持戒，避免不当行为，可修善积德',
-      minor: '小罪之日，应基本持戒，保持身心清净',
+      major: '大戒之日，应严格持戒，可诵经礼忏，广修善业，以求消灾祈福',
+      moderate: '中戒之日，应谨慎持戒，避免不当行为，可修善积德',
+      minor: '宜戒之日，应基本持戒，保持身心清净',
       safe: '平安之日，可正常修行，保持正念'
     }
 
@@ -1153,9 +1173,9 @@ export class PreceptDataManager {
    */
   private generateDescription(detail: PreceptDetail, level: PreceptLevel): string {
     const levelText = {
-      major: '大罪',
-      moderate: '中罪',
-      minor: '小罪',
+      major: '大戒',
+      moderate: '中戒',
+      minor: '宜戒',
       safe: '安全'
     }
 
@@ -1174,6 +1194,44 @@ export class PreceptDataManager {
     }
 
     return description
+  }
+
+  /**
+   * 根据惩罚内容判断戒期等级
+   */
+  private determinePreceptLevel(punishment: string): PreceptLevel {
+    // 大戒：死、亡、夺纪、夺禄
+    if (punishment.includes('死') || punishment.includes('亡') ||
+        punishment.includes('夺纪') || punishment.includes('夺禄') ||
+        punishment.includes('暴亡') || punishment.includes('血死') ||
+        punishment.includes('贫夭') || punishment.includes('夭亡') ||
+        punishment.includes('绝嗣') || punishment.includes('水厄') ||
+        punishment.includes('奇祸') || punishment.includes('大凶') ||
+        punishment.includes('男女俱亡')) {
+      return 'major' as PreceptLevel
+    }
+
+    // 中戒：重疾、大病、损寿、减寿、生病
+    if (punishment.includes('重疾') || punishment.includes('大病') ||
+        punishment.includes('损寿') || punishment.includes('减寿') ||
+        punishment.includes('生病') || punishment.includes('得病') ||
+        punishment.includes('遭回禄') || punishment.includes('产恶胎') ||
+        punishment.includes('失瘏夭胎') || punishment.includes('得危疾') ||
+        punishment.includes('恶疾') || punishment.includes('带疾') ||
+        punishment.includes('子带疾')) {
+      return 'moderate' as PreceptLevel
+    }
+
+    // 宜戒：明确指出宜戒的或较轻的惩罚
+    if (punishment.includes('宜戒') || punishment.includes('大忌') ||
+        punishment.includes('忌') || punishment.includes('斋') ||
+        punishment.includes('得祸') || punishment.includes('削禄') ||
+        punishment === '宜戒' || punishment.includes('宜斋戒')) {
+      return 'minor' as PreceptLevel
+    }
+
+    // 默认为小戒
+    return 'minor' as PreceptLevel
   }
 
   /**
@@ -1205,5 +1263,12 @@ export class PreceptDataManager {
    */
   public isTenPreceptDay(day: number): boolean {
     return this.getTenPreceptDays().includes(day)
+  }
+
+  /**
+   * 测试戒期等级判断（用于开发调试）
+   */
+  public testPreceptLevel(punishment: string): PreceptLevel {
+    return this.determinePreceptLevel(punishment)
   }
 }

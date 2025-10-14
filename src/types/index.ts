@@ -1,8 +1,8 @@
 // 戒期等级枚举
 export enum PreceptLevel {
-  MAJOR = 'major',     // 大罪
-  MODERATE = 'moderate', // 中罪
-  MINOR = 'minor',     // 小罪
+  MAJOR = 'major',     // 大戒
+  MODERATE = 'moderate', // 中戒
+  MINOR = 'minor',     // 宜戒
   SAFE = 'safe'        // 安全
 }
 
