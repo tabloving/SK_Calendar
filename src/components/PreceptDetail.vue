@@ -24,8 +24,10 @@
         <!-- 中间：日期标题信息 -->
         <div class="flex items-center justify-center flex-1 min-w-[100px]">
           <div class="date-title-centered">
-            <h2 class="text-lg font-bold text-gray-800 leading-tight mb-1">
-              {{ currentYear }}年{{ currentMonth }}月
+            <h2 class="text-2xl font-semibold text-purple-500 leading-none mb-1 flex items-center justify-center gap-1">
+              <span>{{ currentYear }}</span>
+              <span class="text-lg">·</span>
+              <span>{{ currentMonth }}</span>
             </h2>
             <div class="text-xs text-gray-500 leading-tight">
               {{ lunarMonthName }}
@@ -71,7 +73,7 @@
         </div>
 
         <!-- 中间统计项 -->
-        <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-wrap">
+        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
           <div class="flex items-center gap-1" title="大戒：重罪戒期，需严格持戒">
             <span class="w-1.5 h-1.5 bg-red-500 rounded-full flex-shrink-0"></span>
             <span class="text-xs text-gray-600">大戒 {{ monthStats.major }}</span>
@@ -779,12 +781,15 @@ const goToToday = () => {
 }
 
 .date-title-centered h2 {
-  font-family: 'system-ui', -apple-system, sans-serif;
-  font-weight: 700;
-  color: #1f2937;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: 'Gravitas One', cursive;
+  font-weight: 600;
+  color: #8b5cf6;
   margin: 0;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .date-title-centered .text-xs {
@@ -792,39 +797,47 @@ const goToToday = () => {
   color: #6b7280;
   font-weight: 500;
   white-space: nowrap;
+  letter-spacing: 0.08em;
 }
 
 .nav-btn {
-  padding: 8px 6px;
+  padding: 6px 8px;
   height: 32px;
   width: 32px;
-  border-radius: 6px;
-  background-color: #f9fafb;
-  border: none;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  transition: all 0.2s ease;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .nav-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+  color: #475569;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .today-btn {
-  background: linear-gradient(to right, #3b82f6, #2563eb);
+  padding: 6px 12px;
+  height: 32px;
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
   color: white;
-  border: none;
-  transition: all 0.2s ease;
+  border: 1px solid #8b5cf6;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(167, 139, 250, 0.15);
 }
 
 .today-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+  border-color: #7c3aed;
 }
 
 
@@ -943,7 +956,8 @@ const goToToday = () => {
   }
 
   .date-title-centered h2 {
-    font-size: 0.875rem;
+    font-size: 1.125rem;
+    font-weight: 700;
   }
 
   .date-title-centered .text-xs {
