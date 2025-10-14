@@ -131,13 +131,13 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
 /* 整体容器内边距优化 */
 .calendar-grid .grid-cols-7 > * {
-  padding: 4px 7px;
+  padding: 5px 8px;
   box-sizing: border-box;
 }
 
 /* 确保最后一列格子的右边框完整显示 */
 .calendar-grid .grid-cols-7 > *:nth-child(7n) {
-  padding-right: 8px;
+  padding-right: 9px;
 }
 
 @media (max-width: 640px) {

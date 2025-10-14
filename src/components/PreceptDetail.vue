@@ -1,5 +1,66 @@
 <template>
   <div class="precept-detail bg-white rounded-lg shadow-sm p-4">
+    <!-- 导航按钮区域 -->
+    <div class="navigation-buttons mb-4">
+      <div class="flex items-center justify-between gap-2">
+        <!-- 左侧导航 -->
+        <div class="flex items-center gap-1">
+          <el-button
+            :icon="ArrowLeft"
+            @click="goToPreviousYear"
+            title="上一年"
+            size="small"
+            class="nav-btn"
+          />
+          <el-button
+            :icon="CaretLeft"
+            @click="goToPreviousMonth"
+            title="上个月"
+            size="small"
+            class="nav-btn"
+          />
+        </div>
+
+        <!-- 中间：日期标题信息 -->
+        <div class="flex items-center justify-center">
+          <div class="date-title-centered">
+            <h2 class="text-lg font-bold text-gray-800 leading-tight mb-1">
+              {{ currentYear }}年{{ currentMonth }}月
+            </h2>
+            <div class="text-xs text-gray-500 leading-tight">
+              {{ lunarMonthName }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧导航 -->
+        <div class="flex items-center gap-1">
+          <el-button
+            :icon="CaretRight"
+            @click="goToNextMonth"
+            title="下个月"
+            size="small"
+            class="nav-btn"
+          />
+          <el-button
+            :icon="ArrowRight"
+            @click="goToNextYear"
+            title="下一年"
+            size="small"
+            class="nav-btn"
+          />
+          <el-button
+            size="small"
+            :icon="CalendarIcon"
+            @click="goToToday"
+            class="today-btn"
+          >
+            今天
+          </el-button>
+        </div>
+      </div>
+    </div>
+
     <!-- 月度统计信息 -->
     <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-2 border border-blue-100">
       <div class="flex items-center justify-between gap-2">
@@ -323,7 +384,7 @@ import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
 import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { Calendar as CalendarIcon, Bell, Document, Star, DataAnalysis } from '@element-plus/icons-vue'
+import { Calendar as CalendarIcon, Bell, Document, Star, DataAnalysis, ArrowLeft, ArrowRight, CaretLeft, CaretRight } from '@element-plus/icons-vue'
 
 // 二十四节气icon映射
 const SOLAR_TERM_ICONS: Record<string, string> = {
@@ -366,10 +427,24 @@ const preceptManager = PreceptDataManager.getInstance()
 
 // 计算属性
 const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
-
-// 统计相关计算属性
-const selectedYear = computed(() => calendarStore.selectedYear)
 const selectedMonth = computed(() => calendarStore.selectedMonth)
+
+// 用于日期标题的别名，避免与统计信息中的变量名冲突
+const currentYear = computed(() => calendarStore.selectedYear)
+const currentMonth = computed(() => calendarStore.selectedMonth)
+
+const lunarMonthName = computed(() => {
+  try {
+    // 使用lunar.js获取该月第一天的农历月份名称
+    const solar = lunar.Solar.fromYmd(currentYear.value, currentMonth.value, 1)
+    const lunarDate = solar.getLunar()
+    return `${lunarDate.getYearInChinese()}年${lunarDate.getMonthInChinese()}月`
+  } catch (error) {
+    // 如果出错，降级显示公历年份
+    return `${currentYear.value}年`
+  }
+})
+
 const monthStats = computed(() => calendarStore.getMonthPreceptStats)
 
 const fastingPercentage = computed(() => {
@@ -475,7 +550,6 @@ const solarTermInfo = computed(() => {
 
 const upcomingPrecepts = computed(() => {
   const today = new Date()
-  const todayStr = today.toDateString()
   const threeMonthsLater = new Date(today)
   threeMonthsLater.setMonth(today.getMonth() + 3)
 
@@ -566,18 +640,11 @@ const upcomingPrecepts = computed(() => {
   })
 })
 
-// 方法
-const formatDate = (date: Date) => {
-  return CalendarUtil.formatDate(date, 'YYYY-MM-DD')
-}
 
 const getMonthYear = (date: Date) => {
   return `${date.getFullYear()}年 ${date.getMonth() + 1}月`
 }
 
-const getDaySuffix = (day: number) => {
-  return '日'
-}
 
 const getPreceptLevelText = (level: string) => {
   return CalendarUtil.getPreceptLevelText(level as any)
@@ -595,15 +662,6 @@ const getPreceptTypeText = (type: string) => {
 }
 
 
-const getTagType = (level: string) => {
-  const typeMap = {
-    major: 'danger',
-    moderate: 'warning',
-    minor: 'info',
-    safe: 'success'
-  }
-  return typeMap[level as keyof typeof typeMap] || 'info'
-}
 
 const getPreceptItemClass = (level: string) => {
   const classMap = {
@@ -663,6 +721,28 @@ const getPreceptLevelStyle = (level: string) => {
     color: '#ffffff'
   }
 }
+
+// 导航方法
+const goToPreviousMonth = () => {
+  calendarStore.goToPreviousMonth()
+}
+
+const goToNextMonth = () => {
+  calendarStore.goToNextMonth()
+}
+
+const goToPreviousYear = () => {
+  calendarStore.goToPreviousYear()
+}
+
+const goToNextYear = () => {
+  calendarStore.goToNextYear()
+}
+
+const goToToday = () => {
+  calendarStore.goToToday()
+}
+
 </script>
 
 <style>
@@ -679,6 +759,70 @@ const getPreceptLevelStyle = (level: string) => {
 .precept-detail {
   min-height: 400px;
 }
+
+/* 导航按钮样式 */
+.navigation-buttons {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+/* 居中日期标题样式 */
+.date-title-centered {
+  text-align: center;
+  min-width: 160px;
+  padding: 0 8px;
+}
+
+.date-title-centered h2 {
+  font-family: 'system-ui', -apple-system, sans-serif;
+  font-weight: 700;
+  color: #1f2937;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.date-title-centered .text-xs {
+  font-family: 'system-ui', -apple-system, sans-serif;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav-btn {
+  padding: 8px 6px;
+  height: 32px;
+  width: 32px;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  border: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.today-btn {
+  background: linear-gradient(to right, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.today-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
 
 /* 月度统计卡片样式 */
 .month-stats-card {

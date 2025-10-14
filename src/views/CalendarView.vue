@@ -3,7 +3,6 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <!-- 左侧日历区域 -->
       <div class="lg:col-span-3 space-y-3">
-        <CalendarHeader />
         <CalendarGrid />
       </div>
 
@@ -21,7 +20,6 @@ import { useRouter } from 'vue-router'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
-import CalendarHeader from '@/components/CalendarHeader.vue'
 import CalendarGrid from '@/components/CalendarGrid.vue'
 import PreceptDetail from '@/components/PreceptDetail.vue'
 import {
