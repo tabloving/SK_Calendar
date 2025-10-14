@@ -19,12 +19,15 @@ export interface PreceptDetail {
   // 核心内容
   reason: string;         // 戒期原因（如：四天王巡行、天地仓开日）
   punishment: string;     // 犯戒惩罚（如：犯者减寿、犯者夺纪）
+
+  // 分类信息
+  category: PreceptCategory;  // 戒期分类
+  subcategory?: string;   // 子分类（如：四大天王、雷斋日）
+  tags?: string[];        // 标签（如：["四天王", "巡行", "月望"]）
+
+  // 详细内容
   explanation?: string;   // 详细解释说明
   suggestion?: string;    // 修行建议
-
-  // 扩展信息
-  category?: string;      // 分类（如：神明巡行、诞辰纪念、节气变化）
-  tags?: string[];        // 标签（如：["四天王", "巡行", "月望"]）
   historicalContext?: string; // 历史背景
   source?: string;        // 来源（如：《寿康宝鉴》、道教传统）
 
@@ -32,6 +35,30 @@ export interface PreceptDetail {
   specialNote?: string;   // 特殊注意事项
   alternativeDate?: string; // 替代日期（如小月的廿九日）
   relatedEvents?: string[]; // 相关事件
+
+  // 显示格式化内容
+  formattedContent?: PreceptFormattedContent;  // 格式化的显示内容
+}
+
+// 戒期分类枚举
+export enum PreceptCategory {
+  DEITY_INSPECTION = 'deity_inspection',    // 神明巡行
+  FESTIVAL = 'festival',                    // 节日斋日
+  SOLAR_TERM = 'solar_term',                // 节气戒期
+  ANNIVERSARY = 'anniversary',              // 诞辰纪念
+  ASTRONOMICAL = 'astronomical',            // 天象戒期
+  KARMA = 'karma',                          // 因果戒期
+  CUSTOM = 'custom'                         // 自定义戒期
+}
+
+// 格式化的显示内容
+export interface PreceptFormattedContent {
+  title: string;              // 显示标题
+  categoryDisplay: string;    // 分类显示文本
+  description: string;        // 完整描述（已格式化）
+  keyPoints: string[];        // 关键要点
+  practiceAdvice: string[];   // 修行建议
+  warnings?: string[];        // 注意事项
 }
 
 // 戒期信息接口

@@ -2,7 +2,7 @@ import { LunarCalendarUtil } from './lunar'
 import { PreceptDataManager } from './precept-data'
 import * as lunarLib from 'lunar-javascript'
 import type { CalendarDayInfo, PreceptInfo } from '@/types'
-import { PreceptLevel, PreceptType } from '@/types'
+import { PreceptLevel, PreceptType, PreceptCategory } from '@/types'
 
 /**
  * 日历工具类
@@ -67,7 +67,7 @@ export class CalendarUtil {
         punishment: '犯者减寿',
         explanation: '十斋日是佛教传统的重要斋戒日，持戒清净可得大功德',
         suggestion: '十斋日应严格持戒，可诵经礼佛，修身养性，广修善业',
-        category: '佛教斋日',
+        category: PreceptCategory.FESTIVAL,
         tags: ['斋日', '佛教', '持戒'],
         source: '《寿康宝鉴》'
       }

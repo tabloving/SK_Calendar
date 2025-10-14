@@ -1,4 +1,5 @@
 import type { PreceptInfo, PreceptLevel, PreceptType, PreceptDetail } from '@/types'
+import { PreceptCategory } from '@/types'
 
 /**
  * 戒期数据管理类
@@ -847,6 +848,7 @@ export class PreceptDataManager {
     const result: PreceptDetail = {
       reason: text,
       punishment: '宜戒',
+      category: PreceptCategory.CUSTOM,
       source: '《寿康宝鉴》'
     }
 
@@ -939,7 +941,7 @@ export class PreceptDataManager {
     if (text.includes('月晦')) {
       result.reason = '月晦日'
       result.punishment = text.includes('犯者') ? text : '犯者减寿'
-      result.category = '月相变化'
+      result.category = PreceptCategory.ASTRONOMICAL
       result.tags = ['月晦', '司命奏事']
       result.explanation = '月晦是农历每月的最后一日，天地交泰、阴阳转换的关键时刻。司命之神在此日向天庭奏报世人善恶。如遇到小月（只有29天），则廿九日即为月晦日。'
       result.suggestion = '月晦日应严格持戒，反省己过，可诵经忏悔，修身养性'
@@ -952,7 +954,7 @@ export class PreceptDataManager {
       result.punishment = '犯者夺纪'
       // 使用新的等级判断逻辑
       const newLevel = this.determinePreceptLevel(result.punishment)
-      result.category = '神明诞辰'
+      result.category = PreceptCategory.ANNIVERSARY
       result.tags = this.extractTags(text)
       result.explanation = this.getBirthExplanation(text)
       result.suggestion = '神明诞辰日应持戒清净，可诵经礼忏，积德行善'
@@ -964,7 +966,7 @@ export class PreceptDataManager {
       result.punishment = '犯者夺纪'
       // 使用新的等级判断逻辑
       const newLevel = this.determinePreceptLevel(result.punishment)
-      result.category = '神明降世'
+      result.category = PreceptCategory.DEITY_INSPECTION
       result.tags = this.extractTags(text)
       result.explanation = this.getDescentExplanation(text)
       result.suggestion = '神明降世之日应虔诚持戒，可诵经祈福'
@@ -983,7 +985,7 @@ export class PreceptDataManager {
       }
       // 使用新的等级判断逻辑
       const newLevel = this.determinePreceptLevel(result.punishment)
-      result.category = '特殊忌日'
+      result.category = PreceptCategory.KARMA
       result.tags = this.extractTags(result.reason)
       result.explanation = this.getSpecialEventExplanation(result.reason)
       result.suggestion = '此日有大凶险，应严格持戒，避免一切不当行为'
@@ -1015,7 +1017,7 @@ export class PreceptDataManager {
     }
 
     // 默认情况
-    result.category = '常规戒期'
+    result.category = PreceptCategory.CUSTOM
     result.tags = this.extractTags(text)
     result.explanation = '传统戒期，应持戒清净'
     result.suggestion = '宜持戒修行，保持身心清净'
@@ -1025,23 +1027,23 @@ export class PreceptDataManager {
   /**
    * 根据原因内容分类
    */
-  private categorizeByReason(reason: string): string {
-    if (reason.includes('四天王')) return '神明巡行'
-    if (reason.includes('斗降') || reason.includes('北斗')) return '星宿神明'
-    if (reason.includes('雷斋')) return '雷神斋日'
-    if (reason.includes('月望') || reason.includes('月朔') || reason.includes('月晦')) return '月相变化'
-    if (reason.includes('三元') || reason.includes('三官')) return '三元节日'
-    if (reason.includes('腊')) return '腊日斋戒'
-    if (reason.includes('仓开')) return '天地仓开'
-    if (reason.includes('杨公忌')) return '杨公忌日'
-    if (reason.includes('人神')) return '人神相关'
-    if (reason.includes('司命')) return '司命奏事'
-    if (reason.includes('九毒')) return '九毒日'
-    if (reason.includes('五虚')) return '五虚忌日'
-    if (reason.includes('六耗')) return '六耗忌日'
-    if (reason.includes('天地交泰')) return '天地交泰日'
-    if (reason.includes('阴毒')) return '阴毒大忌'
-    return '常规戒期'
+  private categorizeByReason(reason: string): PreceptCategory {
+    if (reason.includes('四天王')) return PreceptCategory.DEITY_INSPECTION
+    if (reason.includes('斗降') || reason.includes('北斗')) return PreceptCategory.DEITY_INSPECTION
+    if (reason.includes('雷斋')) return PreceptCategory.FESTIVAL
+    if (reason.includes('月望') || reason.includes('月朔') || reason.includes('月晦')) return PreceptCategory.ASTRONOMICAL
+    if (reason.includes('三元') || reason.includes('三官')) return PreceptCategory.FESTIVAL
+    if (reason.includes('腊')) return PreceptCategory.FESTIVAL
+    if (reason.includes('仓开')) return PreceptCategory.DEITY_INSPECTION
+    if (reason.includes('杨公忌')) return PreceptCategory.KARMA
+    if (reason.includes('人神')) return PreceptCategory.DEITY_INSPECTION
+    if (reason.includes('司命')) return PreceptCategory.DEITY_INSPECTION
+    if (reason.includes('九毒')) return PreceptCategory.KARMA
+    if (reason.includes('五虚')) return PreceptCategory.KARMA
+    if (reason.includes('六耗')) return PreceptCategory.KARMA
+    if (reason.includes('天地交泰')) return PreceptCategory.ASTRONOMICAL
+    if (reason.includes('阴毒')) return PreceptCategory.KARMA
+    return PreceptCategory.CUSTOM
   }
 
   /**
@@ -1179,7 +1181,7 @@ export class PreceptDataManager {
       safe: '安全'
     }
 
-    let description = `${detail.reason} - ${detail.punishment} - ${levelText[level]}`
+    let description = ``
 
     if (detail.explanation) {
       description += `\n说明：${detail.explanation}`

@@ -101,22 +101,55 @@
                   ></div>
                   <span class="font-semibold">{{ precept.reason }}</span>
                   <el-tag
-                    :type="getTagType(precept.level)"
                     size="small"
                     class="ml-2"
+                    :style="getPreceptLevelStyle(precept.level)"
                   >
                     {{ getPreceptLevelText(precept.level) }}
                   </el-tag>
+                  <el-tag
+                    type="warning"
+                    size="small"
+                    class="ml-1"
+                    effect="plain"
+                  >
+                    {{ precept.punishment }}
+                  </el-tag>
                 </div>
-                <div class="text-sm text-gray-600 space-y-1">
-                  <div class="flex items-center">
-                    <span class="font-medium text-gray-700 mr-2">惩罚：</span>
-                    <span class="text-red-600 font-medium">{{ precept.punishment }}</span>
+                <div class="text-sm text-gray-600 space-y-2">
+                  <!-- 标签组：类型标签 + 其他标签 -->
+                  <div class="flex flex-wrap gap-1">
+                    <!-- 类型标签（第一位） -->
+                    <el-tag type="primary" size="small">
+                      {{ getPreceptTypeText(precept.type) }}
+                    </el-tag>
+
+                    <!-- 其他标签 -->
+                    <el-tag
+                      v-for="tag in precept.detail?.tags"
+                      :key="tag"
+                      size="small"
+                      type="info"
+                      effect="plain"
+                      class="text-xs"
+                    >
+                      {{ tag }}
+                    </el-tag>
                   </div>
-                  <div>类型：{{ getPreceptTypeText(precept.type) }}</div>
-                  <div v-if="precept.description">说明：{{ precept.description }}</div>
-                  <!-- 如果是斋日，添加斋日说明 -->
-                  <div v-if="hasPreceptDays">诸天斋日，功德倍增</div>
+
+                  <!-- 说明 -->
+                  <div v-if="precept.detail?.explanation" class="whitespace-pre-wrap text-gray-600">
+                    {{ precept.detail.explanation }}
+                  </div>
+
+  
+                  <!-- 如果是斋日类型的戒期，添加斋日说明 -->
+                  <div v-if="precept.type === PreceptType.PRECEPT_DAY" class="bg-amber-50 rounded p-2 text-amber-700 text-sm">
+                    <div class="flex items-center">
+                      <Star class="w-4 h-4 mr-1" />
+                      <span>诸天斋日，功德倍增</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,38 +208,7 @@
         </div>
       </div>
 
-      <!-- 修行建议 -->
-      <div class="practice-advice">
-        <!-- 有戒期或斋日时的建议 -->
-        <div v-if="filteredPreceptInfos.length > 0 || hasPreceptDays" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div class="flex items-center mb-2">
-            <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-semibold text-blue-800">修行建议</span>
-          </div>
-          <ul class="text-sm text-blue-700 space-y-1">
-            <li>• 请在此日保持身心清净，精进修行</li>
-            <li>• 可多读诵经典，念佛持咒</li>
-            <li>• 若有不慎，应诚心忏悔</li>
-            <li>• 功德回向给法界众生</li>
-          </ul>
-        </div>
-
-        <!-- 既无戒期也无斋日时的精进鼓励 -->
-        <div v-else class="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div class="flex items-center mb-2">
-            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            <span class="font-semibold text-green-800">修行精进</span>
-          </div>
-          <p class="text-sm text-green-700">
-            无戒期之日正是精进修行的好时机，可以加倍功课，积累功德
-          </p>
-        </div>
       </div>
-    </div>
 
     <div v-else class="text-center text-gray-500 py-8">
       <el-icon size="48" class="mb-4"><Calendar /></el-icon>
@@ -221,8 +223,9 @@ import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
+import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { Calendar as CalendarIcon, Bell, Document } from '@element-plus/icons-vue'
+import { Calendar as CalendarIcon, Bell, Document, Star } from '@element-plus/icons-vue'
 
 // 二十四节气icon映射
 const SOLAR_TERM_ICONS: Record<string, string> = {
@@ -428,10 +431,12 @@ const getPreceptTypeText = (type: string) => {
     regular: '常规戒期',
     special: '特殊戒期',
     personal: '个人戒期',
-  fasting_day: '斋日'
+  fasting_day: '斋日',
+    precept_day: '斋日'
   }
   return typeMap[type as keyof typeof typeMap] || '未知类型'
 }
+
 
 const getTagType = (level: string) => {
   const typeMap = {
@@ -446,8 +451,8 @@ const getTagType = (level: string) => {
 const getPreceptItemClass = (level: string) => {
   const classMap = {
     major: 'bg-red-50 border-red-200',
-    moderate: 'bg-orange-50 border-orange-200',
-    minor: 'bg-yellow-50 border-yellow-200',
+    moderate: 'bg-purple-50 border-purple-200',
+    minor: 'bg-blue-50 border-blue-200',
     safe: 'bg-green-50 border-green-200'
   }
   return classMap[level as keyof typeof classMap] || 'bg-gray-50 border-gray-200'
@@ -484,7 +489,34 @@ const getWeekdayText = (date: Date) => {
   const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
   return weekDays[date.getDay()]
 }
+
+const getPreceptLevelStyle = (level: string) => {
+  const colorMap = {
+    major: '220, 38, 38',
+    moderate: '124, 58, 237',
+    minor: '59, 130, 246',
+    safe: '22, 163, 74'
+  }
+
+  const rgb = colorMap[level as keyof typeof colorMap] || colorMap.minor
+
+  return {
+    backgroundColor: `rgba(${rgb}, 0.85)`,
+    borderColor: `rgb(${rgb})`,
+    color: '#ffffff'
+  }
+}
 </script>
+
+<style>
+/* 全局CSS变量 - 用于戒期等级颜色系统 */
+:root {
+  --color-major: 220, 38, 38;       /* #DC2626 */
+  --color-moderate: 124, 58, 237;   /* #7C3AED */
+  --color-minor: 59, 130, 246;     /* #3B82F6 */
+  --color-safe: 22, 163, 74;       /* #16A34A */
+}
+</style>
 
 <style scoped>
 .precept-detail {
@@ -670,19 +702,69 @@ const getWeekdayText = (date: Date) => {
 }
 
 .precept-indicator.major {
-  background-color: #DC2626;
+  background-color: rgb(var(--color-major));
 }
 
 .precept-indicator.moderate {
-  background-color: #EA580C;
+  background-color: rgb(var(--color-moderate));
 }
 
 .precept-indicator.minor {
-  background-color: #CA8A04;
+  background-color: rgb(var(--color-minor));
 }
 
 .precept-indicator.safe {
-  background-color: #16A34A;
+  background-color: rgb(var(--color-safe));
+}
+
+/* 戒等级标签样式 - 与指示器颜色匹配 */
+.precept-level-tag.major {
+  background: rgba(var(--color-major), 0.85) !important;
+  border-color: rgb(var(--color-major)) !important;
+  color: #ffffff !important;
+}
+
+.precept-level-tag.moderate {
+  background: rgba(var(--color-moderate), 0.85) !important;
+  border-color: rgb(var(--color-moderate)) !important;
+  color: #ffffff !important;
+}
+
+.precept-level-tag.minor {
+  background: rgba(var(--color-minor), 0.85) !important;
+  border-color: rgb(var(--color-minor)) !important;
+  color: #ffffff !important;
+}
+
+.precept-level-tag.safe {
+  background: rgba(var(--color-safe), 0.85) !important;
+  border-color: rgb(var(--color-safe)) !important;
+  color: #ffffff !important;
+}
+
+/* 深度样式覆盖 */
+:deep(.el-tag.precept-level-tag.major) {
+  background: rgba(var(--color-major), 0.85) !important;
+  border-color: rgb(var(--color-major)) !important;
+  color: #ffffff !important;
+}
+
+:deep(.el-tag.precept-level-tag.moderate) {
+  background: rgba(var(--color-moderate), 0.85) !important;
+  border-color: rgb(var(--color-moderate)) !important;
+  color: #ffffff !important;
+}
+
+:deep(.el-tag.precept-level-tag.minor) {
+  background: rgba(var(--color-minor), 0.85) !important;
+  border-color: rgb(var(--color-minor)) !important;
+  color: #ffffff !important;
+}
+
+:deep(.el-tag.precept-level-tag.safe) {
+  background: rgba(var(--color-safe), 0.85) !important;
+  border-color: rgb(var(--color-safe)) !important;
+  color: #ffffff !important;
 }
 
 /* 近期戒期提醒卡片样式 */
@@ -703,22 +785,22 @@ const getWeekdayText = (date: Date) => {
 /* 大罪戒期卡片 */
 .major-precept-card {
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  border-left-color: #dc2626;
+  border-left-color: rgb(var(--color-major));
   border: 1px solid #fecaca;
 }
 
 /* 中罪戒期卡片 */
 .moderate-precept-card {
-  background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-  border-left-color: #ea580c;
-  border: 1px solid #fbd38d;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-left-color: rgb(var(--color-moderate));
+  border: 1px solid #e9d5ff;
 }
 
 /* 小罪戒期卡片 */
 .minor-precept-card {
-  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  border-left-color: #ca8a04;
-  border: 1px solid #fde68a;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-left-color: rgb(var(--color-minor));
+  border: 1px solid #bfdbfe;
 }
 
 /* 戒期等级指示器 */
@@ -730,15 +812,15 @@ const getWeekdayText = (date: Date) => {
 }
 
 .major-indicator {
-  background-color: #dc2626;
+  background-color: rgb(var(--color-major));
 }
 
 .moderate-indicator {
-  background-color: #ea580c;
+  background-color: rgb(var(--color-moderate));
 }
 
 .minor-indicator {
-  background-color: #ca8a04;
+  background-color: rgb(var(--color-minor));
 }
 
 /* 日期样式 */
