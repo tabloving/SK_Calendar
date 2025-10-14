@@ -162,8 +162,29 @@
         </div>
 
         <!-- 既无戒期也无斋日时的提示 -->
-        <div v-if="!(hasPreceptDays || filteredPreceptInfos.length > 0)" class="text-gray-500 text-center py-4">
-          今日无戒期，保持平常心，慎勿放逸！
+        <div v-if="!(hasPreceptDays || filteredPreceptInfos.length > 0)" class="precept-item border rounded-lg p-4" :class="getPreceptItemClass('safe')">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center mb-2">
+                <div class="precept-indicator safe mr-2"></div>
+                <span class="font-semibold">今日清净日</span>
+                <el-tag
+                  size="small"
+                  class="ml-2"
+                  :style="getPreceptLevelStyle('safe')"
+                >
+                  安泰
+                </el-tag>
+              </div>
+              <div class="text-sm text-gray-600 space-y-1">
+                <div class="flex items-center">
+                  <span class="font-medium text-gray-700 mr-2">状态：</span>
+                  <span class="text-green-600 font-medium">心清意净，自在安然</span>
+                </div>
+                <div>建议：宜精进修行，清净身心，进德修业，慎勿放逸！</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -850,6 +871,7 @@ const getPreceptLevelStyle = (level: string) => {
   color: #ffffff !important;
 }
 
+
 /* 近期戒期提醒卡片样式 */
 .precept-reminder-card {
   padding: 10px;
@@ -998,6 +1020,8 @@ const getPreceptLevelStyle = (level: string) => {
   .upcoming-fastings {
     margin-top: 4;
   }
+
+  
 
   /* 移动端节气样式调整 */
   .solar-term-content {
