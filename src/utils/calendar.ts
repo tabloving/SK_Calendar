@@ -62,13 +62,24 @@ export class CalendarUtil {
   
     // 3. 检查十斋日
     if (this.preceptManager.isTenPreceptDay(lunarDay)) {
-      allPreceptInfos.push({
-        date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
+      const tenPreceptDetail = {
         reason: '十斋日',
         punishment: '犯者减寿',
+        explanation: '十斋日是佛教传统的重要斋戒日，持戒清净可得大功德',
+        suggestion: '十斋日应严格持戒，可诵经礼佛，修身养性，广修善业',
+        category: '佛教斋日',
+        tags: ['斋日', '佛教', '持戒'],
+        source: '《寿康宝鉴》'
+      }
+
+      allPreceptInfos.push({
+        date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
         level: PreceptLevel.MODERATE,
         type: PreceptType.PRECEPT_DAY,
-        description: '十斋日 - 犯者减寿 - 中罪'
+        detail: tenPreceptDetail,
+        reason: tenPreceptDetail.reason,        // 向后兼容
+        punishment: tenPreceptDetail.punishment, // 向后兼容
+        description: '十斋日 - 犯者减寿 - 中罪\n说明：十斋日是佛教传统的重要斋戒日，持戒清净可得大功德\n建议：十斋日应严格持戒，可诵经礼佛，修身养性，广修善业\n分类：佛教斋日'
       })
     }
 

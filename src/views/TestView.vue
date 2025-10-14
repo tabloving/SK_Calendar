@@ -98,6 +98,85 @@
         </div>
       </el-card>
 
+      <!-- 新数据结构测试 -->
+      <el-card>
+        <template #header>
+          <span>新数据结构测试</span>
+        </template>
+        <div class="space-y-3">
+          <div class="text-sm text-gray-600">测试优化后的戒期数据结构：</div>
+          <div
+            v-for="(test, index) in newDataStructureTests"
+            :key="index"
+            class="border rounded p-3 bg-gray-50"
+          >
+            <div class="font-semibold text-purple-700 mb-2">{{ test.title }}</div>
+
+            <!-- 多戒期测试显示 -->
+            <div v-if="test.isMultiTest" class="space-y-3">
+              <div class="text-xs text-green-600 font-medium">
+                该日期共有 {{ test.precepts.length }} 个独立戒期：
+              </div>
+              <div
+                v-for="(precept, pIndex) in test.precepts"
+                :key="pIndex"
+                class="border-l-2 border-blue-400 pl-3 ml-2"
+              >
+                <div class="font-medium text-blue-700 mb-1">戒期 {{ pIndex + 1 }}:</div>
+                <div class="grid grid-cols-1 gap-1 text-sm">
+                  <div><strong>原因:</strong> {{ precept.reason }}</div>
+                  <div><strong>惩罚:</strong> {{ precept.punishment }}</div>
+                  <div><strong>等级:</strong>
+                    <span :class="{
+                      'text-red-600': precept.level === 'major',
+                      'text-orange-600': precept.level === 'moderate',
+                      'text-yellow-600': precept.level === 'minor',
+                      'text-green-600': precept.level === 'safe'
+                    }">
+                      {{ precept.level }}
+                    </span>
+                  </div>
+                  <div v-if="precept.detail?.category" class="text-blue-600">
+                    <strong>分类:</strong> {{ precept.detail.category }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 单戒期测试显示 -->
+            <div v-else-if="test.precept" class="grid grid-cols-1 gap-2 text-sm">
+              <div><strong>原因:</strong> {{ test.precept.reason }}</div>
+              <div><strong>惩罚:</strong> {{ test.precept.punishment }}</div>
+              <div><strong>等级:</strong>
+                <span :class="{
+                  'text-red-600': test.precept.level === 'major',
+                  'text-orange-600': test.precept.level === 'moderate',
+                  'text-yellow-600': test.precept.level === 'minor',
+                  'text-green-600': test.precept.level === 'safe'
+                }">
+                  {{ test.precept.level }}
+                </span>
+              </div>
+              <div v-if="test.precept.detail?.category" class="text-blue-600">
+                <strong>分类:</strong> {{ test.precept.detail.category }}
+              </div>
+              <div v-if="test.precept.detail?.tags?.length" class="text-purple-600">
+                <strong>标签:</strong> {{ test.precept.detail.tags.join(', ') }}
+              </div>
+              <div v-if="test.precept.detail?.explanation" class="text-gray-600 italic text-xs">
+                <strong>解释:</strong> {{ test.precept.detail.explanation.substring(0, 80) }}...
+              </div>
+              <div v-if="test.precept.detail?.suggestion" class="text-green-600 text-xs">
+                <strong>建议:</strong> {{ test.precept.detail.suggestion.substring(0, 60) }}...
+              </div>
+            </div>
+            <div v-else class="text-gray-500 text-sm">
+              <strong>无数据</strong>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 快速操作 -->
       <el-card>
         <template #header>
@@ -131,6 +210,58 @@ const currentTestYear = ref(new Date().getFullYear())
 const solarTerms = ref<Array<{ name: string; date: Date }>>([])
 const lunarStatus = ref('未测试')
 const lunarTestResult = ref('')
+
+// 新数据结构测试
+const preceptDataManager = PreceptDataManager.getInstance()
+
+const newDataStructureTests = computed(() => {
+  const testCases = [
+    { month: 1, day: 1, title: "正月初一 - 玉帝校世人神气禄命" },
+    { month: 1, day: 8, title: "正月初八 - 四天王巡行" },
+    { month: 1, day: 30, title: "正月三十 - 月晦日" },
+    { month: 5, day: 5, title: "五月初五 - 九毒日" },
+    { month: 7, day: 10, title: "七月初十 - 阴毒日" },
+    { month: 5, day: 14, title: "五月十四 - 天地交泰" },
+    { month: 3, day: 27, title: "三月廿七 - 七殿泰山王诞，犯者夺纪" },
+    { month: 3, day: 28, title: "三月廿八 - 人神在阴，犯者得病" },
+    // 测试分离修复
+    { month: 9, day: 1, title: "九月初一 - 月朔 & 南斗诞 (分离测试)" },
+    { month: 2, day: 1, title: "二月初一 - 月朔 & 秦广王诞 (分离测试)" },
+    { month: 3, day: 15, title: "三月十五 - 月望 & 吴天上帝诞 & 玄坛诞 (分离测试)" },
+    { month: 8, day: 15, title: "八月十五 - 月望 & 太阴朝元 (分离测试)" },
+    { month: 11, day: 15, title: "十一月十五 - 月望 & 四天王巡行 (分离测试)" },
+    { month: 5, day: 15, title: "五月十五 - 月望 & 九毒日 (分离测试)" }
+  ]
+
+  return testCases.map(testCase => {
+    const precepts = preceptDataManager.getPreceptByLunarDate(testCase.month, testCase.day)
+
+    // 对于分离测试，显示所有戒期
+    if (testCase.title.includes('(分离测试)')) {
+      return {
+        title: testCase.title,
+        precepts: precepts,
+        isMultiTest: true
+      }
+    }
+
+    const targetPrecept = precepts.find(p =>
+      testCase.title.includes(p.reason) ||
+      (testCase.title.includes('七殿泰山王') && p.reason.includes('七殿泰山王')) ||
+      (testCase.title.includes('人神在阴') && p.reason.includes('人神在阴'))
+    )
+
+    return {
+      title: testCase.title,
+      precept: targetPrecept || precepts[0] || {
+        reason: '无数据',
+        punishment: '无',
+        level: 'safe',
+        detail: null
+      }
+    }
+  })
+})
 
 // 测试用的节气日期
 const solarTermTestDates = computed(() => {

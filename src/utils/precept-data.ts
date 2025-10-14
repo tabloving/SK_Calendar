@@ -1,4 +1,4 @@
-import type { PreceptInfo, PreceptLevel, PreceptType } from '@/types'
+import type { PreceptInfo, PreceptLevel, PreceptType, PreceptDetail } from '@/types'
 
 /**
  * 戒期数据管理类
@@ -101,7 +101,8 @@ export class PreceptDataManager {
 
     // 二月戒期
     this.addMonthPrecepts(2, 1, [
-      { reason: '月朔，一殿秦广王诞，犯者夺纪', level: 'major' as PreceptLevel }
+      { reason: '月朔', level: 'major' as PreceptLevel },
+      { reason: '一殿秦广王诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 2, [
       { reason: '福德土地正神诞，犯者得祸', level: 'moderate' as PreceptLevel },
@@ -191,7 +192,9 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(3, 15, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '月望，昊天上帝诞，玄坛诞，犯者夺纪', level: 'major' as PreceptLevel }
+      { reason: '月望', level: 'major' as PreceptLevel },
+      { reason: '昊天上帝诞，犯者夺纪', level: 'major' as PreceptLevel },
+      { reason: '玄坛诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(3, 16, [
       { reason: '准提菩萨诞，犯者夺纪', level: 'major' as PreceptLevel }
@@ -331,7 +334,8 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(5, 15, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '月望，九毒日，犯者夭亡，奇祸不测', level: 'major' as PreceptLevel }
+      { reason: '月望', level: 'major' as PreceptLevel },
+      { reason: '九毒日，犯者夭亡，奇祸不测', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(5, 16, [
       { reason: '天地元气造化万物之辰，犯者三年内夫妇俱亡', level: 'major' as PreceptLevel },
@@ -531,7 +535,8 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(8, 15, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '月望，太阴朝元，宜焚香守夜，犯者暴亡', level: 'major' as PreceptLevel }
+      { reason: '月望', level: 'major' as PreceptLevel },
+      { reason: '太阴朝元，宜焚香守夜，犯者暴亡', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(8, 16, [
       { reason: '天曹掠刷真君降，犯者贫夭', level: 'major' as PreceptLevel }
@@ -567,7 +572,8 @@ export class PreceptDataManager {
 
     // 九月戒期
     this.addMonthPrecepts(9, 1, [
-      { reason: '月朔，南斗诞，犯者削禄夺纪', level: 'major' as PreceptLevel },
+      { reason: '月朔', level: 'major' as PreceptLevel },
+      { reason: '南斗诞，犯者削禄夺纪', level: 'major' as PreceptLevel },
       { reason: '北斗九星降，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 3, [
@@ -709,7 +715,8 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 15, [
-      { reason: '月望，四天王巡行，上半夜犯男死，下半夜犯女死', level: 'major' as PreceptLevel }
+      { reason: '月望', level: 'major' as PreceptLevel },
+      { reason: '四天王巡行，上半夜犯男死，下半夜犯女死', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 17, [
       { reason: '阿弥陀佛诞', level: 'major' as PreceptLevel }
@@ -817,42 +824,83 @@ export class PreceptDataManager {
   private addMonthPrecepts(month: number, day: number, reasons: { reason: string; level: PreceptLevel }[]): void {
     const dateKey = `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
     const preceptInfos: PreceptInfo[] = reasons.map(precept => {
-      const { reason, punishment } = this.parseReasonAndPunishment(precept.reason)
+      const detail = this.parsePreceptDetail(precept.reason, precept.level)
       return {
         date: dateKey,
-        reason: reason,
-        punishment: punishment,
         level: precept.level,
         type: 'regular' as PreceptType,
-        description: this.getPreceptDescription(reason, punishment, precept.level)
+        detail: detail,
+        reason: detail.reason,        // 向后兼容
+        punishment: detail.punishment, // 向后兼容
+        description: this.generateDescription(detail, precept.level)
       }
     })
     this.monthlyPrecepts.set(dateKey, preceptInfos)
   }
 
   /**
-   * 解析戒期原因和惩罚
+   * 解析戒期原因和惩罚，返回详细的结构化数据
    */
-  private parseReasonAndPunishment(text: string): { reason: string; punishment: string } {
-    // 处理包含"犯者"的文本
+  private parsePreceptDetail(text: string, level: PreceptLevel): PreceptDetail {
+    const result: PreceptDetail = {
+      reason: text,
+      punishment: '宜戒',
+      source: '《寿康宝鉴》'
+    }
+
+    // 处理包含"犯者"的文本 - 最优先处理
     if (text.includes('犯者')) {
       const match = text.match(/(.+)，犯者(.+)/)
       if (match) {
-        return {
-          reason: match[1].trim(),
-          punishment: `犯者${match[2].trim()}`
-        }
+        result.reason = match[1].trim()
+        result.punishment = `犯者${match[2].trim()}`
+        result.category = this.categorizeByReason(result.reason)
+        result.tags = this.extractTags(result.reason)
+        result.explanation = this.getExplanation(result.reason)
+        result.suggestion = this.getSuggestion(result.reason, level)
+        return result
       }
     }
 
-    // 处理包含"削禄夺纪"的文本
+    // 处理包含"削禄夺纪"的文本（可能没有"犯者"前缀）
     if (text.includes('削禄夺纪')) {
       const match = text.match(/(.+)，削禄夺纪/)
       if (match) {
-        return {
-          reason: match[1].trim(),
-          punishment: '犯者削禄夺纪'
-        }
+        result.reason = match[1].trim()
+        result.punishment = '犯者削禄夺纪'
+        result.category = this.categorizeByReason(result.reason)
+        result.tags = this.extractTags(result.reason)
+        result.explanation = this.getExplanation(result.reason)
+        result.suggestion = this.getSuggestion(result.reason, level)
+        return result
+      }
+    }
+
+    // 处理包含"减寿"的文本（可能没有"犯者"前缀）
+    if (text.includes('减寿')) {
+      const match = text.match(/(.+)，(.+减寿)/)
+      if (match) {
+        result.reason = match[1].trim()
+        result.punishment = match[2].trim().startsWith('犯者') ? match[2].trim() : `犯者${match[2].trim()}`
+        result.category = this.categorizeByReason(result.reason)
+        result.tags = this.extractTags(result.reason)
+        result.explanation = this.getExplanation(result.reason)
+        result.suggestion = this.getSuggestion(result.reason, level)
+        return result
+      }
+    }
+
+    // 处理包含"损寿"的文本（可能没有"犯者"前缀）
+    if (text.includes('损寿')) {
+      const match = text.match(/(.+)，(.+损寿)/)
+      if (match) {
+        result.reason = match[1].trim()
+        result.punishment = match[2].trim().startsWith('犯者') ? match[2].trim() : `犯者${match[2].trim()}`
+        result.category = this.categorizeByReason(result.reason)
+        result.tags = this.extractTags(result.reason)
+        result.explanation = this.getExplanation(result.reason)
+        result.suggestion = this.getSuggestion(result.reason, level)
+        return result
       }
     }
 
@@ -860,86 +908,234 @@ export class PreceptDataManager {
     if (text.includes('宜戒')) {
       const match = text.match(/(.+)，宜戒/)
       if (match) {
-        return {
-          reason: match[1].trim(),
-          punishment: '宜戒'
-        }
+        result.reason = match[1].trim()
+        result.punishment = '宜戒'
+      } else if (text === '宜戒') {
+        result.reason = '宜戒之日'
+        result.punishment = '宜戒'
+      } else if (text.includes('宜斋戒')) {
+        result.punishment = '宜戒'
       }
-      // 如果整个文本就是"宜戒"
-      if (text === '宜戒') {
-        return {
-          reason: '宜戒之日',
-          punishment: '宜戒'
-        }
-      }
-      // 如果文本中包含"宜斋戒，存想吉事"等
-      if (text.includes('宜斋戒')) {
-        return {
-          reason: text,
-          punishment: '宜戒'
-        }
-      }
+      result.category = this.categorizeByReason(result.reason)
+      result.tags = this.extractTags(result.reason)
+      result.explanation = this.getExplanation(result.reason)
+      result.suggestion = this.getSuggestion(result.reason, level)
+      return result
     }
 
-    // 处理包含"忌"的文本
-    if (text.includes('忌')) {
-      return {
-        reason: text,
-        punishment: '宜戒'
-      }
+    // 处理月晦日特殊说明
+    if (text.includes('月晦')) {
+      result.reason = '月晦日'
+      result.punishment = text.includes('犯者') ? text : '犯者减寿'
+      result.category = '月相变化'
+      result.tags = ['月晦', '司命奏事']
+      result.explanation = '月晦是农历每月的最后一日，天地交泰、阴阳转换的关键时刻。司命之神在此日向天庭奏报世人善恶。如遇到小月（只有29天），则廿九日即为月晦日。'
+      result.suggestion = '月晦日应严格持戒，反省己过，可诵经忏悔，修身养性'
+      result.specialNote = '如月小即戒廿九日'
+      return result
     }
 
-    // 处理神明诞辰（包含"诞"但没有明确惩罚）
+    // 处理神明诞辰
     if (text.includes('诞')) {
-      return {
-        reason: text,
-        punishment: '犯者夺纪'
-      }
+      result.punishment = '犯者夺纪'
+      result.category = '神明诞辰'
+      result.tags = this.extractTags(text)
+      result.explanation = this.getBirthExplanation(text)
+      result.suggestion = '神明诞辰日应持戒清净，可诵经礼忏，积德行善'
+      return result
     }
 
-    // 处理降神事件（包含"降"但没有明确惩罚）
+    // 处理神明降世事件
     if (text.includes('降')) {
-      return {
-        reason: text,
-        punishment: '犯者夺纪'
-      }
+      result.punishment = '犯者夺纪'
+      result.category = '神明降世'
+      result.tags = this.extractTags(text)
+      result.explanation = this.getDescentExplanation(text)
+      result.suggestion = '神明降世之日应虔诚持戒，可诵经祈福'
+      return result
     }
 
     // 处理其他特殊事件
-    if (text.includes('暴亡') || text.includes('贫夭') || text.includes('血死') || text.includes('水厄') || text.includes('绝嗣')) {
-      return {
-        reason: text,
-        punishment: text.includes('，') ? text.split('，')[1] : '犯者减寿'
+    if (text.includes('暴亡') || text.includes('贫夭') || text.includes('血死') ||
+        text.includes('水厄') || text.includes('绝嗣') || text.includes('夭亡')) {
+      const parts = text.split('，')
+      if (parts.length > 1) {
+        result.reason = parts[0].trim()
+        result.punishment = parts[1].trim()
+      } else {
+        result.punishment = text.includes('，') ? text.split('，')[1] : '犯者减寿'
       }
+      result.category = '特殊忌日'
+      result.tags = this.extractTags(result.reason)
+      result.explanation = this.getSpecialEventExplanation(result.reason)
+      result.suggestion = '此日有大凶险，应严格持戒，避免一切不当行为'
+      return result
     }
 
-    // 处理包含逗号的文本，尝试分割
+    // 处理包含逗号的文本
     const commaMatch = text.match(/(.+)，(.+)/)
     if (commaMatch) {
       const firstPart = commaMatch[1].trim()
       const secondPart = commaMatch[2].trim()
 
-      // 判断第二部分是否是惩罚
       if (secondPart.includes('犯者') || secondPart.includes('宜') || secondPart.includes('忌') ||
           secondPart.includes('减寿') || secondPart.includes('损寿') || secondPart.includes('夺纪')) {
-        return {
-          reason: firstPart,
-          punishment: secondPart.startsWith('犯者') ? secondPart : `犯者${secondPart}`
-        }
+        result.reason = firstPart
+        result.punishment = secondPart.startsWith('犯者') ? secondPart : `犯者${secondPart}`
+      } else {
+        result.reason = firstPart
+        result.punishment = '宜戒'
       }
 
-      // 如果第二部分不是惩罚，则第一部分为原因，第二部分为补充说明
-      return {
-        reason: firstPart,
-        punishment: '宜戒'
-      }
+      result.category = this.categorizeByReason(result.reason)
+      result.tags = this.extractTags(result.reason)
+      result.explanation = this.getExplanation(result.reason)
+      result.suggestion = this.getSuggestion(result.reason, level)
+      return result
     }
 
-    // 默认情况，整个文本作为原因，惩罚为轻度的
-    return {
-      reason: text,
-      punishment: '宜戒'
+    // 默认情况
+    result.category = '常规戒期'
+    result.tags = this.extractTags(text)
+    result.explanation = '传统戒期，应持戒清净'
+    result.suggestion = '宜持戒修行，保持身心清净'
+    return result
+  }
+
+  /**
+   * 根据原因内容分类
+   */
+  private categorizeByReason(reason: string): string {
+    if (reason.includes('四天王')) return '神明巡行'
+    if (reason.includes('斗降') || reason.includes('北斗')) return '星宿神明'
+    if (reason.includes('雷斋')) return '雷神斋日'
+    if (reason.includes('月望') || reason.includes('月朔') || reason.includes('月晦')) return '月相变化'
+    if (reason.includes('三元') || reason.includes('三官')) return '三元节日'
+    if (reason.includes('腊')) return '腊日斋戒'
+    if (reason.includes('仓开')) return '天地仓开'
+    if (reason.includes('杨公忌')) return '杨公忌日'
+    if (reason.includes('人神')) return '人神相关'
+    if (reason.includes('司命')) return '司命奏事'
+    if (reason.includes('九毒')) return '九毒日'
+    if (reason.includes('五虚')) return '五虚忌日'
+    if (reason.includes('六耗')) return '六耗忌日'
+    if (reason.includes('天地交泰')) return '天地交泰日'
+    if (reason.includes('阴毒')) return '阴毒大忌'
+    return '常规戒期'
+  }
+
+  /**
+   * 提取标签
+   */
+  private extractTags(text: string): string[] {
+    const tags: string[] = []
+
+    // 神明相关标签
+    if (text.includes('四天王')) tags.push('四天王')
+    if (text.includes('玉帝') || text.includes('玉皇')) tags.push('玉帝')
+    if (text.includes('斗') || text.includes('北斗')) tags.push('斗星')
+    if (text.includes('雷')) tags.push('雷神')
+
+    // 事件类型标签
+    if (text.includes('巡行')) tags.push('巡行')
+    if (text.includes('诞')) tags.push('诞辰')
+    if (text.includes('降')) tags.push('降世')
+    if (text.includes('奏事')) tags.push('奏事')
+
+    // 时间标签
+    if (text.includes('月望')) tags.push('月望')
+    if (text.includes('月朔')) tags.push('月朔')
+    if (text.includes('月晦')) tags.push('月晦')
+
+    // 特殊标签
+    if (text.includes('杨公忌')) tags.push('杨公忌')
+    if (text.includes('九毒')) tags.push('九毒日')
+
+    return tags
+  }
+
+  /**
+   * 获取解释说明
+   */
+  private getExplanation(reason: string): string {
+    const explanations: Record<string, string> = {
+      '四天王巡行': '四天王（东方持国天王、南方增长天王、西方广目天王、北方多闻天王）巡视人间，记录世人善恶',
+      '斗降': '斗星君下降之日，监察世人行为',
+      '雷斋日': '雷神斋戒之日，持戒可避雷劫之灾',
+      '月望': '月圆之日，阴阳交泰，宜清净持戒',
+      '月朔': '新月之日，月神诞辰，宜持戒祈福',
+      '三元降': '三元（天、地、水）之神下降，校世人善恶',
+      '天地仓开日': '天地开仓之日，犯戒损寿并影响子孙',
+      '人神在阴': '先祖神灵在阴间之日，犯戒易得疾病，宜先一日即戒',
+      '司命奏事': '司命之神向天庭奏报世人善恶',
+      '杨公忌': '唐代风水宗师杨筠松所订定的忌日，诸事不宜',
+      '五虚忌': '五虚指脉细、皮寒、气少、泄利前后、饮食不入等五种虚弱状态，此日犯戒易损伤身体',
+      '六耗忌': '六耗指阴、阳、晦、明、风、雨所导致的六种疾病，此日犯戒易致病',
+      '九毒日': '九毒日天地之气不正，湿热毒气盛行，犯戒易遭奇祸不测',
+      '天地交泰': '天地阴阳交合之日，犯戒可能导致严重后果',
+      '阴毒日': '阴毒大忌之日，邪气最盛，犯戒有大凶险'
     }
+
+    for (const [key, value] of Object.entries(explanations)) {
+      if (reason.includes(key)) return value
+    }
+
+    return '传统戒期，应持戒清净，避免不当行为'
+  }
+
+  /**
+   * 获取诞辰解释
+   */
+  private getBirthExplanation(text: string): string {
+    if (text.includes('佛')) return '诸佛菩萨诞辰日，功德殊胜，应持戒清净，广修善业'
+    if (text.includes('玉帝') || text.includes('玉皇')) return '玉帝诞辰，天神庆祝，应持戒祈福'
+    if (text.includes('孔子')) return '至圣先师诞辰，应持戒恭敬，修习智慧'
+    return '神明诞辰日，应持戒清净，可诵经礼忏，积德行善'
+  }
+
+  /**
+   * 获取降世解释
+   */
+  private getDescentExplanation(text: string): string {
+    if (text.includes('三元')) return '三元之神（天官赐福、地官赦罪、水官解厄）下降，校世人善恶'
+    if (text.includes('斗')) return '斗星君下降，监察世人行为，记录善恶功过'
+    return '神明降世之日，应虔诚持戒，可诵经祈福'
+  }
+
+  /**
+   * 获取特殊事件解释
+   */
+  private getSpecialEventExplanation(reason: string): string {
+    if (reason.includes('天地交泰')) return '天地阴阳交泰之日，犯戒可能导致严重后果'
+    if (reason.includes('九毒')) return '九毒日天地之气不正，犯戒易遭奇祸不测'
+    return '此日特殊，应严格持戒，避免一切不当行为'
+  }
+
+  /**
+   * 获取修行建议
+   */
+  private getSuggestion(reason: string, level: PreceptLevel): string {
+    const baseSuggestions = {
+      major: '大罪之日，应严格持戒，可诵经礼忏，广修善业，以求消灾祈福',
+      moderate: '中罪之日，应谨慎持戒，避免不当行为，可修善积德',
+      minor: '小罪之日，应基本持戒，保持身心清净',
+      safe: '平安之日，可正常修行，保持正念'
+    }
+
+    let suggestion = baseSuggestions[level]
+
+    // 根据具体原因添加建议
+    if (reason.includes('四天王')) {
+      suggestion += '，可念诵四天王名号或持诵相关经咒'
+    }
+    if (reason.includes('佛') || reason.includes('菩萨')) {
+      suggestion += '，可持诵佛号或菩萨圣号，修行布施等善业'
+    }
+    if (reason.includes('雷斋')) {
+      suggestion += '，宜食素斋，避免杀生，可诵雷尊经咒'
+    }
+
+    return suggestion
   }
 
   /**
@@ -953,9 +1149,9 @@ export class PreceptDataManager {
 
 
   /**
-   * 获取戒期描述
+   * 生成戒期描述
    */
-  private getPreceptDescription(reason: string, punishment: string, level: PreceptLevel): string {
+  private generateDescription(detail: PreceptDetail, level: PreceptLevel): string {
     const levelText = {
       major: '大罪',
       moderate: '中罪',
@@ -963,7 +1159,21 @@ export class PreceptDataManager {
       safe: '安全'
     }
 
-    return `${reason} - ${punishment} - ${levelText[level]}`
+    let description = `${detail.reason} - ${detail.punishment} - ${levelText[level]}`
+
+    if (detail.explanation) {
+      description += `\n说明：${detail.explanation}`
+    }
+
+    if (detail.suggestion) {
+      description += `\n建议：${detail.suggestion}`
+    }
+
+    if (detail.category) {
+      description += `\n分类：${detail.category}`
+    }
+
+    return description
   }
 
   /**
