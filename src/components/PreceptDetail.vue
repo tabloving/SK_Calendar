@@ -2,7 +2,7 @@
   <div class="precept-detail bg-white rounded-lg shadow-sm p-4">
     <!-- 导航按钮区域 -->
     <div class="navigation-buttons mb-4">
-      <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center justify-between gap-1 flex-wrap">
         <!-- 左侧导航 -->
         <div class="flex items-center gap-1">
           <el-button
@@ -22,7 +22,7 @@
         </div>
 
         <!-- 中间：日期标题信息 -->
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-center flex-1 min-w-0">
           <div class="date-title-centered">
             <h2 class="text-lg font-bold text-gray-800 leading-tight mb-1">
               {{ currentYear }}年{{ currentMonth }}月
@@ -63,35 +63,35 @@
 
     <!-- 月度统计信息 -->
     <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-2 border border-blue-100">
-      <div class="flex items-center justify-between gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <!-- 左侧标题 -->
-        <div class="flex items-center gap-1">
+        <div class="month-title flex items-center gap-1 min-w-fit">
           <el-icon class="text-xs text-blue-600"><DataAnalysis /></el-icon>
           <span class="text-xs font-medium text-gray-700">{{ selectedMonth }}月</span>
         </div>
 
         <!-- 中间统计项 -->
-        <div class="flex items-center gap-1.5 flex-1 justify-center">
+        <div class="flex items-center justify-center gap-1 sm:gap-1.5 flex-wrap">
           <div class="flex items-center gap-1" title="大戒：重罪戒期，需严格持戒">
-            <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-red-500 rounded-full flex-shrink-0"></span>
             <span class="text-xs text-gray-600">大戒 {{ monthStats.major }}</span>
           </div>
           <div class="flex items-center gap-1" title="中戒：中罪戒期，应当谨慎">
-            <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0"></span>
             <span class="text-xs text-gray-600">中戒 {{ monthStats.moderate }}</span>
           </div>
           <div class="flex items-center gap-1" title="宜戒：小罪戒期，建议避免">
-            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0"></span>
             <span class="text-xs text-gray-600">宜戒 {{ monthStats.minor }}</span>
           </div>
           <div class="flex items-center gap-1" title="安全：无明显戒期，可安心行事">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"></span>
             <span class="text-xs text-gray-600">安全 {{ monthStats.safe }}</span>
           </div>
         </div>
 
         <!-- 右侧进度条 -->
-        <div class="flex items-center gap-1">
+        <div class="progress-section flex items-center gap-1 min-w-fit">
           <div class="w-8 bg-gray-200 rounded-full h-1">
             <div
               class="bg-gradient-to-r from-orange-400 to-red-500 h-1 rounded-full transition-all duration-300"
@@ -770,8 +770,9 @@ const goToToday = () => {
 /* 居中日期标题样式 */
 .date-title-centered {
   text-align: center;
-  min-width: 160px;
-  padding: 0 8px;
+  min-width: 120px;
+  padding: 0 4px;
+  flex-shrink: 0;
 }
 
 .date-title-centered h2 {
@@ -873,7 +874,7 @@ const goToToday = () => {
   }
 
   .month-stats-card .flex.items-center.gap-1\.5 {
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
 
   .month-stats-card .flex.items-center.gap-1\.5 > div {
@@ -882,6 +883,22 @@ const goToToday = () => {
 
   .month-stats-card .w-8 {
     width: 1.5rem;
+  }
+
+  .nav-btn {
+    padding: 6px 4px;
+    height: 28px;
+    width: 28px;
+  }
+
+  .date-title-centered {
+    min-width: 100px;
+  }
+
+  .today-btn {
+    padding: 6px 8px;
+    height: 28px;
+    font-size: 11px;
   }
 }
 
@@ -892,7 +909,7 @@ const goToToday = () => {
   }
 
   .month-stats-card .flex.items-center.gap-1\.5 {
-    gap: 0.125rem;
+    gap: 0.25rem;
   }
 
   .month-stats-card .flex.items-center.gap-1\.5 > div {
@@ -900,7 +917,7 @@ const goToToday = () => {
   }
 
   .month-stats-card .flex.items-center.gap-1 {
-    gap: 0.125rem;
+    gap: 0.25rem;
   }
 
   .month-stats-card .w-8 {
@@ -909,6 +926,92 @@ const goToToday = () => {
 
   .month-stats-card .text-xs {
     font-size: 0.625rem;
+  }
+
+  .nav-btn {
+    padding: 4px 2px;
+    height: 24px;
+    width: 24px;
+    font-size: 10px;
+  }
+
+  .date-title-centered {
+    min-width: 80px;
+  }
+
+  .date-title-centered h2 {
+    font-size: 0.875rem;
+  }
+
+  .date-title-centered .text-xs {
+    font-size: 0.625rem;
+  }
+
+  .today-btn {
+    padding: 4px 6px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .navigation-buttons .flex {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  /* 导航按钮样式 */
+  .nav-btn {
+    padding: 3px 1px;
+    height: 20px;
+    width: 20px;
+  }
+
+  .date-title-centered {
+    min-width: 60px;
+  }
+
+  .today-btn {
+    padding: 3px 4px;
+    height: 20px;
+    font-size: 9px;
+  }
+
+  /* 统计卡片样式 - 隐藏月份和进度条，只保留核心统计 */
+  .month-stats-card {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .month-stats-card .month-title {
+    display: none; /* 隐藏月份标题 */
+  }
+
+  .month-stats-card .progress-section {
+    display: none; /* 隐藏进度条 */
+  }
+
+  .month-stats-card .flex.items-center {
+    justify-content: space-evenly; /* 均匀分布统计项 */
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .month-stats-card .flex.items-center > div {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 2px;
+  }
+
+  .month-stats-card .w-1\.5 {
+    display: inline-block; /* 保留指示器 */
+  }
+
+  .month-stats-card .text-xs {
+    font-size: 0.625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
