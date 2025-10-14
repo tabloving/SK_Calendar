@@ -188,6 +188,9 @@
                     :class="getPreceptIndicatorClass(fasting.level)"
                   ></div>
                   <span class="font-medium text-sm">{{ fasting.reason }}</span>
+                  <el-tag v-if="fasting.preceptCount > 1" size="small" type="info" class="ml-2">
+                    {{ fasting.preceptCount }}项
+                  </el-tag>
                 </div>
                 <div class="flex items-center text-xs text-gray-500">
                   <span class="mr-1">{{ fasting.lunarDate }}</span>
@@ -205,6 +208,38 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 修行建议 -->
+      <div class="practice-advice">
+        <!-- 有戒期或斋日时的建议 -->
+        <div v-if="filteredPreceptInfos.length > 0 || hasPreceptDays" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="flex items-center mb-2">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <span class="font-semibold text-blue-800">修行建议</span>
+          </div>
+          <ul class="text-sm text-blue-700 space-y-1">
+            <li>• 请在此日保持身心清净，精进修行</li>
+            <li>• 可多读诵经典，念佛持咒</li>
+            <li>• 若有不慎，应诚心忏悔</li>
+            <li>• 功德回向给法界众生</li>
+          </ul>
+        </div>
+
+        <!-- 既无戒期也无斋日时的精进鼓励 -->
+        <div v-else class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex items-center mb-2">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <span class="font-semibold text-green-800">修行精进</span>
+          </div>
+          <p class="text-sm text-green-700">
+            无戒期之日正是精进修行的好时机，可以加倍功课，积累功德
+          </p>
         </div>
       </div>
 
@@ -363,50 +398,98 @@ const solarTermInfo = computed(() => {
   return null
 })
 
+
 const upcomingPrecepts = computed(() => {
   const today = new Date()
-  const weekLater = new Date(today)
-  weekLater.setDate(today.getDate() + 7)
-  const upcomingPrecepts: Array<{
-    reason: string;
-    date: string;
-    fullDate: Date;
-    lunarDate: string;
-    level: 'major' | 'moderate' | 'minor';
-    daysFromNow: number;
-  }> = []
+  const todayStr = today.toDateString()
+  const threeMonthsLater = new Date(today)
+  threeMonthsLater.setMonth(today.getMonth() + 3)
 
-  // 获取当前月份和下个月的日历数据
+  // 按日期分组的戒期信息
+  const preceptsByDate = new Map<string, {
+    date: Date;
+    dateString: string;
+    lunarDate: string;
+    precepts: Array<{
+      reason: string;
+      level: 'major' | 'moderate' | 'minor';
+      type: string;
+    }>;
+    daysFromNow: number;
+  }>()
+
+  // 获取足够多的日历数据（当前月及未来几个月）
   const currentMonth = calendarStore.currentMonthInfo.days
   const allDays = [...currentMonth]
 
   allDays.forEach(day => {
-    if (day.date >= today && day.date <= weekLater) {
+    if (day.date > today && day.date <= threeMonthsLater) {
       const enabledPrecepts = day.preceptInfos.filter(precept =>
         settingsStore.settings.enabledPreceptTypes.includes(precept.type)
       )
 
       if (enabledPrecepts.length > 0) {
-        const highestLevel = CalendarUtil.getHighestPreceptLevel(enabledPrecepts)
+        const dateKey = day.date.toDateString()
         const daysFromNow = Math.ceil((day.date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+        const lunarInfo = CalendarUtil.getFullLunarMonthDay(day.date)
 
-        enabledPrecepts.forEach(precept => {
-          const lunarInfo = CalendarUtil.getFullLunarMonthDay(day.date)
-          upcomingPrecepts.push({
-            reason: precept.reason,
-            date: `${day.month}月${day.day}日`,
-            fullDate: day.date,
+        if (!preceptsByDate.has(dateKey)) {
+          preceptsByDate.set(dateKey, {
+            date: day.date,
+            dateString: `${day.month}月${day.day}日`,
             lunarDate: lunarInfo.full,
-            level: highestLevel as 'major' | 'moderate' | 'minor',
+            precepts: [],
             daysFromNow: daysFromNow
+          })
+        }
+
+        const dayData = preceptsByDate.get(dateKey)!
+        enabledPrecepts.forEach(precept => {
+          dayData.precepts.push({
+            reason: precept.reason,
+            level: precept.level as 'major' | 'moderate' | 'minor',
+            type: precept.type
           })
         })
       }
     }
   })
 
-  return upcomingPrecepts
+  // 转换为数组并排序，取前3个戒期日
+  const sortedPreceptDays = Array.from(preceptsByDate.values())
     .sort((a, b) => a.daysFromNow - b.daysFromNow)
+    .slice(0, 3)
+
+  // 合并同一天的戒期为一个卡片
+  return sortedPreceptDays.map(dayData => {
+    // 获取当天最高戒期等级
+    const highestLevel = dayData.precepts.reduce((highest, precept) => {
+      const levelOrder = { major: 3, moderate: 2, minor: 1 }
+      const currentOrder = levelOrder[precept.level] || 0
+      const highestOrder = levelOrder[highest.level] || 0
+      return currentOrder > highestOrder ? precept : highest
+    }, dayData.precepts[0]).level
+
+    // 合并戒期原因，如果是同一天多个戒期
+    let combinedReason = ''
+    if (dayData.precepts.length === 1) {
+      combinedReason = dayData.precepts[0].reason
+    } else {
+      // 多个戒期时，用顿号分隔
+      combinedReason = dayData.precepts.map(p => p.reason).join('、')
+    }
+
+    return {
+      reason: combinedReason,
+      date: dayData.dateString,
+      fullDate: dayData.date,
+      lunarDate: dayData.lunarDate,
+      level: highestLevel,
+      daysFromNow: dayData.daysFromNow,
+      preceptCount: dayData.precepts.length,
+      allPrecepts: dayData.precepts
+    }
+  })
 })
 
 // 方法
@@ -781,6 +864,7 @@ const getPreceptLevelStyle = (level: string) => {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 /* 大罪戒期卡片 */
 .major-precept-card {
