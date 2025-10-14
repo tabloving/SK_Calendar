@@ -22,7 +22,7 @@
         </div>
 
         <!-- 中间：日期标题信息 -->
-        <div class="flex items-center justify-center flex-1 min-w-0">
+        <div class="flex items-center justify-center flex-1 min-w-[100px]">
           <div class="date-title-centered">
             <h2 class="text-lg font-bold text-gray-800 leading-tight mb-1">
               {{ currentYear }}年{{ currentMonth }}月
@@ -773,6 +773,9 @@ const goToToday = () => {
   min-width: 120px;
   padding: 0 4px;
   flex-shrink: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .date-title-centered h2 {
@@ -892,7 +895,7 @@ const goToToday = () => {
   }
 
   .date-title-centered {
-    min-width: 100px;
+    min-width: 90px;
   }
 
   .today-btn {
@@ -936,7 +939,7 @@ const goToToday = () => {
   }
 
   .date-title-centered {
-    min-width: 80px;
+    min-width: 70px;
   }
 
   .date-title-centered h2 {
@@ -967,7 +970,12 @@ const goToToday = () => {
   }
 
   .date-title-centered {
-    min-width: 60px;
+    min-width: 50px;
+    font-size: 0.75rem;
+  }
+
+  .date-title-centered h2 {
+    font-size: 0.75rem;
   }
 
   .today-btn {
