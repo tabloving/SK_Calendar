@@ -41,6 +41,7 @@ declare module 'vue' {
     PreceptInfo: typeof import('./src/components/sidebar/PreceptInfo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SidebarPanelIndex: typeof import('./src/components/SidebarPanelIndex.vue')['default']
     UpcomingPrecepts: typeof import('./src/components/sidebar/UpcomingPrecepts.vue')['default']
     Warning: typeof import('./src/components/icons/Warning.vue')['default']
   }

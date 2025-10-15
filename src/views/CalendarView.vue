@@ -8,7 +8,7 @@
 
       <!-- 右侧边栏区域 -->
       <div class="lg:col-span-1">
-        <PreceptDetail />
+        <SidebarPanelIndex />
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@ import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import CalendarGrid from '@/components/CalendarGrid.vue'
-import PreceptDetail from '@/components/PreceptDetail.vue'
+import SidebarPanelIndex from '@/components/SidebarPanelIndex.vue'
 import {
   DataAnalysis,
   Operation,
