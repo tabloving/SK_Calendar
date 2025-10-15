@@ -1,40 +1,40 @@
 <template>
-  <div v-if="upcomingPrecepts.length > 0" class="upcoming-fastings">
+  <div v-if="upcomingPrecepts.length > 0" class="upcoming-precepts">
     <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
       <el-icon class="mr-2"><Clock /></el-icon>
       近期戒期
     </h4>
     <div class="space-y-2">
       <div
-        v-for="(fasting, index) in upcomingPrecepts"
+        v-for="(precept, index) in upcomingPrecepts"
         :key="index"
         class="precept-reminder-card"
-        :class="getPreceptCardClass(fasting.level)"
+        :class="getPreceptCardClass(precept.level)"
       >
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center mb-1">
               <div
                 class="precept-level-indicator mr-2"
-                :class="getPreceptIndicatorClass(fasting.level)"
+                :class="getPreceptIndicatorClass(precept.level)"
               ></div>
-              <span class="font-medium text-sm">{{ fasting.reason }}</span>
-              <el-tag v-if="fasting.preceptCount > 1" size="small" type="info" class="ml-2">
-                {{ fasting.preceptCount }}项
+              <span class="font-medium text-sm">{{ precept.reason }}</span>
+              <el-tag v-if="precept.preceptCount > 1" size="small" type="info" class="ml-2">
+                {{ precept.preceptCount }}项
               </el-tag>
             </div>
             <div class="flex items-center text-xs text-gray-500">
-              <span class="mr-1">{{ fasting.lunarDate }}</span>
+              <span class="mr-1">{{ precept.lunarDate }}</span>
               <svg class="w-3 h-3 mx-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L10 10.414l2.293 2.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
               </svg>
-              <span>{{ getDaysText(fasting.daysFromNow) }}</span>
+              <span>{{ getDaysText(precept.daysFromNow) }}</span>
             </div>
           </div>
           <div class="text-right">
-            <div class="date-text font-semibold text-sm">{{ fasting.date }}</div>
+            <div class="date-text font-semibold text-sm">{{ precept.date }}</div>
             <div class="weekday-text text-xs text-gray-400">
-              {{ getWeekdayText(fasting.fullDate) }}
+              {{ getWeekdayText(precept.fullDate) }}
             </div>
           </div>
         </div>

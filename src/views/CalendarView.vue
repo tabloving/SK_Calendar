@@ -58,8 +58,8 @@ const exportCalendar = () => {
     days: currentMonthDays.value.filter(day => day.isCurrentMonth).map(day => ({
       date: CalendarUtil.formatDate(day.date),
       lunarDate: day.lunarDate,
-      preceptInfos: day.preceptInfos.filter(fasting =>
-        settingsStore.settings.enabledPreceptTypes.includes(fasting.type)
+      preceptInfos: day.preceptInfos.filter(precept =>
+        settingsStore.settings.enabledPreceptTypes.includes(precept.type)
       ),
       solarTerm: day.solarTerm
     }))

@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'fasting': {
+        'precept': {
           'major': '#DC2626',  // 大罪 - 红色
           'moderate': '#EA580C',  // 中罪 - 橙色
           'minor': '#CA8A04',  // 小罪 - 黄色

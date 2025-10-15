@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 /* 自定义戒期颜色样式 */
-.fasting-major {
+.precept-major {
   @apply bg-red-100 text-red-800 border-red-300;
 }
 
-.fasting-moderate {
+.precept-moderate {
   @apply bg-orange-100 text-orange-800 border-orange-300;
 }
 
-.fasting-minor {
+.precept-minor {
   @apply bg-yellow-100 text-yellow-800 border-yellow-300;
 }
 
-.fasting-safe {
+.precept-safe {
   @apply bg-green-100 text-green-800 border-green-300;
 }
 
@@ -24,15 +24,15 @@
   @apply min-h-[80px] border border-gray-200 p-2 transition-all duration-200 hover:shadow-md;
 }
 
-.calendar-day.fasting-major {
+.calendar-day.precept-major {
   @apply bg-red-50 border-red-300;
 }
 
-.calendar-day.fasting-moderate {
+.calendar-day.precept-moderate {
   @apply bg-orange-50 border-orange-300;
 }
 
-.calendar-day.fasting-minor {
+.calendar-day.precept-minor {
   @apply bg-yellow-50 border-yellow-300;
 }
 
@@ -41,19 +41,19 @@
 }
 
 /* 戒期标记样式 */
-.fasting-indicator {
+.precept-indicator {
   @apply inline-block w-2 h-2 rounded-full mr-1;
 }
 
-.fasting-indicator.major {
+.precept-indicator.major {
   @apply bg-red-500;
 }
 
-.fasting-indicator.moderate {
+.precept-indicator.moderate {
   @apply bg-orange-500;
 }
 
-.fasting-indicator.minor {
+.precept-indicator.minor {
   @apply bg-yellow-500;
 }
 
@@ -75,28 +75,28 @@
 }
 
 /* 戒期颜色主题 */
-.fasting-major-theme {
-  --fasting-color: #DC2626;
-  --fasting-bg: #FEF2F2;
-  --fasting-border: #FCA5A5;
+.precept-major-theme {
+  --precept-color: #DC2626;
+  --precept-bg: #FEF2F2;
+  --precept-border: #FCA5A5;
 }
 
-.fasting-moderate-theme {
-  --fasting-color: #EA580C;
-  --fasting-bg: #FFF7ED;
-  --fasting-border: #FDBA74;
+.precept-moderate-theme {
+  --precept-color: #EA580C;
+  --precept-bg: #FFF7ED;
+  --precept-border: #FDBA74;
 }
 
-.fasting-minor-theme {
-  --fasting-color: #CA8A04;
-  --fasting-bg: #FEFCE8;
-  --fasting-border: #FDE047;
+.precept-minor-theme {
+  --precept-color: #CA8A04;
+  --precept-bg: #FEFCE8;
+  --precept-border: #FDE047;
 }
 
-.fasting-safe-theme {
-  --fasting-color: #16A34A;
-  --fasting-bg: #F0FDF4;
-  --fasting-border: #86EFAC;
+.precept-safe-theme {
+  --precept-color: #16A34A;
+  --precept-bg: #F0FDF4;
+  --precept-border: #86EFAC;
 }
 
 /* 动画优化 */

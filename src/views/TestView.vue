@@ -40,19 +40,19 @@
         <template #header>
           <span>今日戒期</span>
         </template>
-        <div v-if="todayFasting.length === 0" class="text-gray-500">
+        <div v-if="todayPrecept.length === 0" class="text-gray-500">
           今日无戒期
         </div>
         <div v-else class="space-y-2">
           <div
-            v-for="(fasting, index) in todayFasting"
+            v-for="(precept, index) in todayPrecept"
             :key="index"
             class="p-2 border rounded"
-            :class="getFastingClass(fasting.level)"
+            :class="getPreceptClass(precept.level)"
           >
-            <div class="font-semibold">{{ fasting.reason }}</div>
-            <div class="text-sm">{{ fasting.description }}</div>
-            <div class="text-xs mt-1">等级：{{ getPreceptLevelText(fasting.level) }}</div>
+            <div class="font-semibold">{{ precept.reason }}</div>
+            <div class="text-sm">{{ precept.description }}</div>
+            <div class="text-xs mt-1">等级：{{ getPreceptLevelText(precept.level) }}</div>
           </div>
         </div>
       </el-card>
@@ -324,7 +324,7 @@ const currentDateInfo = computed(() => {
   }
 })
 
-const todayFasting = computed(() => {
+const todayPrecept = computed(() => {
   const dayInfo = {
     date: currentDate.value,
     lunarDate: '',
@@ -340,7 +340,7 @@ const todayFasting = computed(() => {
   return CalendarUtil.getDayPreceptInfos(dayInfo)
 })
 
-const getFastingClass = (level: string) => {
+const getPreceptClass = (level: string) => {
   const classMap = {
     major: 'bg-red-50 border-red-200',
     moderate: 'bg-orange-50 border-orange-200',

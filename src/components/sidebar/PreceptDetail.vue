@@ -163,7 +163,6 @@ const getPreceptTypeText = (type: string) => {
     regular: '常规戒期',
     special: '特殊戒期',
     personal: '个人戒期',
-    fasting_day: '斋日',
     precept_day: '斋日'
   }
   return typeMap[type as keyof typeof typeMap] || '未知类型'

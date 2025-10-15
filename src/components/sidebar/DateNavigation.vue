@@ -97,10 +97,10 @@
           <div class="w-8 bg-gray-200 rounded-full h-1">
             <div
               class="bg-gradient-to-r from-orange-400 to-red-500 h-1 rounded-full transition-all duration-300"
-              :style="{ width: `${fastingPercentage}%` }"
+              :style="{ width: `${preceptPercentage}%` }"
             ></div>
           </div>
-          <span class="text-xs font-medium text-gray-700">{{ fastingPercentage }}%</span>
+          <span class="text-xs font-medium text-gray-700">{{ preceptPercentage }}%</span>
         </div>
       </div>
     </div>
@@ -136,10 +136,10 @@ const lunarMonthName = computed(() => {
 
 const monthStats = computed(() => calendarStore.getMonthPreceptStats)
 
-const fastingPercentage = computed(() => {
+const preceptPercentage = computed(() => {
   if (monthStats.value.total === 0) return 0
-  const fastingDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
-  return Math.round((fastingDays / monthStats.value.total) * 100)
+  const preceptDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
+  return Math.round((preceptDays / monthStats.value.total) * 100)
 })
 
 // 导航方法
