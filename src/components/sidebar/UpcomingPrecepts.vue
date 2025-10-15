@@ -1,8 +1,8 @@
 <template>
   <div v-if="upcomingPrecepts.length > 0" class="upcoming-fastings">
     <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-      <el-icon class="mr-2"><Bell /></el-icon>
-      近期戒期提醒
+      <el-icon class="mr-2"><Clock /></el-icon>
+      近期戒期
     </h4>
     <div class="space-y-2">
       <div
@@ -48,7 +48,7 @@ import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
-import { Bell } from '@element-plus/icons-vue'
+import { Clock } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
