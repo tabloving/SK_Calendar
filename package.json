@@ -2,6 +2,7 @@
   "name": "sk-calendar",
   "version": "1.0.0",
   "description": "寿康宝鉴戒期日历应用",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
