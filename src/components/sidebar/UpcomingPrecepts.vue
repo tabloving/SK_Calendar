@@ -1,6 +1,6 @@
 <template>
   <div v-if="upcomingPrecepts.length > 0" class="upcoming-fastings">
-    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+    <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
       <el-icon class="mr-2"><Bell /></el-icon>
       近期戒期提醒
     </h4>
@@ -269,8 +269,5 @@ const getWeekdayText = (date: Date) => {
     font-size: 10px;
   }
 
-  .upcoming-fastings {
-    margin-top: 4;
-  }
 }
 </style>

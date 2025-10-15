@@ -428,8 +428,4 @@ const getMonthYear = (date: Date) => {
     padding: 1px 4px;
   }
 }
-
-.date-card {
-  margin-bottom: 1.5rem; /* 与下一个组件的间距 */
-}
 </style>

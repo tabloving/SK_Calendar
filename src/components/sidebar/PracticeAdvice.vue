@@ -69,9 +69,3 @@ const isTenPreceptDay = computed(() => {
   }
 })
 </script>
-
-<style scoped>
-.practice-advice {
-  margin-top: 1.5rem; /* 增加与上方组件的间距 */
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="selectedDayInfo" class="precept-info">
-    <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+    <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
       <el-icon class="mr-2" :size="20">
         <Document />
       </el-icon>
@@ -208,10 +208,6 @@ const getPreceptLevelStyle = (level: string) => {
 </style>
 
 <style scoped>
-.precept-info {
-  margin-bottom: 1.5rem; /* 增加与下方组件的间距 */
-}
-
 .precept-indicator {
   width: 12px;
   height: 12px;

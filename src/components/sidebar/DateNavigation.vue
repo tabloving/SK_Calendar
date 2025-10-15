@@ -1,7 +1,7 @@
 <template>
   <div class="date-navigation">
     <!-- 导航按钮区域 -->
-    <div class="navigation-buttons mb-4">
+    <div class="navigation-buttons mb-2">
       <div class="flex items-center justify-between gap-1 flex-wrap">
         <!-- 左侧导航 -->
         <div class="flex items-center gap-1">
@@ -64,7 +64,7 @@
     </div>
 
     <!-- 月度统计信息 -->
-    <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-2 border border-blue-100">
+    <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-100">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <!-- 左侧标题 -->
         <div class="month-title flex items-center gap-1 min-w-fit">
@@ -169,7 +169,6 @@ const goToToday = () => {
 .navigation-buttons {
   border-bottom: 1px solid #f0f0f0;
   padding-bottom: 12px;
-  margin-bottom: 16px;
 }
 
 /* 居中日期标题样式 */
