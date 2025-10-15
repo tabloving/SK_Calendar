@@ -2,9 +2,9 @@
   <div v-if="selectedDayInfo" class="precept-info">
     <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
       <el-icon class="mr-2" :size="20">
-        <Document />
+        <View />
       </el-icon>
-      戒期信息
+      戒期详情
     </h4>
 
     <!-- 有斋日或戒期时显示 -->
@@ -121,7 +121,7 @@ import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
 import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { Document, Star } from '@element-plus/icons-vue'
+import { View, Star } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
