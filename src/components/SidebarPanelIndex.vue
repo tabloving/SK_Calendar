@@ -3,7 +3,7 @@
     <!-- 唯一入口：直接显示所有子组件 -->
     <DateNavigation />
     <DateCard v-if="selectedDayInfo" />
-    <PreceptInfo v-if="selectedDayInfo" />
+    <PreceptDetail v-if="selectedDayInfo" />
     <UpcomingPrecepts v-if="selectedDayInfo" />
     <PracticeAdvice v-if="selectedDayInfo" />
 
@@ -27,7 +27,7 @@ import { useCalendarStore } from '@/stores/calendar'
 import { Calendar } from '@element-plus/icons-vue'
 import DateNavigation from './sidebar/DateNavigation.vue'
 import DateCard from './sidebar/DateCard.vue'
-import PreceptInfo from './sidebar/PreceptInfo.vue'
+import PreceptDetail from './sidebar/PreceptDetail.vue'
 import UpcomingPrecepts from './sidebar/UpcomingPrecepts.vue'
 import PracticeAdvice from './sidebar/PracticeAdvice.vue'
 
