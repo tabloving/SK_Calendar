@@ -139,7 +139,8 @@ onMounted(async () => {
 
   // 监听月份变化（当用户切换月份时更新高度）
   const unwatchMonth = calendarStore.$subscribe((mutation, state) => {
-    if (mutation.type === 'direct' || mutation.events?.key.includes('selectedYear') || mutation.events?.key.includes('selectedMonth')) {
+    // 监听 store 中任何可能导致日历高度变化的状态
+    if (mutation.type === 'direct') {
       nextTick(() => {
         updateSidebarHeight()
       })
