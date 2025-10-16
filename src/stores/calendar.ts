@@ -155,7 +155,7 @@ export const useCalendarStore = defineStore('calendar', () => {
   }
 
   // 获取指定日期的戒期信息
-  const getDayFastingInfo = (date: Date) => {
+  const getDayPreceptInfo = (date: Date) => {
     return CalendarUtil.getDayPreceptInfos({
       date,
       lunarDate: '',
@@ -211,6 +211,6 @@ export const useCalendarStore = defineStore('calendar', () => {
     goToNextYear,
     selectDate,
     goToMonth,
-    getDayFastingInfo
+    getDayPreceptInfo
   }
 })

@@ -52,12 +52,12 @@ export class CalendarUtil {
     }
 
     // 1. 获取每月固定戒期
-    const monthlyFastings = this.preceptManager.getPreceptByLunarDate(lunarMonth, lunarDay)
-    allPreceptInfos.push(...monthlyFastings)
+    const monthlyPrecepts = this.preceptManager.getPreceptByLunarDate(lunarMonth, lunarDay)
+    allPreceptInfos.push(...monthlyPrecepts)
 
     // 2. 获取特殊戒期（佛菩萨圣诞等）
-    const specialFastings = this.preceptManager.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
-    allPreceptInfos.push(...specialFastings)
+    const specialPrecepts = this.preceptManager.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
+    allPreceptInfos.push(...specialPrecepts)
 
   
     // 3. 检查十斋日
@@ -157,7 +157,7 @@ export class CalendarUtil {
       minor: 'precept-minor',
       safe: 'precept-safe'
     }
-    return classMap[level] || 'fasting-safe'
+    return classMap[level] || 'precept-safe'
   }
 
   /**

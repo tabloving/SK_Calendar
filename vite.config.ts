@@ -15,7 +15,10 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-      dts: true
+      dts: true,
+      // 解决组件命名冲突
+      include: [/\.vue$/, /\.vue\?vue/],
+      exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]\.nuxt[\\/]/]
     })
   ],
   resolve: {
@@ -29,6 +32,19 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // 将 vendor 库分离出来
+          vendor: ['vue', 'vue-router', 'pinia'],
+          // Element UI 分离出来
+          'element-ui': ['element-plus'],
+          // 工具库分离出来
+          utils: [/* 如果有单独的工具库文件在这里添加 */]
+        }
+      }
+    },
+    chunkSizeWarningLimit: 500 // 默认是500KB，这里保持默认值
   }
 })

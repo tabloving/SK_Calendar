@@ -78,14 +78,14 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   // 个人戒期管理
-  const addPersonalPrecept = (fasting: Omit<PersonalPrecept, 'id'>) => {
-    const newFasting: PersonalPrecept = {
-      ...fasting,
+  const addPersonalPrecept = (precept: Omit<PersonalPrecept, 'id'>) => {
+    const newPrecept: PersonalPrecept = {
+      ...precept,
       id: Date.now().toString()
     }
-    settings.value.personalPrecepts.push(newFasting)
+    settings.value.personalPrecepts.push(newPrecept)
     saveSettings()
-    return newFasting
+    return newPrecept
   }
 
   const updatePersonalPrecept = (id: string, updates: Partial<PersonalPrecept>) => {
@@ -108,9 +108,9 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   const togglePersonalPrecept = (id: string) => {
-    const fasting = settings.value.personalPrecepts.find(f => f.id === id)
-    if (fasting) {
-      fasting.enabled = !fasting.enabled
+    const precept = settings.value.personalPrecepts.find(f => f.id === id)
+    if (precept) {
+      precept.enabled = !precept.enabled
       saveSettings()
     }
   }

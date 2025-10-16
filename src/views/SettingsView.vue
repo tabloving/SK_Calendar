@@ -23,7 +23,7 @@
         <el-form-item label="显示戒期标识">
           <el-switch
             v-model="settings.showPreceptIndicators"
-            @change="handleShowFastingIndicatorsChange"
+            @change="handleShowPreceptIndicatorsChange"
           />
           <div class="text-sm text-gray-500 mt-1">
             在日历格子中显示戒期等级指示器
@@ -111,24 +111,24 @@
 
       <div v-else class="space-y-3">
         <div
-          v-for="fasting in personalPrecepts"
-          :key="fasting.id"
+          v-for="precept in personalPrecepts"
+          :key="precept.id"
           class="personal-precept-item border rounded-lg p-4"
-          :class="{ 'opacity-50': !fasting.enabled }"
+          :class="{ 'opacity-50': !precept.enabled }"
         >
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center mb-2">
-                <span class="font-semibold">{{ fasting.name }}</span>
+                <span class="font-semibold">{{ precept.name }}</span>
                 <el-tag
-                  :type="getTagType(fasting.level)"
+                  :type="getTagType(precept.level)"
                   size="small"
                   class="ml-2"
                 >
-                  {{ getPreceptLevelText(fasting.level) }}
+                  {{ getPreceptLevelText(precept.level) }}
                 </el-tag>
                 <el-tag
-                  v-if="!fasting.enabled"
+                  v-if="!precept.enabled"
                   type="info"
                   size="small"
                   class="ml-2"
@@ -137,22 +137,22 @@
                 </el-tag>
               </div>
               <div class="text-sm text-gray-600">
-                <div>日期：农历{{ fasting.date }}</div>
-                <div>原因：{{ fasting.reason }}</div>
+                <div>日期：农历{{ precept.date }}</div>
+                <div>原因：{{ precept.reason }}</div>
               </div>
             </div>
             <div class="flex items-center space-x-2">
               <el-button
                 type="text"
                 size="small"
-                @click="togglePersonalPrecept(fasting.id)"
+                @click="togglePersonalPrecept(precept.id)"
               >
-                {{ fasting.enabled ? '禁用' : '启用' }}
+                {{ precept.enabled ? '禁用' : '启用' }}
               </el-button>
               <el-button
                 type="text"
                 size="small"
-                @click="editPersonalPrecept(fasting)"
+                @click="editPersonalPrecept(precept)"
               >
                 编辑
               </el-button>
@@ -160,7 +160,7 @@
                 type="text"
                 size="small"
                 class="text-red-600"
-                @click="deletePersonalPrecept(fasting.id)"
+                @click="deletePersonalPrecept(precept.id)"
               >
                 删除
               </el-button>
@@ -223,9 +223,9 @@
       width="500px"
     >
       <el-form
-        ref="personalFastingFormRef"
+        ref="personalPreceptFormRef"
         :model="personalPreceptDialog.form"
-        :rules="personalFastingRules"
+        :rules="personalPreceptRules"
         label-width="80px"
       >
         <el-form-item label="名称" prop="name">
@@ -311,10 +311,10 @@ const personalPreceptDialog = reactive({
   }
 })
 
-const personalFastingFormRef = ref<FormInstance>()
+const personalPreceptFormRef = ref<FormInstance>()
 
 // 表单验证规则
-const personalFastingRules: FormRules = {
+const personalPreceptRules: FormRules = {
   name: [
     { required: true, message: '请输入戒期名称', trigger: 'blur' }
   ],
@@ -335,7 +335,7 @@ const handleThemeChange = (theme: 'light' | 'dark') => {
   settingsStore.setTheme(theme)
 }
 
-const handleShowFastingIndicatorsChange = (value: boolean) => {
+const handleShowPreceptIndicatorsChange = (value: boolean) => {
   settingsStore.setShowPreceptIndicators(value)
 }
 
@@ -371,10 +371,10 @@ const showAddPersonalPreceptDialog = () => {
   resetPersonalPreceptForm()
 }
 
-const editPersonalPrecept = (fasting: PersonalPrecept) => {
+const editPersonalPrecept = (precept: PersonalPrecept) => {
   personalPreceptDialog.visible = true
   personalPreceptDialog.isEdit = true
-  Object.assign(personalPreceptDialog.form, fasting)
+  Object.assign(personalPreceptDialog.form, precept)
 }
 
 const resetPersonalPreceptForm = () => {
@@ -394,10 +394,10 @@ const cancelPersonalPreceptDialog = () => {
 }
 
 const savePersonalPrecept = async () => {
-  if (!personalFastingFormRef.value) return
+  if (!personalPreceptFormRef.value) return
 
   try {
-    await personalFastingFormRef.value.validate()
+    await personalPreceptFormRef.value.validate()
 
     if (personalPreceptDialog.isEdit) {
       settingsStore.updatePersonalPrecept(personalPreceptDialog.form.id, {

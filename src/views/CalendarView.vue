@@ -3,25 +3,33 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <!-- 左侧日历区域 -->
       <div class="lg:col-span-3 space-y-3">
-        <CalendarGrid />
+        <div ref="calendarGridRef">
+          <CalendarGrid />
+        </div>
       </div>
 
       <!-- 右侧边栏区域 -->
       <div class="lg:col-span-1">
-        <PreceptDetail />
+        <div
+          ref="sidebarRef"
+          class="sidebar-container"
+          :style="{ height: isDesktopLayout ? sidebarHeight + 'px' : 'auto' }"
+        >
+          <SidebarPanelIndex />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, onUnmounted, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import CalendarGrid from '@/components/CalendarGrid.vue'
-import PreceptDetail from '@/components/PreceptDetail.vue'
+import SidebarPanelIndex from '@/components/SidebarPanelIndex.vue'
 import {
   DataAnalysis,
   Operation,
@@ -35,9 +43,44 @@ const router = useRouter()
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
 
+// 快捷搜索关联词汇
+// DOM 引用
+const calendarGridRef = ref<HTMLElement>()
+const sidebarRef = ref<HTMLElement>()
+
+// 右侧边栏高度
+const sidebarHeight = ref(400)
+
+// 检测是否为桌面端并列布局
+const isDesktopLayout = ref(window.innerWidth >= 1024)
+
+// 响应式处理窗口大小变化
+const handleResize = () => {
+  const wasDesktop = isDesktopLayout.value
+  isDesktopLayout.value = window.innerWidth >= 1024
+
+  // 如果布局模式发生变化，更新侧边栏高度
+  if (wasDesktop !== isDesktopLayout.value) {
+    nextTick(() => {
+      updateSidebarHeight()
+    })
+  }
+}
+
+// 响应式数据
 const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
 })
+
+// 更新右侧边栏高度与日历同步
+const updateSidebarHeight = async () => {
+  await nextTick()
+
+  if (calendarGridRef.value && isDesktopLayout.value) { // 仅在桌面端并列布局时执行
+    const calendarHeight = calendarGridRef.value.offsetHeight
+    sidebarHeight.value = calendarHeight
+  }
+}
 
 // 方法
 const goToToday = () => {
@@ -58,8 +101,8 @@ const exportCalendar = () => {
     days: currentMonthDays.value.filter(day => day.isCurrentMonth).map(day => ({
       date: CalendarUtil.formatDate(day.date),
       lunarDate: day.lunarDate,
-      preceptInfos: day.preceptInfos.filter(fasting =>
-        settingsStore.settings.enabledPreceptTypes.includes(fasting.type)
+      preceptInfos: day.preceptInfos.filter(precept =>
+        settingsStore.settings.enabledPreceptTypes.includes(precept.type)
       ),
       solarTerm: day.solarTerm
     }))
@@ -78,7 +121,7 @@ const exportCalendar = () => {
 }
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
   // 加载设置
   settingsStore.loadSettings()
 
@@ -86,12 +129,48 @@ onMounted(() => {
   if (!calendarStore.selectedDate) {
     calendarStore.goToToday()
   }
+
+  // 初始化高度同步
+  await nextTick()
+  updateSidebarHeight()
+
+  // 监听窗口大小变化
+  window.addEventListener('resize', handleResize)
+
+  // 监听月份变化（当用户切换月份时更新高度）
+  const unwatchMonth = calendarStore.$subscribe((mutation, state) => {
+    // 监听 store 中任何可能导致日历高度变化的状态
+    if (mutation.type === 'direct') {
+      nextTick(() => {
+        updateSidebarHeight()
+      })
+    }
+  })
+
+  // 组件卸载时清理监听器
+  onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+    unwatchMonth()
+  })
 })
 </script>
 
 <style scoped>
 .calendar-view {
   padding: 0;
+}
+
+.sidebar-container {
+  transition: height 0.3s ease;
+  min-height: auto;
+}
+
+/* 桌面端（并列显示）时的样式 */
+@media (min-width: 1024px) {
+  .sidebar-container {
+    min-height: 400px;
+    overflow: hidden;
+  }
 }
 
 .stats-card {
