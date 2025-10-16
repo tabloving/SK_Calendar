@@ -13,7 +13,7 @@
         <div
           ref="sidebarRef"
           class="sidebar-container"
-          :style="{ height: sidebarHeight + 'px' }"
+          :style="{ height: isDesktopLayout ? sidebarHeight + 'px' : 'auto' }"
         >
           <SidebarPanelIndex />
         </div>
@@ -51,6 +51,22 @@ const sidebarRef = ref<HTMLElement>()
 // 右侧边栏高度
 const sidebarHeight = ref(400)
 
+// 检测是否为桌面端并列布局
+const isDesktopLayout = ref(window.innerWidth >= 1024)
+
+// 响应式处理窗口大小变化
+const handleResize = () => {
+  const wasDesktop = isDesktopLayout.value
+  isDesktopLayout.value = window.innerWidth >= 1024
+
+  // 如果布局模式发生变化，更新侧边栏高度
+  if (wasDesktop !== isDesktopLayout.value) {
+    nextTick(() => {
+      updateSidebarHeight()
+    })
+  }
+}
+
 // 响应式数据
 const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
@@ -60,7 +76,7 @@ const currentMonthDays = computed(() => {
 const updateSidebarHeight = async () => {
   await nextTick()
 
-  if (calendarGridRef.value && window.innerWidth >= 1024) { // 仅在桌面端执行
+  if (calendarGridRef.value && isDesktopLayout.value) { // 仅在桌面端并列布局时执行
     const calendarHeight = calendarGridRef.value.offsetHeight
     sidebarHeight.value = calendarHeight
   }
@@ -119,7 +135,7 @@ onMounted(async () => {
   updateSidebarHeight()
 
   // 监听窗口大小变化
-  window.addEventListener('resize', updateSidebarHeight)
+  window.addEventListener('resize', handleResize)
 
   // 监听月份变化（当用户切换月份时更新高度）
   const unwatchMonth = calendarStore.$subscribe((mutation, state) => {
@@ -132,7 +148,7 @@ onMounted(async () => {
 
   // 组件卸载时清理监听器
   onUnmounted(() => {
-    window.removeEventListener('resize', updateSidebarHeight)
+    window.removeEventListener('resize', handleResize)
     unwatchMonth()
   })
 })
@@ -145,7 +161,15 @@ onMounted(async () => {
 
 .sidebar-container {
   transition: height 0.3s ease;
-  min-height: 400px;
+  min-height: auto;
+}
+
+/* 桌面端（并列显示）时的样式 */
+@media (min-width: 1024px) {
+  .sidebar-container {
+    min-height: 400px;
+    overflow: hidden;
+  }
 }
 
 .stats-card {

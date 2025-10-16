@@ -37,10 +37,16 @@ const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
 
 <style scoped>
 .sidebar-panel {
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
+}
+
+/* 桌面端（并列显示）时的样式 */
+@media (min-width: 1024px) {
+  .sidebar-panel {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 </style>
