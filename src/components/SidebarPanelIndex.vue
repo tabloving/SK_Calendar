@@ -37,9 +37,10 @@ const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
 
 <style scoped>
 .sidebar-panel {
-  min-height: 400px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 }
 </style>
