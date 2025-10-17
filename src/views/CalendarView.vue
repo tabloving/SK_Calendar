@@ -1,9 +1,9 @@
 <template>
   <div class="calendar-view">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 h-full">
       <!-- 左侧日历区域 -->
-      <div class="lg:col-span-3 space-y-3">
-        <div ref="calendarGridRef">
+      <div class="lg:col-span-3 space-y-3 h-full" ref="calendarContainerRef">
+        <div ref="calendarGridRef" class="calendar-grid-container" :style="{ height: calendarGridHeight + 'px' }">
           <CalendarGrid />
         </div>
       </div>
@@ -46,9 +46,11 @@ const settingsStore = useSettingsStore()
 // 快捷搜索关联词汇
 // DOM 引用
 const calendarGridRef = ref<HTMLElement>()
+const calendarContainerRef = ref<HTMLElement>()
 const sidebarRef = ref<HTMLElement>()
 
-// 右侧边栏高度
+// 高度状态
+const calendarGridHeight = ref(600)
 const sidebarHeight = ref(400)
 
 // 检测是否为桌面端并列布局
@@ -58,6 +60,9 @@ const isDesktopLayout = ref(window.innerWidth >= 1024)
 const handleResize = () => {
   const wasDesktop = isDesktopLayout.value
   isDesktopLayout.value = window.innerWidth >= 1024
+
+  // 更新日历网格高度
+  updateCalendarGridHeight()
 
   // 如果布局模式发生变化，更新侧边栏高度
   if (wasDesktop !== isDesktopLayout.value) {
@@ -72,12 +77,34 @@ const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
 })
 
+// 更新日历网格高度，充满可视区域
+const updateCalendarGridHeight = async () => {
+  await nextTick()
+
+  if (isDesktopLayout.value) {
+    // 桌面端：让日历充满可用的可视空间
+    const viewportHeight = window.innerHeight
+
+    // 计算日历可用高度：视口高度减去顶部导航栏和侧边栏边距
+    // 减去约80px的页面顶部空间和底部边距
+    const calendarHeight = viewportHeight - 80
+
+    // 设置合理的高度范围
+    const newHeight = Math.max(600, Math.min(calendarHeight, viewportHeight - 100))
+
+    calendarGridHeight.value = newHeight
+  } else {
+    // 移动端使用合理的固定高度
+    calendarGridHeight.value = 400
+  }
+}
+
 // 更新右侧边栏高度与日历同步
 const updateSidebarHeight = async () => {
   await nextTick()
 
   if (calendarGridRef.value && isDesktopLayout.value) { // 仅在桌面端并列布局时执行
-    const calendarHeight = calendarGridRef.value.offsetHeight
+    const calendarHeight = calendarGridHeight.value // 使用计算出的高度而不是实际offsetHeight
     sidebarHeight.value = calendarHeight
   }
 }
@@ -130,8 +157,9 @@ onMounted(async () => {
     calendarStore.goToToday()
   }
 
-  // 初始化高度同步
+  // 初始化高度计算
   await nextTick()
+  updateCalendarGridHeight()
   updateSidebarHeight()
 
   // 监听窗口大小变化
@@ -142,6 +170,7 @@ onMounted(async () => {
     // 监听 store 中任何可能导致日历高度变化的状态
     if (mutation.type === 'direct') {
       nextTick(() => {
+        updateCalendarGridHeight()
         updateSidebarHeight()
       })
     }
@@ -158,6 +187,13 @@ onMounted(async () => {
 <style scoped>
 .calendar-view {
   padding: 0;
+  height: calc(100vh - 60px); /* 减去顶部导航栏高度 */
+  overflow: hidden;
+}
+
+.calendar-grid-container {
+  transition: height 0.3s ease;
+  overflow: hidden;
 }
 
 .sidebar-container {

@@ -1,7 +1,7 @@
 <template>
-  <div class="calendar-grid bg-white rounded-lg shadow-sm pb-2">
+  <div class="calendar-grid bg-white rounded-lg shadow-sm pb-2 h-full flex flex-col">
     <!-- 星期标题 -->
-    <div class="week-header grid grid-cols-7 bg-white border-b border-gray-100">
+    <div class="week-header grid grid-cols-7 bg-white border-b border-gray-100 flex-shrink-0">
       <div
         v-for="(day, index) in weekDays"
         :key="index"
@@ -16,8 +16,8 @@
     </div>
 
     <!-- 日历格子 -->
-    <div class="calendar-body">
-      <div class="grid grid-cols-7">
+    <div class="calendar-body flex-1">
+      <div class="calendar-grid-days">
         <CalendarDay
           v-for="dayInfo in currentMonthDays"
           :key="`${dayInfo.year}-${dayInfo.month}-${dayInfo.day}`"
@@ -27,8 +27,7 @@
         />
       </div>
     </div>
-
-    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,6 +44,12 @@ const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 // 计算属性
 const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
+})
+
+// 计算日历行数，用于动态设置格子高度
+const calendarRows = computed(() => {
+  const dayCount = currentMonthDays.value.length
+  return Math.ceil(dayCount / 7)
 })
 
 // 方法
@@ -68,6 +73,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #f1f5f9;
+  overflow: hidden;
 }
 
 .week-header {
@@ -102,42 +108,41 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 }
 
 .calendar-body {
-  min-height: 450px;
   background: #ffffff;
   padding: 6px 10px;
-  overflow: visible;
+  overflow: hidden;
+  flex: 1;
 }
 
-.calendar-body .grid {
+.calendar-grid-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 3px;
+  height: 100%;
   margin-right: 2px;
 }
 
 /* 格子之间的分隔 */
-.calendar-body .grid > * {
+.calendar-grid-days > * {
   border-right: 1px solid #f8fafc;
   border-bottom: 1px solid #f8fafc;
-}
-
-/* 移除每行最后一个格子的右边框 */
-.calendar-body .grid > *:nth-child(7n) {
-  border-right: none;
-}
-
-/* 移除最后一行格子的底边框 */
-.calendar-body .grid > *:nth-last-child {
-  border-bottom: none;
-}
-
-/* 整体容器内边距优化 */
-.calendar-grid .grid-cols-7 > * {
   padding: 5px 8px;
   box-sizing: border-box;
 }
 
+/* 移除每行最后一个格子的右边框 */
+.calendar-grid-days > *:nth-child(7n) {
+  border-right: none;
+}
+
 /* 确保最后一列格子的右边框完整显示 */
-.calendar-grid .grid-cols-7 > *:nth-child(7n) {
+.calendar-grid-days > *:nth-child(7n) {
   padding-right: 9px;
+}
+
+/* 移除最后一行格子的底边框 */
+.calendar-grid-days > *:nth-last-child(-n+7) {
+  border-bottom: none;
 }
 
 @media (max-width: 640px) {
@@ -159,25 +164,26 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .calendar-body {
-    min-height: 350px;
     padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
   }
 
-  .calendar-body .grid {
+  .calendar-grid-days {
     gap: 2px;
   }
 
-  .calendar-body .grid > * {
+  .calendar-grid-days > * {
     border-right: 1px solid #f8fafc;
     border-bottom: 1px solid #f8fafc;
   }
 
-  .calendar-body .grid > *:nth-child(7n) {
+  .calendar-grid-days > *:nth-child(7n) {
     border-right: none;
     padding-right: 6px;
   }
 
-  .calendar-body .grid > *:nth-last-child {
+  .calendar-grid-days > *:nth-last-child(-n+7) {
     border-bottom: none;
   }
 }
@@ -198,25 +204,26 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .calendar-body {
-    min-height: 300px;
     padding: 3px 7px;
+    display: flex;
+    flex-direction: column;
   }
 
-  .calendar-body .grid {
+  .calendar-grid-days {
     gap: 2px;
   }
 
-  .calendar-body .grid > * {
+  .calendar-grid-days > * {
     border-right: 1px solid #f8fafc;
     border-bottom: 1px solid #f8fafc;
   }
 
-  .calendar-body .grid > *:nth-child(7n) {
+  .calendar-grid-days > *:nth-child(7n) {
     border-right: none;
     padding-right: 5px;
   }
 
-  .calendar-body .grid > *:nth-last-child {
+  .calendar-grid-days > *:nth-last-child(-n+7) {
     border-bottom: none;
   }
 }

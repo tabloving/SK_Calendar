@@ -368,6 +368,7 @@ const getDisplayReason = (reason: string): string => {
   overflow: hidden;
   border: 1px solid #f0f0f0;
   background: #ffffff;
+  height: 100%;
   min-height: 120px;
   padding: 12px 16px;
   border-radius: 8px;
