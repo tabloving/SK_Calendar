@@ -46,7 +46,6 @@ const selectedDayInfo = computed(() => calendarStore.selectedDayInfo)
 @media (min-width: 1024px) {
   .sidebar-panel {
     height: 100%;
-    overflow-y: auto;
   }
 }
 </style>

@@ -1,20 +1,27 @@
 <template>
   <div class="calendar-view">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 h-full">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <!-- 左侧日历区域 -->
-      <div class="lg:col-span-3 space-y-3 h-full" ref="calendarContainerRef">
-        <div ref="calendarGridRef" class="calendar-grid-container" :style="{ height: calendarGridHeight + 'px' }">
+      <div
+        class="lg:col-span-3 space-y-3 flex flex-col"
+        ref="calendarContainerRef"
+        :style="{ height: isDesktopLayout ? 'calc(100vh - 60px)' : 'auto' }">
+        <div
+          ref="calendarGridRef"
+          class="calendar-grid-container"
+          :style="{ height: calendarGridHeight + 'px' }">
           <CalendarGrid />
         </div>
       </div>
 
       <!-- 右侧边栏区域 -->
-      <div class="lg:col-span-1 bg-white pt-4 pb-4">
+      <div
+        ref="sidebarContainerRef"
+        class="lg:col-span-1 bg-white pt-4 pb-4 sidebar-outer-container"
+        :style="{ height: isDesktopLayout ? calendarGridHeight + 'px' : 'auto' }">
         <div
           ref="sidebarRef"
-          class="sidebar-container"
-          :style="{ height: isDesktopLayout ? sidebarHeight + 'px' : 'auto' }"
-        >
+          class="sidebar-container">
           <SidebarPanelIndex />
         </div>
       </div>
@@ -51,7 +58,6 @@ const sidebarRef = ref<HTMLElement>()
 
 // 高度状态
 const calendarGridHeight = ref(600)
-const sidebarHeight = ref(400)
 
 // 检测是否为桌面端并列布局
 const isDesktopLayout = ref(window.innerWidth >= 1024)
@@ -63,13 +69,6 @@ const handleResize = () => {
 
   // 更新日历网格高度
   updateCalendarGridHeight()
-
-  // 如果布局模式发生变化，更新侧边栏高度
-  if (wasDesktop !== isDesktopLayout.value) {
-    nextTick(() => {
-      updateSidebarHeight()
-    })
-  }
 }
 
 // 响应式数据
@@ -99,16 +98,6 @@ const updateCalendarGridHeight = async () => {
   }
 }
 
-// 更新右侧边栏高度与日历同步
-const updateSidebarHeight = async () => {
-  await nextTick()
-
-  if (calendarGridRef.value && isDesktopLayout.value) { // 仅在桌面端并列布局时执行
-    const calendarHeight = calendarGridHeight.value // 使用计算出的高度而不是实际offsetHeight
-    sidebarHeight.value = calendarHeight
-  }
-}
-
 // 方法
 const goToToday = () => {
   calendarStore.goToToday()
@@ -125,14 +114,16 @@ const exportCalendar = () => {
     year: calendarStore.selectedYear,
     month: calendarStore.selectedMonth,
     preceptStats: calendarStore.getMonthPreceptStats,
-    days: currentMonthDays.value.filter(day => day.isCurrentMonth).map(day => ({
-      date: CalendarUtil.formatDate(day.date),
-      lunarDate: day.lunarDate,
-      preceptInfos: day.preceptInfos.filter(precept =>
-        settingsStore.settings.enabledPreceptTypes.includes(precept.type)
-      ),
-      solarTerm: day.solarTerm
-    }))
+    days: currentMonthDays.value
+      .filter(day => day.isCurrentMonth)
+      .map(day => ({
+        date: CalendarUtil.formatDate(day.date),
+        lunarDate: day.lunarDate,
+        preceptInfos: day.preceptInfos.filter(precept =>
+          settingsStore.settings.enabledPreceptTypes.includes(precept.type)
+        ),
+        solarTerm: day.solarTerm
+      }))
   }
 
   const dataStr = JSON.stringify(exportData, null, 2)
@@ -160,7 +151,6 @@ onMounted(async () => {
   // 初始化高度计算
   await nextTick()
   updateCalendarGridHeight()
-  updateSidebarHeight()
 
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize)
@@ -171,7 +161,6 @@ onMounted(async () => {
     if (mutation.type === 'direct') {
       nextTick(() => {
         updateCalendarGridHeight()
-        updateSidebarHeight()
       })
     }
   })
@@ -196,6 +185,11 @@ onMounted(async () => {
   overflow: hidden;
 }
 
+.sidebar-outer-container {
+  transition: height 0.3s ease;
+  overflow-y: auto;
+}
+
 .sidebar-container {
   transition: height 0.3s ease;
   min-height: auto;
@@ -204,13 +198,14 @@ onMounted(async () => {
 /* 桌面端（并列显示）时的样式 */
 @media (min-width: 1024px) {
   .sidebar-container {
-    min-height: 400px;
-    overflow: hidden;
+    min-height: 100%;
   }
 }
 
 .stats-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .stats-card:hover {

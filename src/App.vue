@@ -32,7 +32,7 @@
         </div>
       </el-header>
 
-      <el-main class="p-6">
+      <el-main class="p-6 main-container">
         <router-view />
       </el-main>
     </el-container>
@@ -46,5 +46,15 @@
 <style scoped>
 #app {
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+}
+
+.el-container {
+  height: 100vh;
+}
+
+.main-container {
+  height: calc(100vh - 60px); /* 减去header高度 */
+  padding: 1.5rem; /* p-6 = 24px = 1.5rem */
+  overflow: hidden;
 }
 </style>
