@@ -9,7 +9,7 @@
       </div>
 
       <!-- 右侧边栏区域 -->
-      <div class="lg:col-span-1">
+      <div class="lg:col-span-1 bg-white pt-4 pb-4">
         <div
           ref="sidebarRef"
           class="sidebar-container"

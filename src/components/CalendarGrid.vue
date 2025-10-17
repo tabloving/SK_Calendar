@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar-grid bg-white rounded-lg shadow-sm">
+  <div class="calendar-grid bg-white rounded-lg shadow-sm pb-2">
     <!-- 星期标题 -->
     <div class="week-header grid grid-cols-7 bg-white border-b border-gray-100">
       <div
