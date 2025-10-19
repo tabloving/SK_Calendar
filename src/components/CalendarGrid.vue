@@ -167,15 +167,18 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
     padding: 4px 8px;
     display: flex;
     flex-direction: column;
+    height: auto; /* 移动端让内容决定高度 */
   }
 
   .calendar-grid-days {
     gap: 2px;
+    grid-auto-rows: 85px; /* 移动端固定行高 */
   }
 
   .calendar-grid-days > * {
     border-right: 1px solid #f8fafc;
     border-bottom: 1px solid #f8fafc;
+    height: 85px; /* 移动端固定格子高度 */
   }
 
   .calendar-grid-days > *:nth-child(7n) {
@@ -207,15 +210,18 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
     padding: 3px 7px;
     display: flex;
     flex-direction: column;
+    height: auto; /* 移动端让内容决定高度 */
   }
 
   .calendar-grid-days {
     gap: 2px;
+    grid-auto-rows: 75px; /* 小屏幕固定行高 */
   }
 
   .calendar-grid-days > * {
     border-right: 1px solid #f8fafc;
     border-bottom: 1px solid #f8fafc;
+    height: 75px; /* 小屏幕固定格子高度 */
   }
 
   .calendar-grid-days > *:nth-child(7n) {

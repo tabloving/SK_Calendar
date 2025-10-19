@@ -32,7 +32,7 @@
         </div>
       </el-header>
 
-      <el-main class="p-6 main-container">
+      <el-main class="main-container px-2 lg:px-6 pt-4 lg:pt-6 pb-4 lg:pb-6">
         <router-view />
       </el-main>
     </el-container>
@@ -54,7 +54,22 @@
 
 .main-container {
   height: calc(100vh - 60px); /* 减去header高度 */
-  padding: 1.5rem; /* p-6 = 24px = 1.5rem */
-  overflow: hidden;
+}
+
+/* 桌面端：保持overflow hidden */
+@media (min-width: 1024px) {
+  .main-container {
+    overflow: hidden;
+  }
+}
+
+/* 移动端：允许内容滚动并添加上下padding */
+@media (max-width: 1023px) {
+  .main-container {
+    overflow: auto;
+    height: auto; /* 让内容决定高度 */
+    /* 移动端上下padding，左右无padding */
+    padding: 16px 0; /* pt-4 pb-4 */
+  }
 }
 </style>

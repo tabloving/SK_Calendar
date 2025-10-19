@@ -1,15 +1,19 @@
 <template>
   <div class="calendar-view">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <!-- 桌面端：网格布局 -->
+    <div v-if="isDesktopLayout" class="grid grid-cols-1 lg:grid-cols-4 gap-4">
       <!-- 左侧日历区域 -->
       <div
         class="lg:col-span-3 space-y-3 flex flex-col"
         ref="calendarContainerRef"
-        :style="{ height: isDesktopLayout ? 'calc(100vh - 60px)' : 'auto' }">
+        :style="{ height: 'calc(100vh - 60px)' }">
         <div
           ref="calendarGridRef"
           class="calendar-grid-container"
-          :style="{ height: calendarGridHeight + 'px' }">
+          :style="{
+            height: calendarGridHeight + 'px',
+            overflow: 'hidden'
+          }">
           <CalendarGrid />
         </div>
       </div>
@@ -17,12 +21,41 @@
       <!-- 右侧边栏区域 -->
       <div
         ref="sidebarContainerRef"
-        class="lg:col-span-1 bg-white pt-4 pb-4 sidebar-outer-container"
-        :style="{ height: isDesktopLayout ? calendarGridHeight + 'px' : 'auto' }">
+        class="lg:col-span-1 bg-white py-4 sidebar-outer-container"
+        :style="{ height: calendarGridHeight + 'px' }">
         <div
           ref="sidebarRef"
           class="sidebar-container">
           <SidebarPanelIndex />
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动端：流式布局 -->
+    <div v-else class="flex flex-col space-y-4">
+      <!-- 日历区域 -->
+      <div class="calendar-section">
+        <div
+          ref="calendarContainerRef"
+          class="calendar-mobile-container">
+          <div
+            ref="calendarGridRef"
+            class="calendar-grid-container">
+            <CalendarGrid />
+          </div>
+        </div>
+      </div>
+
+      <!-- 边栏区域 -->
+      <div class="sidebar-section bg-white py-4">
+        <div
+          ref="sidebarContainerRef"
+          class="sidebar-outer-container">
+          <div
+            ref="sidebarRef"
+            class="sidebar-container">
+            <SidebarPanelIndex />
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +109,7 @@ const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
 })
 
-// 更新日历网格高度，充满可视区域
+// 更新日历网格高度，充满可视区域（仅桌面端）
 const updateCalendarGridHeight = async () => {
   await nextTick()
 
@@ -93,8 +126,8 @@ const updateCalendarGridHeight = async () => {
 
     calendarGridHeight.value = newHeight
   } else {
-    // 移动端使用合理的固定高度
-    calendarGridHeight.value = 400
+    // 移动端：不需要固定高度，让内容自然流动
+    calendarGridHeight.value = 0 // 设置为0，让CSS控制高度
   }
 }
 
@@ -176,13 +209,67 @@ onMounted(async () => {
 <style scoped>
 .calendar-view {
   padding: 0;
-  height: calc(100vh - 60px); /* 减去顶部导航栏高度 */
-  overflow: hidden;
+}
+
+/* 桌面端：固定高度和隐藏溢出 */
+@media (min-width: 1024px) {
+  .calendar-view {
+    height: calc(100vh - 60px); /* 减去顶部导航栏高度 */
+    overflow: hidden;
+  }
+}
+
+/* 移动端：允许内容自然流动 */
+@media (max-width: 1023px) {
+  .calendar-view {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* 流式布局样式 */
+  .calendar-mobile-container {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+  }
+
+  .calendar-section {
+    width: 100%;
+  }
+
+  .sidebar-section {
+    width: 100%;
+  }
+
+  .sidebar-outer-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
 }
 
 .calendar-grid-container {
   transition: height 0.3s ease;
-  overflow: hidden;
+}
+
+/* 桌面端：固定高度和隐藏溢出 */
+@media (min-width: 1024px) {
+  .calendar-grid-container {
+    overflow: hidden;
+  }
+}
+
+/* 移动端：允许内容自然流动 */
+@media (max-width: 1023px) {
+  .calendar-grid-container {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
 }
 
 .sidebar-outer-container {
@@ -213,37 +300,15 @@ onMounted(async () => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* 响应式设计 */
-@media (max-width: 1024px) {
-  /* 平板布局：右侧边栏移动到下方 */
-  .calendar-view .grid {
-    @apply grid-cols-1 gap-3;
-  }
-
-  .calendar-view .space-y-3 {
-    @apply space-y-2;
-  }
-
-  .lg\:col-span-1 {
-    @apply mt-3;
-  }
-}
-
+/* 小屏幕优化 */
 @media (max-width: 768px) {
   .calendar-view {
-    @apply px-2;
+    padding: 0 8px; /* 给小屏幕添加少量边距 */
   }
 
-  .calendar-view .grid {
-    @apply gap-2;
-  }
-
-  .calendar-view .space-y-3 {
-    @apply space-y-1;
-  }
-
-  .lg\:col-span-1 {
-    @apply mt-2;
+  .calendar-mobile-container,
+  .sidebar-outer-container {
+    border-radius: 8px;
   }
 }
 </style>

@@ -651,7 +651,9 @@ const getDisplayReason = (reason: string): string => {
 
 @media (max-width: 640px) {
   .calendar-day {
-    min-height: 85px;
+    height: 85px !important;
+    min-height: 85px !important;
+    max-height: 85px !important;
     padding: 7px 10px;
     border-radius: 6px;
     box-sizing: border-box;
@@ -716,7 +718,9 @@ const getDisplayReason = (reason: string): string => {
 
 @media (max-width: 480px) {
   .calendar-day {
-    min-height: 75px;
+    height: 75px !important;
+    min-height: 75px !important;
+    max-height: 75px !important;
     padding: 5px 8px;
     box-sizing: border-box;
   }
