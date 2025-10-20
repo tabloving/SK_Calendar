@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-panel rounded-lg shadow-sm pl-4 pr-4">
+  <div class="sidebar-panel pl-4 pr-4">
     <!-- 唯一入口：直接显示所有子组件 -->
     <DateNavigation />
     <DateCard v-if="selectedDayInfo" />
