@@ -21,7 +21,7 @@
       <!-- 右侧边栏区域 -->
       <div
         ref="sidebarContainerRef"
-        class="lg:col-span-1 bg-white py-4 sidebar-outer-container"
+        class="lg:col-span-1 bg-white py-4 rounded-lg shadow-sm sidebar-outer-container"
         :style="{ height: calendarGridHeight + 'px' }">
         <div
           ref="sidebarRef"
@@ -47,10 +47,10 @@
       </div>
 
       <!-- 边栏区域 -->
-      <div class="sidebar-section bg-white py-4">
+      <div class="sidebar-section bg-white rounded-lg shadow-sm">
         <div
           ref="sidebarContainerRef"
-          class="sidebar-outer-container">
+          class="sidebar-outer-container  py-4">
           <div
             ref="sidebarRef"
             class="sidebar-container">
@@ -274,18 +274,18 @@ onMounted(async () => {
 
 .sidebar-outer-container {
   transition: height 0.3s ease;
-  overflow-y: auto;
 }
 
 .sidebar-container {
   transition: height 0.3s ease;
-  min-height: auto;
+  height: auto;
 }
 
 /* 桌面端（并列显示）时的样式 */
 @media (min-width: 1024px) {
   .sidebar-container {
-    min-height: 100%;
+    height: 100%;
+    overflow-y: auto;
   }
 }
 
