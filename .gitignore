@@ -140,3 +140,6 @@ playwright-report/
 test-results/
 screenshots/
 videos/
+
+# AI doc
+CLAUDE.md
