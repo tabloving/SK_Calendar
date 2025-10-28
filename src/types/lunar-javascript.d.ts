@@ -27,6 +27,15 @@ declare module 'lunar-javascript' {
     toFullString(): string
   }
 
+  export class LunarMonth {
+    static fromYm(year: number, month: number): LunarMonth
+    getDayCount(): number
+    getYear(): number
+    getMonth(): number
+    isLeap(): boolean
+    toString(): string
+  }
+
   export class Solar {
     static fromDate(date: Date): Solar
     static fromYmd(year: number, month: number, day: number): Solar

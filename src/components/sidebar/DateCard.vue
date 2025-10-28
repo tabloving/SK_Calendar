@@ -38,11 +38,19 @@
 
           <!-- 右侧：农历和干支信息（次要信息） -->
           <div class="text-right ml-4 pl-4 border-l border-purple-200">
-            <div class="text-xs text-purple-600 font-medium mb-2">农历</div>
+            <div class="flex items-center justify-end mb-2">
+              <!-- 农历月份天数Badge -->
+              <span v-if="lunarMonthInfo" class="lunar-month-days-badge mr-2">
+                {{ lunarMonthInfo.isLeap ? '闰' : '' }}{{ lunarMonthInfo.isBigMonth ? '大' : '小' }}
+              </span>
+              <div class="text-xs text-purple-600 font-medium">农历</div>
+            </div>
             <div class="space-y-2">
               <!-- 农历日期 -->
-              <div class="text-sm text-gray-700 mb-2 font-medium text-right">
-                {{ lunarInfo.full }}
+              <div class="mb-2 text-right">
+                <div class="text-sm text-gray-700 font-medium">
+                  {{ lunarInfo.full }}
+                </div>
               </div>
 
               <!-- 干支信息 -->
@@ -76,6 +84,7 @@
 import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { CalendarUtil } from '@/utils/calendar'
+import { LunarCalendarUtil } from '@/utils/lunar'
 import * as lunar from 'lunar-javascript'
 
 // 二十四节气icon映射
@@ -121,6 +130,13 @@ const lunarInfo = computed(() => {
   if (!selectedDayInfo.value) return { month: '', day: '', full: '' }
 
   return CalendarUtil.getFullLunarMonthDay(selectedDayInfo.value.date)
+})
+
+// 农历月份信息（包含天数和大小月）
+const lunarMonthInfo = computed(() => {
+  if (!selectedDayInfo.value) return null
+
+  return LunarCalendarUtil.getLunarMonthDays(selectedDayInfo.value.date)
 })
 
 // 干支信息计算
@@ -236,6 +252,23 @@ const getMonthYear = (date: Date) => {
   color: #4b5563;
   line-height: 1;
   font-family: 'Gravitas One', cursive;
+}
+
+/* 农历月份天数Badge样式 */
+.lunar-month-days-badge {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid #fbbf24;
+  box-shadow: 0 1px 2px rgba(251, 191, 36, 0.2);
+  display: inline-block;
+  white-space: nowrap;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* 干支 Badge 样式 */
@@ -426,6 +459,13 @@ const getMonthYear = (date: Date) => {
 
   .next-solar-term {
     padding: 1px 4px;
+  }
+
+  /* 移动端农历月份天数Badge调整 */
+  .lunar-month-days-badge {
+    font-size: 9px;
+    padding: 1px 3px;
+    min-width: 18px;
   }
 }
 </style>

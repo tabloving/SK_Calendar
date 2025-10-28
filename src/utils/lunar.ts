@@ -258,4 +258,115 @@ export class LunarCalendarUtil {
       return null
     }
   }
+
+  /**
+   * 获取农历月份的天数
+   * @param date 指定日期，获取该日期所在农历月份的天数
+   * @returns 农历月份信息，包含天数和大小月信息
+   */
+  static getLunarMonthDays(date: Date): { days: number; isBigMonth: boolean; monthName: string; isLeap: boolean } | null {
+    try {
+      const solar = lunar.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      const lunarYear = lunarDate.getYear()
+      const lunarMonth = lunarDate.getMonth()
+
+      // 使用官方API LunarMonth.fromYm创建农历月份对象
+      const lunarMonthObj = lunar.LunarMonth.fromYm(lunarYear, lunarMonth)
+      const days = lunarMonthObj.getDayCount()
+      const isLeap = lunarMonthObj.isLeap()
+
+      if (days === 0) return null
+
+      const isBigMonth = days === 30
+      const monthName = lunarDate.getMonthInChinese()
+
+      return {
+        days,
+        isBigMonth,
+        monthName,
+        isLeap
+      }
+    } catch (error) {
+      debug.error('获取农历月份天数失败', error)
+      // 回退到手动计算
+      return this.getLunarMonthDaysFallback(date)
+    }
+  }
+
+  /**
+   * 手动计算农历月份天数（回退方案）
+   */
+  private static getLunarMonthDaysFallback(date: Date): { days: number; isBigMonth: boolean; monthName: string; isLeap: boolean } | null {
+    try {
+      const solar = lunar.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      const lunarYear = lunarDate.getYear()
+      const lunarMonth = lunarDate.getMonth()
+      const isLeap = lunarDate.isLeap()
+
+      let dayCount = 0
+      for (let day = 1; day <= 31; day++) {
+        try {
+          const testLunar = lunar.fromLunar(lunarYear, lunarMonth, day, isLeap)
+          // 直接验证lunar对象是否创建成功
+          dayCount++
+        } catch (e) {
+          // 转换失败说明该农历月没有这一天
+          break
+        }
+      }
+
+      if (dayCount === 0) return null
+
+      const isBigMonth = dayCount === 30
+      const monthName = lunarDate.getMonthInChinese()
+
+      return {
+        days: dayCount,
+        isBigMonth,
+        monthName,
+        isLeap
+      }
+    } catch (error) {
+      debug.error('手动计算农历月份天数失败', error)
+      return null
+    }
+  }
+
+  /**
+   * 获取指定农历月份的天数
+   * @param year 农历年
+   * @param month 农历月（1-12）
+   * @param isLeap 是否闰月
+   * @returns 农历月份信息
+   */
+  static getLunarMonthDaysByParams(year: number, month: number, isLeap: boolean = false): { days: number; isBigMonth: boolean; monthName: string; isLeap: boolean } | null {
+    try {
+      // 使用官方API LunarMonth.fromYm创建农历月份对象
+      const lunarMonthObj = lunar.LunarMonth.fromYm(year, month)
+      const days = lunarMonthObj.getDayCount()
+      const actualIsLeap = lunarMonthObj.isLeap()
+
+      if (days === 0) return null
+
+      const isBigMonth = days === 30
+
+      // 获取月份名称
+      const testLunar = lunar.fromLunar(year, month, 1, isLeap)
+      const monthName = testLunar.getMonthInChinese()
+
+      return {
+        days,
+        isBigMonth,
+        monthName,
+        isLeap: actualIsLeap
+      }
+    } catch (error) {
+      debug.error('获取指定农历月份天数失败', error)
+      return null
+    }
+  }
 }
