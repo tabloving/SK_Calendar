@@ -1,5 +1,6 @@
-import type { PreceptInfo, PreceptLevel, PreceptType, PreceptDetail } from '@/types'
-import { PreceptCategory } from '@/types'
+import type { PreceptInfo, PreceptDetail } from '@/types'
+import { PreceptCategory, PreceptLevel, PreceptType } from '@/types'
+import * as lunarLib from 'lunar-javascript'
 
 /**
  * 戒期数据管理类
@@ -1161,12 +1162,20 @@ export class PreceptDataManager {
   }
 
   /**
-   * 初始化特殊戒期（佛菩萨圣诞等）
-   * 注意：根据要求，移除所有特殊戒期，只保留十斋日
+   * 初始化特殊戒期（包括二分二至日等节气戒期）
    */
   private initSpecialPrecepts(): void {
-    // 特殊戒期已移除，只保留十斋日
-    // 十斋日已包含在 getDayPreceptInfos 方法中
+    // 初始化二分二至日特殊戒期
+    this.initSolarTermPrecepts()
+  }
+
+  /**
+   * 初始化二分二至日特殊戒期
+   */
+  private initSolarTermPrecepts(): void {
+    // 注意：二分二至日戒期不是固定日期，而是根据每年节气变化
+    // 这里不进行静态初始化，而是在查询时动态计算
+    // 保持特殊戒期结构以便于管理
   }
 
 
@@ -1250,6 +1259,231 @@ export class PreceptDataManager {
   public getSpecialPreceptByLunarDate(month: number, day: number): PreceptInfo[] {
     const dateKey = `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
     return this.specialPrecepts.get(dateKey) || []
+  }
+
+  /**
+   * 获取指定日期的特殊戒期信息（包括二分二至日等动态戒期）
+   */
+  public getSpecialPreceptsByDate(date: Date, dayInfo: any): PreceptInfo[] {
+    const specialPrecepts: PreceptInfo[] = []
+
+    // 1. 获取农历日期相关的固定特殊戒期
+    let lunarMonth = 1
+    let lunarDay = 1
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      lunarMonth = lunarDate.getMonth()
+      lunarDay = lunarDate.getDay()
+    } catch (error) {
+      console.warn('获取农历日期失败，使用默认值', error)
+    }
+
+    const lunarSpecialPrecepts = this.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
+    specialPrecepts.push(...lunarSpecialPrecepts)
+
+    // 2. 获取二分二至日特殊戒期（动态计算）
+    const solarTermPrecepts = this.getSolarTermPrecepts(date, dayInfo)
+    specialPrecepts.push(...solarTermPrecepts)
+
+    return specialPrecepts
+  }
+
+  /**
+   * 获取指定日期的二分二至日特殊戒期
+   */
+  private getSolarTermPrecepts(date: Date, dayInfo: any): PreceptInfo[] {
+    const solarTermPrecepts: PreceptInfo[] = []
+
+    // 检查当日是否为二分二至日
+    const currentSolarTerm = dayInfo.solarTerm
+    if (currentSolarTerm) {
+      const preceptInfo = this.createSolarTermPrecept(currentSolarTerm, date, dayInfo)
+      if (preceptInfo) {
+        solarTermPrecepts.push(preceptInfo)
+      }
+    }
+
+    // 检查是否为二分二至日前后的戒期（前三后三共七日）
+    const nearbySolarTerm = this.getNearbySolarTermPrecept(date, dayInfo)
+    if (nearbySolarTerm) {
+      solarTermPrecepts.push(nearbySolarTerm)
+    }
+
+    return solarTermPrecepts
+  }
+
+  /**
+   * 创建二分二至日本身的戒期
+   */
+  private createSolarTermPrecept(solarTerm: string, date: Date, dayInfo: any): PreceptInfo | null {
+    const solarTermConfig: Record<string, { reason: string; punishment: string; level: PreceptLevel }> = {
+      '春分': {
+        reason: '春分日',
+        punishment: '雷将发声，犯者生子五官四肢不全，父母有灾',
+        level: PreceptLevel.MAJOR
+      },
+      '秋分': {
+        reason: '秋分日',
+        punishment: '杀气浸盛，阳气日衰，犯者必得危疾',
+        level: PreceptLevel.MAJOR
+      },
+      '夏至': {
+        reason: '夏至日',
+        punishment: '阴阳相争，死生分判之时，犯者必得急疾',
+        level: PreceptLevel.MAJOR
+      },
+      '冬至': {
+        reason: '冬至日',
+        punishment: '阴阳相争，死生分判之时，犯者必得急疾',
+        level: PreceptLevel.MAJOR
+      }
+    }
+
+    const config = solarTermConfig[solarTerm]
+    if (!config) return null
+
+    const detail = {
+      reason: config.reason,
+      punishment: config.punishment,
+      explanation: this.getSolarTermExplanation(solarTerm),
+      suggestion: this.getSolarTermSuggestion(solarTerm),
+      category: PreceptCategory.SOLAR_TERM,
+      tags: [solarTerm, '节气', '二分二至'],
+      source: '《寿康宝鉴》'
+    }
+
+    const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+    return {
+      date: dateStr,
+      level: config.level,
+      type: PreceptType.SPECIAL,
+      detail: detail,
+      reason: detail.reason,
+      punishment: detail.punishment,
+      description: `${config.reason} - ${config.punishment} - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+    }
+  }
+
+  /**
+   * 获取二分二至日前后的戒期（前三后三共七日）
+   */
+  private getNearbySolarTermPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    const year = date.getFullYear()
+    const currentSolarTerms = this.getSolarTerms(year)
+
+    // 查找二分二至日
+    const erFenErZhiTerms = currentSolarTerms.filter(term =>
+      ['春分', '秋分', '夏至', '冬至'].includes(term.name)
+    )
+
+    for (const term of erFenErZhiTerms) {
+      const daysDiff = Math.floor((date.getTime() - term.date.getTime()) / (1000 * 60 * 60 * 24))
+
+      // 检查是否在前3后3的范围内（不包括当天）
+      if (daysDiff >= -3 && daysDiff <= 3 && daysDiff !== 0) {
+        const direction = daysDiff < 0 ? '前' : '后'
+        const daysAbs = Math.abs(daysDiff)
+
+        let reason: string
+        let punishment: string
+
+        if (['春分', '秋分'].includes(term.name)) {
+          reason = `${term.name}${direction}${daysAbs}日`
+          punishment = '犯者必得危疾，尤宜切戒'
+        } else {
+          reason = `${term.name}${direction}${daysAbs}日`
+          punishment = '犯者必得急疾，尤宜切戒'
+        }
+
+        const detail = {
+          reason: reason,
+          punishment: punishment,
+          explanation: `此二分二至节之前三后三共七日，${term.name}时节阴阳二气相交变化剧烈，犯戒易得疾病`,
+          suggestion: '应在节气前后严格持戒，可诵经祈福，修身养性，避免阴阳失调',
+          category: PreceptCategory.SOLAR_TERM,
+          tags: [term.name, '节气', '二分二至', '前后戒期'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MAJOR,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `${reason} - ${punishment} - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+        }
+      }
+    }
+
+    return null
+  }
+
+  /**
+   * 获取指定年份的所有节气
+   */
+  private getSolarTerms(year: number): Array<{ name: string; date: Date }> {
+    try {
+      const terms: Array<{ name: string; date: Date }> = []
+
+      // 遍历全年每一天，检查是否有节气
+      for (let month = 1; month <= 12; month++) {
+        const daysInMonth = new Date(year, month, 0).getDate()
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          try {
+            const solar = lunarLib.Solar.fromYmd(year, month, day)
+            const lunarDate = solar.getLunar()
+            const jieQi = lunarDate.getJieQi()
+
+            if (jieQi) {
+              terms.push({
+                name: jieQi,
+                date: new Date(year, month - 1, day)
+              })
+            }
+          } catch (e) {
+            // 忽略错误，继续处理下一天
+          }
+        }
+      }
+
+      return terms.sort((a, b) => a.date.getTime() - b.date.getTime())
+    } catch (error) {
+      console.error('获取节气信息失败', error)
+      return []
+    }
+  }
+
+  /**
+   * 获取节气解释说明
+   */
+  private getSolarTermExplanation(solarTerm: string): string {
+    const explanations: Record<string, string> = {
+      '春分': '春分日雷将发声，天地阴阳二气开始激烈交战，此日犯戒会影响后代健康，给父母带来灾祸',
+      '秋分': '秋分日杀气浸盛，阳气逐渐衰退，阴气渐长，此日犯戒会严重损害身体健康',
+      '夏至': '夏至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病',
+      '冬至': '冬至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病'
+    }
+    return explanations[solarTerm] || '二分二至日是天地阴阳二气交战的关键时刻，应严格持戒'
+  }
+
+  /**
+   * 获取节气修行建议
+   */
+  private getSolarTermSuggestion(solarTerm: string): string {
+    const suggestions: Record<string, string> = {
+      '春分': '春分前应从惊蛰节开始禁戒，持戒一个月，可诵经礼佛，修身养性，避免雷震之灾',
+      '秋分': '秋分前应从白露节开始禁戒，持戒一个月，可诵经礼佛，收敛心神，顺应天时',
+      '夏至': '夏至今应从芒种节开始禁戒，持戒一个月，可静坐养心，避免阴阳失调',
+      '冬至': '冬至今应从大雪节开始禁戒，持戒一个月，可静坐养心，潜藏阳气'
+    }
+    return suggestions[solarTerm] || '应严格持戒，可诵经礼佛，修身养性，顺应天时'
   }
 
 

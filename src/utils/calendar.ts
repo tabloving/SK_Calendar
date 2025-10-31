@@ -55,8 +55,8 @@ export class CalendarUtil {
     const monthlyPrecepts = this.preceptManager.getPreceptByLunarDate(lunarMonth, lunarDay)
     allPreceptInfos.push(...monthlyPrecepts)
 
-    // 2. 获取特殊戒期（佛菩萨圣诞等）
-    const specialPrecepts = this.preceptManager.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
+    // 2. 获取特殊戒期（包括二分二至日等）
+    const specialPrecepts = this.preceptManager.getSpecialPreceptsByDate(dayInfo.date, dayInfo)
     allPreceptInfos.push(...specialPrecepts)
 
   

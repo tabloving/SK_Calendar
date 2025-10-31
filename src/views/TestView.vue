@@ -98,6 +98,69 @@
         </div>
       </el-card>
 
+      <!-- 二分二至日戒期测试 -->
+      <el-card class="md:col-span-2">
+        <template #header>
+          <span>二分二至日戒期测试</span>
+        </template>
+        <div class="space-y-4">
+          <div class="text-sm text-gray-600">
+            测试春分、秋分、夏至、冬至及其前后3日的戒期：
+          </div>
+
+          <!-- 选择测试年份 -->
+          <div class="flex gap-2 items-center">
+            <span>测试年份：</span>
+            <el-button @click="solarTermTestYear--" :disabled="solarTermTestYear <= 2024">上一年</el-button>
+            <span class="font-semibold">{{ solarTermTestYear }}</span>
+            <el-button @click="solarTermTestYear++">下一年</el-button>
+            <el-button @click="testSolarTermPrecepts" type="primary">测试戒期</el-button>
+          </div>
+
+          <!-- 显示测试结果 -->
+          <div v-if="solarTermPreceptTests.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="(test, index) in solarTermPreceptTests"
+              :key="index"
+              class="border rounded-lg p-3"
+              :class="{
+                'border-red-300 bg-red-50': test.precepts.some(p => p.level === 'major'),
+                'border-orange-300 bg-orange-50': test.precepts.some(p => p.level === 'moderate') && !test.precepts.some(p => p.level === 'major'),
+                'border-gray-200 bg-gray-50': test.precepts.length === 0
+              }"
+            >
+              <div class="font-semibold text-purple-700 mb-2">{{ test.dateStr }}</div>
+              <div v-if="test.solarTerm" class="text-sm text-blue-600 mb-2">节气：{{ test.solarTerm }}</div>
+
+              <div v-if="test.precepts.length > 0">
+                <div class="text-xs text-green-600 font-medium mb-2">
+                  该日期共有 {{ test.precepts.length }} 个戒期：
+                </div>
+                <div class="space-y-2">
+                  <div
+                    v-for="(precept, pIndex) in test.precepts"
+                    :key="pIndex"
+                    class="text-xs border-l-2 border-blue-400 pl-2"
+                  >
+                    <div class="font-medium">{{ precept.reason }}</div>
+                    <div class="text-gray-600">{{ precept.punishment }}</div>
+                    <div class="text-purple-600">
+                      分类：{{ precept.detail?.category }}
+                      <span v-if="precept.detail?.tags?.length" class="ml-1">
+                        [{{ precept.detail.tags.join(', ') }}]
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 text-sm">
+                无戒期
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 新数据结构测试 -->
       <el-card>
         <template #header>
@@ -210,6 +273,10 @@ const currentTestYear = ref(new Date().getFullYear())
 const solarTerms = ref<Array<{ name: string; date: Date }>>([])
 const lunarStatus = ref('未测试')
 const lunarTestResult = ref('')
+
+// 二分二至日测试相关
+const solarTermTestYear = ref(new Date().getFullYear())
+const solarTermPreceptTests = ref<Array<{ dateStr: string; date: Date; solarTerm: string | null; precepts: any[] }>>([])
 
 // 新数据结构测试
 const preceptDataManager = PreceptDataManager.getInstance()
@@ -416,6 +483,9 @@ onMounted(() => {
 
   // 测试特定日期的节气
   testSpecificDateSolarTerm()
+
+  // 测试二分二至日戒期
+  testSolarTermPrecepts()
 })
 
 const testSpecificDateSolarTerm = () => {
@@ -440,6 +510,55 @@ const testSpecificDateSolarTerm = () => {
     day.date.getDate() === 23 && day.date.getMonth() === 9 // 9 = 10月
   )
   console.log('日历中的2025-10-23:', oct23?.solarTerm)
+}
+
+const testSolarTermPrecepts = () => {
+  console.log(`=== 测试${solarTermTestYear.value}年二分二至日戒期 ===`)
+  const testResults: Array<{ dateStr: string; date: Date; solarTerm: string | null; precepts: any[] }> = []
+
+  // 获取当年的所有节气
+  const yearSolarTerms = LunarCalendarUtil.getSolarTerms(solarTermTestYear.value)
+
+  // 找到二分二至日
+  const erFenErZhiTerms = yearSolarTerms.filter(term =>
+    ['春分', '秋分', '夏至', '冬至'].includes(term.name)
+  )
+
+  // 为每个二分二至日测试当天和前后3天
+  for (const term of erFenErZhiTerms) {
+    for (let offset = -3; offset <= 3; offset++) {
+      const testDate = new Date(term.date)
+      testDate.setDate(testDate.getDate() + offset)
+
+      const dayInfo = LunarCalendarUtil.getLunarInfo(testDate)
+      const precepts = CalendarUtil.getDayPreceptInfos(dayInfo)
+
+      // 过滤出二分二至相关的戒期
+      const solarTermRelatedPrecepts = precepts.filter(p =>
+        p.detail?.category === 'solar_term' ||
+        p.reason.includes('春分') ||
+        p.reason.includes('秋分') ||
+        p.reason.includes('夏至') ||
+        p.reason.includes('冬至')
+      )
+
+      if (solarTermRelatedPrecepts.length > 0 || offset === 0) {
+        testResults.push({
+          dateStr: CalendarUtil.formatDate(testDate),
+          date: testDate,
+          solarTerm: offset === 0 ? term.name : null,
+          precepts: solarTermRelatedPrecepts
+        })
+      }
+    }
+  }
+
+  // 按日期排序
+  testResults.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+  solarTermPreceptTests.value = testResults
+
+  console.log('测试结果:', testResults)
 }
 </script>
 
