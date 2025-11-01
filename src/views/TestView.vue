@@ -98,10 +98,10 @@
         </div>
       </el-card>
 
-      <!-- 二分二至日戒期测试 -->
+      <!-- 节气日戒期测试 -->
       <el-card class="md:col-span-2">
         <template #header>
-          <span>二分二至日戒期测试</span>
+          <span>节气日戒期测试</span>
         </template>
         <div class="space-y-4">
           <div class="text-sm text-gray-600">
@@ -274,7 +274,7 @@ const solarTerms = ref<Array<{ name: string; date: Date }>>([])
 const lunarStatus = ref('未测试')
 const lunarTestResult = ref('')
 
-// 二分二至日测试相关
+// 节气日测试相关
 const solarTermTestYear = ref(new Date().getFullYear())
 const solarTermPreceptTests = ref<Array<{ dateStr: string; date: Date; solarTerm: string | null; precepts: any[] }>>([])
 
@@ -484,7 +484,7 @@ onMounted(() => {
   // 测试特定日期的节气
   testSpecificDateSolarTerm()
 
-  // 测试二分二至日戒期
+  // 测试节气日戒期
   testSolarTermPrecepts()
 })
 
@@ -513,18 +513,18 @@ const testSpecificDateSolarTerm = () => {
 }
 
 const testSolarTermPrecepts = () => {
-  console.log(`=== 测试${solarTermTestYear.value}年二分二至日戒期 ===`)
+  console.log(`=== 测试${solarTermTestYear.value}年节气日戒期 ===`)
   const testResults: Array<{ dateStr: string; date: Date; solarTerm: string | null; precepts: any[] }> = []
 
   // 获取当年的所有节气
   const yearSolarTerms = LunarCalendarUtil.getSolarTerms(solarTermTestYear.value)
 
-  // 找到二分二至日
+  // 找到节气日
   const erFenErZhiTerms = yearSolarTerms.filter(term =>
     ['春分', '秋分', '夏至', '冬至'].includes(term.name)
   )
 
-  // 为每个二分二至日测试当天和前后3天
+  // 为每个节气日测试当天和前后3天
   for (const term of erFenErZhiTerms) {
     for (let offset = -3; offset <= 3; offset++) {
       const testDate = new Date(term.date)
@@ -533,7 +533,7 @@ const testSolarTermPrecepts = () => {
       const dayInfo = LunarCalendarUtil.getLunarInfo(testDate)
       const precepts = CalendarUtil.getDayPreceptInfos(dayInfo)
 
-      // 过滤出二分二至相关的戒期
+      // 过滤出节气相关的戒期
       const solarTermRelatedPrecepts = precepts.filter(p =>
         p.detail?.category === 'solar_term' ||
         p.reason.includes('春分') ||

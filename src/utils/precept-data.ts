@@ -1162,18 +1162,18 @@ export class PreceptDataManager {
   }
 
   /**
-   * 初始化特殊戒期（包括二分二至日等节气戒期）
+   * 初始化特殊戒期（包括节气戒期）
    */
   private initSpecialPrecepts(): void {
-    // 初始化二分二至日特殊戒期
+    // 初始化节气戒期
     this.initSolarTermPrecepts()
   }
 
   /**
-   * 初始化二分二至日特殊戒期
+   * 初始化节气戒期
    */
   private initSolarTermPrecepts(): void {
-    // 注意：二分二至日戒期不是固定日期，而是根据每年节气变化
+    // 注意：节气日戒期不是固定日期，而是根据每年节气变化
     // 这里不进行静态初始化，而是在查询时动态计算
     // 保持特殊戒期结构以便于管理
   }
@@ -1262,7 +1262,7 @@ export class PreceptDataManager {
   }
 
   /**
-   * 获取指定日期的特殊戒期信息（包括二分二至日等动态戒期）
+   * 获取指定日期的特殊戒期信息（包括节气等动态戒期）
    */
   public getSpecialPreceptsByDate(date: Date, dayInfo: any): PreceptInfo[] {
     const specialPrecepts: PreceptInfo[] = []
@@ -1282,7 +1282,7 @@ export class PreceptDataManager {
     const lunarSpecialPrecepts = this.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
     specialPrecepts.push(...lunarSpecialPrecepts)
 
-    // 2. 获取二分二至日特殊戒期（动态计算）
+    // 2. 获取节气特殊戒期（动态计算）
     const solarTermPrecepts = this.getSolarTermPrecepts(date, dayInfo)
     specialPrecepts.push(...solarTermPrecepts)
 
@@ -1290,12 +1290,12 @@ export class PreceptDataManager {
   }
 
   /**
-   * 获取指定日期的二分二至日特殊戒期
+   * 获取指定日期的节气特殊戒期
    */
   private getSolarTermPrecepts(date: Date, dayInfo: any): PreceptInfo[] {
     const solarTermPrecepts: PreceptInfo[] = []
 
-    // 检查当日是否为二分二至日
+    // 检查当日是否为节气日
     const currentSolarTerm = dayInfo.solarTerm
     if (currentSolarTerm) {
       const preceptInfo = this.createSolarTermPrecept(currentSolarTerm, date, dayInfo)
@@ -1304,7 +1304,7 @@ export class PreceptDataManager {
       }
     }
 
-    // 检查是否为二分二至日前后的戒期（前三后三共七日）
+    // 检查是否为节气日前后的戒期（前三后三共七日）
     const nearbySolarTerm = this.getNearbySolarTermPrecept(date, dayInfo)
     if (nearbySolarTerm) {
       solarTermPrecepts.push(nearbySolarTerm)
@@ -1314,28 +1314,28 @@ export class PreceptDataManager {
   }
 
   /**
-   * 创建二分二至日本身的戒期
+   * 创建节气日本身的戒期
    */
   private createSolarTermPrecept(solarTerm: string, date: Date, dayInfo: any): PreceptInfo | null {
     const solarTermConfig: Record<string, { reason: string; punishment: string; level: PreceptLevel }> = {
       '春分': {
-        reason: '春分日',
-        punishment: '雷将发声，犯者生子五官四肢不全，父母有灾',
+        reason: '二分日',
+        punishment: '犯者生子五官四肢不全，父母有灾',
         level: PreceptLevel.MAJOR
       },
       '秋分': {
-        reason: '秋分日',
-        punishment: '杀气浸盛，阳气日衰，犯者必得危疾',
+        reason: '二分日',
+        punishment: '犯者必得危疾',
         level: PreceptLevel.MAJOR
       },
       '夏至': {
-        reason: '夏至日',
-        punishment: '阴阳相争，死生分判之时，犯者必得急疾',
+        reason: '二至日',
+        punishment: '犯者必得急疾',
         level: PreceptLevel.MAJOR
       },
       '冬至': {
-        reason: '冬至日',
-        punishment: '阴阳相争，死生分判之时，犯者必得急疾',
+        reason: '二至日',
+        punishment: '犯者必得急疾',
         level: PreceptLevel.MAJOR
       }
     }
@@ -1349,7 +1349,7 @@ export class PreceptDataManager {
       explanation: this.getSolarTermExplanation(solarTerm),
       suggestion: this.getSolarTermSuggestion(solarTerm),
       category: PreceptCategory.SOLAR_TERM,
-      tags: [solarTerm, '节气', '二分二至'],
+      tags: (solarTerm === "春分" || solarTerm === "秋分") ? [solarTerm, "二分日"] : [solarTerm, "二至日"],
       source: '《寿康宝鉴》'
     }
 
@@ -1367,13 +1367,13 @@ export class PreceptDataManager {
   }
 
   /**
-   * 获取二分二至日前后的戒期（前三后三共七日）
+   * 获取节气日前后的戒期（前三后三共七日）
    */
   private getNearbySolarTermPrecept(date: Date, dayInfo: any): PreceptInfo | null {
     const year = date.getFullYear()
     const currentSolarTerms = this.getSolarTerms(year)
 
-    // 查找二分二至日
+    // 查找节气日
     const erFenErZhiTerms = currentSolarTerms.filter(term =>
       ['春分', '秋分', '夏至', '冬至'].includes(term.name)
     )
@@ -1400,10 +1400,10 @@ export class PreceptDataManager {
         const detail = {
           reason: reason,
           punishment: punishment,
-          explanation: `此二分二至节之前三后三共七日，${term.name}时节阴阳二气相交变化剧烈，犯戒易得疾病`,
+          explanation: `此节气之前三后三共七日，${term.name}时节阴阳二气相交变化剧烈，犯戒易得疾病`,
           suggestion: '应在节气前后严格持戒，可诵经祈福，修身养性，避免阴阳失调',
           category: PreceptCategory.SOLAR_TERM,
-          tags: [term.name, '节气', '二分二至', '前后戒期'],
+          tags: [term.name, (term.name === "春分" || term.name === "秋分") ? "二分日" : "二至日", "前后戒期"],
           source: '《寿康宝鉴》'
         }
 
@@ -1465,12 +1465,12 @@ export class PreceptDataManager {
    */
   private getSolarTermExplanation(solarTerm: string): string {
     const explanations: Record<string, string> = {
-      '春分': '春分日雷将发声，天地阴阳二气开始激烈交战，此日犯戒会影响后代健康，给父母带来灾祸',
-      '秋分': '秋分日杀气浸盛，阳气逐渐衰退，阴气渐长，此日犯戒会严重损害身体健康',
-      '夏至': '夏至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病',
-      '冬至': '冬至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病'
+      '春分': '春分日雷将发声，天地阴阳二气开始激烈交战，此日犯戒会影响后代健康，给父母带来灾祸。宜从惊蛰节禁起，戒过一月',
+      '秋分': '秋分日杀气浸盛，阳气逐渐衰退，阴气渐长，此日犯戒会严重损害身体健康。宜从白露节禁起，戒过一月',
+      '夏至': '夏至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病。宜从芒种节禁起，戒过一月',
+      '冬至': '冬至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病。冬至半夜子时犯之，并冬至后庚辛日，及第三戌日犯之，皆主在一年内亡。宜从大雪节禁起，戒过一月'
     }
-    return explanations[solarTerm] || '二分二至日是天地阴阳二气交战的关键时刻，应严格持戒'
+    return explanations[solarTerm] || '节气日是天地阴阳二气交战的关键时刻，应严格持戒'
   }
 
   /**
