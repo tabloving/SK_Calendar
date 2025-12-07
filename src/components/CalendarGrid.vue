@@ -109,8 +109,8 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
 .calendar-body {
   background: #ffffff;
-  padding: 6px 10px;
-  overflow: hidden;
+  padding: 6px 10px; /* 增加底部padding为transform提供空间 */
+  overflow: visible; /* 改为visible，允许子元素溢出 */
   flex: 1;
 }
 
@@ -173,6 +173,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   .calendar-grid-days {
     gap: 2px;
     grid-auto-rows: 85px; /* 移动端固定行高 */
+    margin-bottom: 0; /* 移动端不需要额外的margin */
   }
 
   .calendar-grid-days > * {

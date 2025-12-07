@@ -211,11 +211,11 @@ onMounted(async () => {
   padding: 0;
 }
 
-/* 桌面端：固定高度和隐藏溢出 */
+/* 桌面端：固定高度，允许内容溢出显示 */
 @media (min-width: 1024px) {
   .calendar-view {
     height: calc(100vh - 60px); /* 减去顶部导航栏高度 */
-    overflow: hidden;
+    overflow: visible; /* 改为visible，允许transform溢出的边框显示 */
   }
 }
 
@@ -255,10 +255,10 @@ onMounted(async () => {
   transition: height 0.3s ease;
 }
 
-/* 桌面端：固定高度和隐藏溢出 */
+/* 桌面端：固定高度，允许内容溢出显示 */
 @media (min-width: 1024px) {
   .calendar-grid-container {
-    overflow: hidden;
+    overflow: visible; /* 改为visible，允许transform溢出的边框显示 */
   }
 }
 
