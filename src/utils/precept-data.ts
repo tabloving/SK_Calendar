@@ -1310,6 +1310,12 @@ export class PreceptDataManager {
       solarTermPrecepts.push(nearbySolarTerm)
     }
 
+    // 检查是否为四绝日（四立日的前一日）
+    const siJueRi = this.getSiJueRiPrecept(date, dayInfo)
+    if (siJueRi) {
+      solarTermPrecepts.push(siJueRi)
+    }
+
     return solarTermPrecepts
   }
 
@@ -1437,6 +1443,50 @@ export class PreceptDataManager {
           reason: detail.reason,
           punishment: detail.punishment,
           description: `${reason} - ${punishment} - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+        }
+      }
+    }
+
+    return null
+  }
+
+  /**
+   * 获取四绝日戒期（四立日的前一日）
+   */
+  private getSiJueRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    const year = date.getFullYear()
+    const currentSolarTerms = this.getSolarTerms(year)
+
+    // 查找四立日（立春、立夏、立秋、立冬）
+    const siLiTerms = currentSolarTerms.filter(term =>
+      ['立春', '立夏', '立秋', '立冬'].includes(term.name)
+    )
+
+    for (const term of siLiTerms) {
+      const daysDiff = Math.floor((date.getTime() - term.date.getTime()) / (1000 * 60 * 60 * 24))
+
+      // 检查是否为前一日（daysDiff === -1）
+      if (daysDiff === -1) {
+        const detail = {
+          reason: '四绝日',
+          punishment: '犯之减寿五年',
+          explanation: `此日为${term.name}的前一日，属四绝日之一。四绝日是季节交替的关键时刻，天地阴阳二气交替，万物更新，犯戒会严重影响寿命`,
+          suggestion: '四绝日应严格持戒，可诵经礼佛，修身养性，避免一切不当行为',
+          category: PreceptCategory.SOLAR_TERM,
+          tags: [`四绝日`, `${term.name}`],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MAJOR,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `四绝日 - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
         }
       }
     }
