@@ -1316,6 +1316,12 @@ export class PreceptDataManager {
       solarTermPrecepts.push(siJueRi)
     }
 
+    // 检查是否为四离日（二分二至的前一日）
+    const siLiRi = this.getSiLiRiPrecept(date, dayInfo)
+    if (siLiRi) {
+      solarTermPrecepts.push(siLiRi)
+    }
+
     return solarTermPrecepts
   }
 
@@ -1487,6 +1493,50 @@ export class PreceptDataManager {
           reason: detail.reason,
           punishment: detail.punishment,
           description: `四绝日 - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+        }
+      }
+    }
+
+    return null
+  }
+
+  /**
+   * 获取四离日戒期（二分二至的前一日）
+   */
+  private getSiLiRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    const year = date.getFullYear()
+    const currentSolarTerms = this.getSolarTerms(year)
+
+    // 查找二分二至日（春分、秋分、夏至、冬至）
+    const erFenErZhiTerms = currentSolarTerms.filter(term =>
+      ['春分', '秋分', '夏至', '冬至'].includes(term.name)
+    )
+
+    for (const term of erFenErZhiTerms) {
+      const daysDiff = Math.floor((date.getTime() - term.date.getTime()) / (1000 * 60 * 60 * 24))
+
+      // 检查是否为前一日（daysDiff === -1）
+      if (daysDiff === -1) {
+        const detail = {
+          reason: '四离日',
+          punishment: '犯之减寿五年',
+          explanation: `此日为${term.name}的前一日，属四离日之一。四离日是季节交替的关键时刻，天地阴阳二气分离，万物转换，犯戒会严重影响寿命`,
+          suggestion: '四离日应严格持戒，可诵经礼佛，修身养性，避免一切不当行为',
+          category: PreceptCategory.SOLAR_TERM,
+          tags: [`四离日`, `${term.name}`],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MAJOR,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `四离日 - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
         }
       }
     }
