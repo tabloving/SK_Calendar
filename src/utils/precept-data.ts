@@ -1337,6 +1337,26 @@ export class PreceptDataManager {
         reason: '二至日',
         punishment: '犯者必得急疾',
         level: PreceptLevel.MAJOR
+      },
+      '立春': {
+        reason: '四立日',
+        punishment: '犯之减寿五年',
+        level: PreceptLevel.MAJOR
+      },
+      '立夏': {
+        reason: '四立日',
+        punishment: '犯之减寿五年',
+        level: PreceptLevel.MAJOR
+      },
+      '立秋': {
+        reason: '四立日',
+        punishment: '犯之减寿五年',
+        level: PreceptLevel.MAJOR
+      },
+      '立冬': {
+        reason: '四立日',
+        punishment: '犯之减寿五年',
+        level: PreceptLevel.MAJOR
       }
     }
 
@@ -1349,7 +1369,7 @@ export class PreceptDataManager {
       explanation: this.getSolarTermExplanation(solarTerm),
       suggestion: this.getSolarTermSuggestion(solarTerm),
       category: PreceptCategory.SOLAR_TERM,
-      tags: (solarTerm === "春分" || solarTerm === "秋分") ? [solarTerm, "二分日"] : [solarTerm, "二至日"],
+      tags: this.getSolarTermTags(solarTerm),
       source: '《寿康宝鉴》'
     }
 
@@ -1468,7 +1488,11 @@ export class PreceptDataManager {
       '春分': '春分日雷将发声，天地阴阳二气开始激烈交战，此日犯戒会影响后代健康，给父母带来灾祸。宜从惊蛰节禁起，戒过一月',
       '秋分': '秋分日杀气浸盛，阳气逐渐衰退，阴气渐长，此日犯戒会严重损害身体健康。宜从白露节禁起，戒过一月',
       '夏至': '夏至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病。宜从芒种节禁起，戒过一月',
-      '冬至': '冬至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病。冬至半夜子时犯之，并冬至后庚辛日，及第三戌日犯之，皆主在一年内亡。宜从大雪节禁起，戒过一月'
+      '冬至': '冬至日阴阳相争，是死生分判的关键时刻，此日犯戒会招致急重疾病。冬至半夜子时犯之，并冬至后庚辛日，及第三戌日犯之，皆主在一年内亡。宜从大雪节禁起，戒过一月',
+      '立春': '立春是二十四节气之首，春季的开始，天地阳气初生，万物复苏。此日犯戒会严重影响寿命，减寿五年',
+      '立夏': '立夏是夏季的开始，天地阳气旺盛，万物生长茂盛。此日犯戒会严重影响寿命，减寿五年',
+      '立秋': '立秋是秋季的开始，天地阳气渐收，阴气渐长。此日犯戒会严重影响寿命，减寿五年',
+      '立冬': '立冬是冬季的开始，天地阳气潜藏，阴气盛极。此日犯戒会严重影响寿命，减寿五年'
     }
     return explanations[solarTerm] || '节气日是天地阴阳二气交战的关键时刻，应严格持戒'
   }
@@ -1481,9 +1505,29 @@ export class PreceptDataManager {
       '春分': '春分前应从惊蛰节开始禁戒，持戒一个月，可诵经礼佛，修身养性，避免雷震之灾',
       '秋分': '秋分前应从白露节开始禁戒，持戒一个月，可诵经礼佛，收敛心神，顺应天时',
       '夏至': '夏至今应从芒种节开始禁戒，持戒一个月，可静坐养心，避免阴阳失调',
-      '冬至': '冬至今应从大雪节开始禁戒，持戒一个月，可静坐养心，潜藏阳气'
+      '冬至': '冬至今应从大雪节开始禁戒，持戒一个月，可静坐养心，潜藏阳气',
+      '立春': '立春是二十四节气之首，春季的开始，犯之减寿五年，应严格持戒',
+      '立夏': '立夏是夏季的开始，犯之减寿五年，应严格持戒',
+      '立秋': '立秋是秋季的开始，犯之减寿五年，应严格持戒',
+      '立冬': '立冬是冬季的开始，犯之减寿五年，应严格持戒'
     }
     return suggestions[solarTerm] || '应严格持戒，可诵经礼佛，修身养性，顺应天时'
+  }
+
+  /**
+   * 获取节气标签
+   */
+  private getSolarTermTags(solarTerm: string): string[] {
+    if (solarTerm === '春分' || solarTerm === '秋分') {
+      return [solarTerm, '二分日']
+    }
+    if (solarTerm === '夏至' || solarTerm === '冬至') {
+      return [solarTerm, '二至日']
+    }
+    if (solarTerm === '立春' || solarTerm === '立夏' || solarTerm === '立秋' || solarTerm === '立冬') {
+      return [solarTerm, '四立日']
+    }
+    return [solarTerm]
   }
 
 
