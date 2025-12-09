@@ -161,6 +161,70 @@
         </div>
       </el-card>
 
+      <!-- 三元日测试 -->
+      <el-card class="md:col-span-2">
+        <template #header>
+          <span>三元日测试</span>
+        </template>
+        <div class="space-y-4">
+          <div class="text-sm text-gray-600">
+            测试三元日（农历正月十五、七月十五、十月十五）戒期，犯之减寿五年：
+          </div>
+
+          <!-- 选择测试年份 -->
+          <div class="flex gap-2 items-center">
+            <span>测试年份：</span>
+            <el-button @click="sanyuanTestYear--" :disabled="sanyuanTestYear <= 2024">上一年</el-button>
+            <span class="font-semibold">{{ sanyuanTestYear }}</span>
+            <el-button @click="sanyuanTestYear++">下一年</el-button>
+            <el-button @click="testSanYuanPrecepts" type="primary">测试三元日</el-button>
+          </div>
+
+          <!-- 说明 -->
+          <div class="text-xs text-gray-600 bg-blue-50 p-3 rounded">
+            <div class="font-semibold mb-1">说明：</div>
+            <div>• 上元节：农历正月十五（天官大帝圣诞）</div>
+            <div>• 中元节：农历七月十五（地官大帝圣诞）</div>
+            <div>• 下元节：农历十月十五（水官大帝圣诞）</div>
+          </div>
+
+          <!-- 显示测试结果 -->
+          <div v-if="sanyuanPreceptTests.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="(test, index) in sanyuanPreceptTests"
+              :key="index"
+              class="border rounded-lg p-3"
+              :class="{
+                'border-red-300 bg-red-50': test.precept.level === 'major',
+                'border-gray-200 bg-gray-50': test.precept.level !== 'major'
+              }"
+            >
+              <div class="font-semibold text-purple-700 mb-2">{{ test.description }}</div>
+              <div class="text-sm text-blue-600 mb-2">
+                {{ test.lunarMonth === 1 ? '上元节' : test.lunarMonth === 7 ? '中元节' : '下元节' }}
+                （农历{{ test.lunarMonth }}月15日）
+              </div>
+
+              <div class="space-y-2">
+                <div class="text-sm border-l-2 border-red-400 pl-2">
+                  <div class="font-medium text-red-700">{{ test.precept.reason }}</div>
+                  <div class="text-gray-700">{{ test.precept.punishment }}</div>
+                  <div class="text-red-600 font-semibold">
+                    等级：{{ getPreceptLevelText(test.precept.level) }}
+                  </div>
+                  <div class="text-purple-600 text-xs">
+                    标签：{{ test.precept.detail?.tags?.join(', ') || '无' }}
+                  </div>
+                  <div v-if="test.precept.detail?.explanation" class="text-gray-600 text-xs mt-1">
+                    说明：{{ test.precept.detail.explanation }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 新数据结构测试 -->
       <el-card>
         <template #header>
@@ -277,6 +341,10 @@ const lunarTestResult = ref('')
 // 节气日测试相关
 const solarTermTestYear = ref(new Date().getFullYear())
 const solarTermPreceptTests = ref<Array<{ dateStr: string; date: Date; solarTerm: string | null; precepts: any[] }>>([])
+
+// 三元日测试相关
+const sanyuanTestYear = ref(new Date().getFullYear())
+const sanyuanPreceptTests = ref<Array<{ description: string; lunarMonth: number; dateStr: string; precept: any }>>([])
 
 // 新数据结构测试
 const preceptDataManager = PreceptDataManager.getInstance()
@@ -559,6 +627,57 @@ const testSolarTermPrecepts = () => {
   solarTermPreceptTests.value = testResults
 
   console.log('测试结果:', testResults)
+}
+
+// 测试三元日
+const testSanYuanPrecepts = () => {
+  console.log(`=== 测试${sanyuanTestYear.value}年三元日戒期 ===`)
+
+  const testResults: Array<{ description: string; lunarMonth: number; dateStr: string; precept: any }> = []
+
+  // 测试三个月的三元日
+  const sanYuanMonths = [1, 7, 10] // 正月、七月、十月
+
+  for (const month of sanYuanMonths) {
+    // 查找当年农历month月15日对应的公历日期
+    for (let day = 1; day <= 31; day++) {
+      try {
+        const testDate = new Date(sanyuanTestYear.value, 0, day) // 从1月1日开始测试
+        const lunarInfo = LunarCalendarUtil.getLunarInfo(testDate)
+
+        if (lunarInfo.lunarMonth === month && lunarInfo.lunarDay === 15) {
+          const dayInfo = LunarCalendarUtil.getLunarInfo(testDate)
+          const precepts = CalendarUtil.getDayPreceptInfos(dayInfo)
+
+          // 找到三元日戒期
+          const sanYuanPrecept = precepts.find(p =>
+            p.reason.includes('三元日') || p.detail?.tags?.includes('三元日')
+          )
+
+          if (sanYuanPrecept) {
+            const description = `${sanyuanTestYear.value}年农历${month}月15日 (${CalendarUtil.formatDate(testDate)})`
+            testResults.push({
+              description,
+              lunarMonth: month,
+              dateStr: CalendarUtil.formatDate(testDate),
+              precept: sanYuanPrecept
+            })
+          }
+          break // 找到后跳出
+        }
+      } catch (e) {
+        // 忽略错误，继续查找
+      }
+    }
+  }
+
+  sanyuanPreceptTests.value = testResults
+
+  console.log('三元日测试结果:', testResults)
+
+  if (testResults.length < 3) {
+    console.warn('未能找到全部三个三元日，只找到了', testResults.length, '个')
+  }
 }
 </script>
 

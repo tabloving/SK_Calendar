@@ -1286,7 +1286,54 @@ export class PreceptDataManager {
     const solarTermPrecepts = this.getSolarTermPrecepts(date, dayInfo)
     specialPrecepts.push(...solarTermPrecepts)
 
+    // 3. 获取三元日戒期
+    const sanYuanRiPrecept = this.getSanYuanRiPrecept(lunarMonth, lunarDay, date)
+    if (sanYuanRiPrecept) {
+      specialPrecepts.push(sanYuanRiPrecept)
+    }
+
     return specialPrecepts
+  }
+
+  /**
+   * 获取三元日戒期
+   * 三元日：农历正月十五（上元）、七月十五（中元）、十月十五（下元）
+   * 犯之减寿五年
+   */
+  private getSanYuanRiPrecept(lunarMonth: number, lunarDay: number, date: Date): PreceptInfo | null {
+    // 检查是否为三元日：正月、七月、十月的十五日
+    if ((lunarMonth === 1 || lunarMonth === 7 || lunarMonth === 10) && lunarDay === 15) {
+      const yuanNames: Record<number, string> = {
+        1: '上元',
+        7: '中元',
+        10: '下元'
+      }
+
+      const yuanName = yuanNames[lunarMonth]
+      const detail = {
+        reason: '三元日',
+        punishment: '犯之减寿五年',
+        explanation: `${yuanName}（农历${lunarMonth}月15日），三元日之一。三元日是天官、地官、水官巡行世间，校定善恶的重要日子，犯戒会严重损害寿命`,
+        suggestion: '三元日应严格持戒，可礼拜三官大帝，诵经礼忏，广修善业，以求消灾祈福',
+        category: PreceptCategory.FESTIVAL,
+        tags: ['三元日', yuanName, '天官大帝', '三官大帝'],
+        source: '《寿康宝鉴》'
+      }
+
+      const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+      return {
+        date: dateStr,
+        level: PreceptLevel.MAJOR,
+        type: PreceptType.SPECIAL,
+        detail: detail,
+        reason: detail.reason,
+        punishment: detail.punishment,
+        description: `三元日${yuanName} - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节日戒期`
+      }
+    }
+
+    return null
   }
 
   /**
