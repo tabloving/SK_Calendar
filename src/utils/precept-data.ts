@@ -97,8 +97,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(1, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 二月戒期
@@ -162,8 +161,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(2, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 三月戒期
@@ -227,8 +225,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(3, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 四月戒期
@@ -292,8 +289,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(4, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 五月戒期（宜全戒）
@@ -373,8 +369,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(5, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 六月戒期
@@ -430,8 +425,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(6, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 七月戒期
@@ -503,8 +497,7 @@ export class PreceptDataManager {
     this.addMonthPrecepts(7, 30, [
       { reason: '地藏菩萨诞，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 八月戒期
@@ -568,7 +561,6 @@ export class PreceptDataManager {
     this.addMonthPrecepts(8, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
       { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel },
       { reason: '诸神考校夺算', level: 'major' as PreceptLevel }
     ])
 
@@ -630,8 +622,7 @@ export class PreceptDataManager {
     this.addMonthPrecepts(9, 30, [
       { reason: '药师琉璃光佛诞，犯者得危疾', level: 'major' as PreceptLevel },
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 十月戒期
@@ -689,8 +680,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(10, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 十一月戒期
@@ -750,8 +740,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(11, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '月晦日，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
 
     // 十二月戒期
@@ -1375,6 +1364,12 @@ export class PreceptDataManager {
       solarTermPrecepts.push(huiBaiRi)
     }
 
+    // 检查是否为月晦日（农历每月最后一天）
+    const yueHuiRi = this.getYueHuiRiPrecept(date, dayInfo)
+    if (yueHuiRi) {
+      solarTermPrecepts.push(yueHuiRi)
+    }
+
     return solarTermPrecepts
   }
 
@@ -1648,6 +1643,63 @@ export class PreceptDataManager {
       }
     } catch (error) {
       console.error('获取毁败日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取月晦日戒期（农历每月最后一天）
+   * 月晦日：大月为三十日，小月为廿九日
+   * 犯者减寿
+   */
+  private getYueHuiRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      const lunarYear = lunarDate.getYear()
+      const lunarMonth = lunarDate.getMonth()
+      const lunarDay = lunarDate.getDay()
+
+      // 获取当前农历月的天数
+      const lunarMonthObj = lunarLib.LunarMonth.fromYm(lunarYear, lunarMonth)
+      if (!lunarMonthObj) {
+        console.error('获取农历月份对象失败', { lunarYear, lunarMonth })
+        return null
+      }
+      const monthDays = lunarMonthObj.getDayCount()
+
+      // 判断是否为月晦日（每月最后一天）
+      const isYueHuiRi = lunarDay === monthDays
+
+      if (isYueHuiRi) {
+        const monthType = monthDays === 30 ? '大月' : '小月'
+        const lunarMonthChinese = lunarDate.getMonthInChinese()
+        const lunarDayChinese = lunarDate.getDayInChinese()
+        const detail = {
+          reason: '月晦日',
+          punishment: '犯者减寿',
+          explanation: `此日为农历${lunarMonthChinese}月${lunarDayChinese}，是本月最后一天（${monthType}月晦）。月晦是天地阴阳转换的关键时刻，司命之神在此日向天庭奏报世人善恶`,
+          suggestion: '月晦日应严格持戒，反省己过，可诵经忏悔，修身养性',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['月晦日', monthType, '司命奏事'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `月晦日 - 犯者减寿 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取月晦日信息失败', error)
     }
 
     return null
