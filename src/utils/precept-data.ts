@@ -1623,10 +1623,11 @@ export class PreceptDataManager {
 
       if (isHuiBaiRi) {
         const monthType = monthDays === 30 ? '大月' : '小月'
+        const lunarMonthChinese = lunarDate.getMonthInChinese()
         const detail = {
           reason: '毁败日',
           punishment: '犯之得病',
-          explanation: `此日为农历${lunarMonth}月${monthType}的毁败日（${monthType === '大月' ? '十八日' : '十七日'}）。毁败日是天地气机不顺的日子，犯戒容易导致疾病`,
+          explanation: `此日为农历${lunarMonthChinese}月${monthType}的毁败日（${monthType === '大月' ? '十八日' : '十七日'}）。毁败日是天地气机不顺的日子，犯戒容易导致疾病`,
           suggestion: '毁败日应注意身体健康，持戒清净，可诵经祈福，避免不当行为',
           category: PreceptCategory.ASTRONOMICAL,
           tags: ['毁败日', monthType],
