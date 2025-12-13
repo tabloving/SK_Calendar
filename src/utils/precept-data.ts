@@ -96,8 +96,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(1, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 二月戒期
@@ -160,8 +159,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 三月戒期
@@ -224,8 +222,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(3, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 四月戒期
@@ -288,8 +285,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(4, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 五月戒期（宜全戒）
@@ -368,8 +364,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(5, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 六月戒期
@@ -424,8 +419,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(6, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 七月戒期
@@ -496,7 +490,6 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(7, 30, [
       { reason: '地藏菩萨诞，犯者夺纪', level: 'major' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
@@ -560,7 +553,6 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(8, 30, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel },
       { reason: '诸神考校夺算', level: 'major' as PreceptLevel }
     ])
 
@@ -621,8 +613,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(9, 30, [
       { reason: '药师琉璃光佛诞，犯者得危疾', level: 'major' as PreceptLevel },
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 十月戒期
@@ -679,8 +670,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 十一月戒期
@@ -739,8 +729,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 30, [
-      { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
-      { reason: '司命奏事，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
 
     // 十二月戒期
@@ -1682,7 +1671,7 @@ export class PreceptDataManager {
           explanation: `此日为农历${lunarMonthChinese}月${lunarDayChinese}，是本月最后一天（${monthType}月晦）。月晦是天地阴阳转换的关键时刻，司命之神在此日向天庭奏报世人善恶`,
           suggestion: '月晦日应严格持戒，反省己过，可诵经忏悔，修身养性',
           category: PreceptCategory.ASTRONOMICAL,
-          tags: ['月晦日', monthType, '司命奏事'],
+          tags: [monthType, '司命奏事'],
           source: '《寿康宝鉴》'
         }
 
