@@ -1637,12 +1637,12 @@ export class PreceptDataManager {
 
         return {
           date: dateStr,
-          level: PreceptLevel.MODERATE,
+          level: PreceptLevel.MINOR,
           type: PreceptType.SPECIAL,
           detail: detail,
           reason: detail.reason,
           punishment: detail.punishment,
-          description: `毁败日 - 犯之得病 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+          description: `毁败日 - 犯之得病 - 宜戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
         }
       }
     } catch (error) {
