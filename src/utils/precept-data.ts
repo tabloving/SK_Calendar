@@ -1369,6 +1369,12 @@ export class PreceptDataManager {
       solarTermPrecepts.push(siLiRi)
     }
 
+    // 检查是否为毁败日（大月十八日，小月十七日）
+    const huiBaiRi = this.getHuiBaiRiPrecept(date, dayInfo)
+    if (huiBaiRi) {
+      solarTermPrecepts.push(huiBaiRi)
+    }
+
     return solarTermPrecepts
   }
 
@@ -1586,6 +1592,61 @@ export class PreceptDataManager {
           description: `四离日 - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
         }
       }
+    }
+
+    return null
+  }
+
+  /**
+   * 获取毁败日戒期（大月十八日，小月十七日）
+   */
+  private getHuiBaiRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      const lunarYear = lunarDate.getYear()
+      const lunarMonth = lunarDate.getMonth()
+      const lunarDay = lunarDate.getDay()
+
+      // 获取当前农历月的天数
+      const lunarMonthObj = lunarLib.LunarMonth.fromYm(lunarYear, lunarMonth)
+      if (!lunarMonthObj) {
+        console.error('获取农历月份对象失败', { lunarYear, lunarMonth })
+        return null
+      }
+      const monthDays = lunarMonthObj.getDayCount()
+
+      // 判断是否为毁败日
+      // 大月（30天）：十八日
+      // 小月（29天）：十七日
+      const isHuiBaiRi = (monthDays === 30 && lunarDay === 18) || (monthDays === 29 && lunarDay === 17)
+
+      if (isHuiBaiRi) {
+        const monthType = monthDays === 30 ? '大月' : '小月'
+        const detail = {
+          reason: '毁败日',
+          punishment: '犯之得病',
+          explanation: `此日为农历${lunarMonth}月${monthType}的毁败日（${monthType === '大月' ? '十八日' : '十七日'}）。毁败日是天地气机不顺的日子，犯戒容易导致疾病`,
+          suggestion: '毁败日应注意身体健康，持戒清净，可诵经祈福，避免不当行为',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['毁败日', monthType],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `毁败日 - 犯之得病 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取毁败日信息失败', error)
     }
 
     return null

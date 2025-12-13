@@ -161,6 +161,72 @@
         </div>
       </el-card>
 
+      <!-- 毁败日测试 -->
+      <el-card class="md:col-span-2">
+        <template #header>
+          <span>毁败日测试</span>
+        </template>
+        <div class="space-y-4">
+          <div class="text-sm text-gray-600">
+            测试毁败日（大月十八日，小月十七日）戒期，犯之得病：
+          </div>
+
+          <!-- 选择测试年份 -->
+          <div class="flex gap-2 items-center">
+            <span>测试年份：</span>
+            <el-button @click="huibaiTestYear--" :disabled="huibaiTestYear <= 2024">上一年</el-button>
+            <span class="font-semibold">{{ huibaiTestYear }}</span>
+            <el-button @click="huibaiTestYear++">下一年</el-button>
+            <el-button @click="testHuiBaiPrecepts" type="primary">测试毁败日</el-button>
+          </div>
+
+          <!-- 说明 -->
+          <div class="text-xs text-gray-600 bg-blue-50 p-3 rounded">
+            <div class="font-semibold mb-1">说明：</div>
+            <div>• 大月（30天）：十八日为毁败日</div>
+            <div>• 小月（29天）：十七日为毁败日</div>
+            <div>• 毁败日是天地气机不顺的日子，犯戒容易导致疾病</div>
+          </div>
+
+          <!-- 显示测试结果 -->
+          <div v-if="huibaiPreceptTests.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="(test, index) in huibaiPreceptTests"
+              :key="index"
+              class="border rounded-lg p-3"
+              :class="{
+                'border-purple-300 bg-purple-50': test.precept,
+                'border-gray-200 bg-gray-50': !test.precept
+              }"
+            >
+              <div class="font-semibold text-purple-700 mb-2">{{ test.description }}</div>
+              <div class="text-sm text-blue-600 mb-2">
+                农历{{ test.lunarMonth }}月{{ test.lunarDay }}日（{{ test.monthType }}）
+              </div>
+
+              <div v-if="test.precept" class="space-y-2">
+                <div class="text-sm border-l-2 border-purple-400 pl-2">
+                  <div class="font-medium text-purple-700">{{ test.precept.reason }}</div>
+                  <div class="text-gray-700">{{ test.precept.punishment }}</div>
+                  <div class="text-purple-600 font-semibold">
+                    等级：{{ getPreceptLevelText(test.precept.level) }}
+                  </div>
+                  <div class="text-purple-600 text-xs">
+                    标签：{{ test.precept.detail?.tags?.join(', ') || '无' }}
+                  </div>
+                  <div v-if="test.precept.detail?.explanation" class="text-gray-600 text-xs mt-1">
+                    说明：{{ test.precept.detail.explanation }}
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 text-sm">
+                未找到毁败日戒期
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 三元日测试 -->
       <el-card class="md:col-span-2">
         <template #header>
@@ -345,6 +411,10 @@ const solarTermPreceptTests = ref<Array<{ dateStr: string; date: Date; solarTerm
 // 三元日测试相关
 const sanyuanTestYear = ref(new Date().getFullYear())
 const sanyuanPreceptTests = ref<Array<{ description: string; lunarMonth: number; dateStr: string; precept: any }>>([])
+
+// 毁败日测试相关
+const huibaiTestYear = ref(new Date().getFullYear())
+const huibaiPreceptTests = ref<Array<{ description: string; lunarMonth: number; lunarDay: number; monthType: string; dateStr: string; precept: any }>>([])
 
 // 新数据结构测试
 const preceptDataManager = PreceptDataManager.getInstance()
@@ -678,6 +748,65 @@ const testSanYuanPrecepts = () => {
   if (testResults.length < 3) {
     console.warn('未能找到全部三个三元日，只找到了', testResults.length, '个')
   }
+}
+
+// 测试毁败日
+const testHuiBaiPrecepts = () => {
+  console.log(`=== 测试${huibaiTestYear.value}年毁败日戒期 ===`)
+
+  const testResults: Array<{ description: string; lunarMonth: number; lunarDay: number; monthType: string; dateStr: string; precept: any }> = []
+
+  // 遍历全年每一天
+  for (let month = 0; month < 12; month++) {
+    const daysInMonth = new Date(huibaiTestYear.value, month + 1, 0).getDate()
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      try {
+        const testDate = new Date(huibaiTestYear.value, month, day)
+        const solar = lunar.Solar.fromDate(testDate)
+        const lunarDate = solar.getLunar()
+        const lunarYear = lunarDate.getYear()
+        const lunarMonth = lunarDate.getMonth()
+        const lunarDay = lunarDate.getDay()
+
+        // 获取当前农历月的天数
+        const lunarMonthObj = lunar.LunarMonth.fromYm(lunarYear, lunarMonth)
+        const monthDays = lunarMonthObj.getDayCount()
+
+        // 判断是否为毁败日
+        const isHuiBaiRi = (monthDays === 30 && lunarDay === 18) || (monthDays === 29 && lunarDay === 17)
+
+        if (isHuiBaiRi) {
+          const dayInfo = LunarCalendarUtil.getLunarInfo(testDate)
+          const precepts = CalendarUtil.getDayPreceptInfos(dayInfo)
+
+          // 找到毁败日戒期
+          const huiBaiPrecept = precepts.find(p =>
+            p.reason.includes('毁败日') || p.detail?.tags?.includes('毁败日')
+          )
+
+          const monthType = monthDays === 30 ? '大月' : '小月'
+          const description = `${huibaiTestYear.value}年农历${lunarMonth}月${lunarDay}日 (${CalendarUtil.formatDate(testDate)})`
+
+          testResults.push({
+            description,
+            lunarMonth,
+            lunarDay,
+            monthType,
+            dateStr: CalendarUtil.formatDate(testDate),
+            precept: huiBaiPrecept || null
+          })
+        }
+      } catch (e) {
+        // 忽略错误，继续查找
+      }
+    }
+  }
+
+  huibaiPreceptTests.value = testResults
+
+  console.log('毁败日测试结果:', testResults)
+  console.log(`找到 ${testResults.length} 个毁败日`)
 }
 </script>
 
