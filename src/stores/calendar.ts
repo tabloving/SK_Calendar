@@ -143,6 +143,28 @@ export const useCalendarStore = defineStore('calendar', () => {
     updateSelectedDateAfterYearChange()
   }
 
+  const goToPreviousDay = () => {
+    if (!selectedDate.value) {
+      selectedDate.value = new Date()
+    }
+    const newDate = new Date(selectedDate.value)
+    newDate.setDate(newDate.getDate() - 1)
+    selectedDate.value = newDate
+    selectedYear.value = newDate.getFullYear()
+    selectedMonth.value = newDate.getMonth() + 1
+  }
+
+  const goToNextDay = () => {
+    if (!selectedDate.value) {
+      selectedDate.value = new Date()
+    }
+    const newDate = new Date(selectedDate.value)
+    newDate.setDate(newDate.getDate() + 1)
+    selectedDate.value = newDate
+    selectedYear.value = newDate.getFullYear()
+    selectedMonth.value = newDate.getMonth() + 1
+  }
+
   const selectDate = (date: Date) => {
     selectedDate.value = date
   }
@@ -209,6 +231,8 @@ export const useCalendarStore = defineStore('calendar', () => {
     goToNextMonth,
     goToPreviousYear,
     goToNextYear,
+    goToPreviousDay,
+    goToNextDay,
     selectDate,
     goToMonth,
     getDayPreceptInfo

@@ -7,15 +7,15 @@
         <div class="flex items-center gap-1">
           <el-button
             :icon="ArrowLeft"
-            @click="goToPreviousYear"
-            title="上一年"
+            @click="goToPreviousMonth"
+            title="上个月"
             size="small"
             class="nav-btn"
           />
           <el-button
             :icon="CaretLeft"
-            @click="goToPreviousMonth"
-            title="上个月"
+            @click="goToPreviousDay"
+            title="上一天"
             size="small"
             class="nav-btn"
           />
@@ -39,15 +39,15 @@
         <div class="flex items-center gap-1">
           <el-button
             :icon="CaretRight"
-            @click="goToNextMonth"
-            title="下个月"
+            @click="goToNextDay"
+            title="下一天"
             size="small"
             class="nav-btn"
           />
           <el-button
             :icon="ArrowRight"
-            @click="goToNextYear"
-            title="下一年"
+            @click="goToNextMonth"
+            title="下个月"
             size="small"
             class="nav-btn"
           />
@@ -151,12 +151,12 @@ const goToNextMonth = () => {
   calendarStore.goToNextMonth()
 }
 
-const goToPreviousYear = () => {
-  calendarStore.goToPreviousYear()
+const goToPreviousDay = () => {
+  calendarStore.goToPreviousDay()
 }
 
-const goToNextYear = () => {
-  calendarStore.goToNextYear()
+const goToNextDay = () => {
+  calendarStore.goToNextDay()
 }
 
 const goToToday = () => {
