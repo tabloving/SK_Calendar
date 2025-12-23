@@ -1270,6 +1270,18 @@ export class PreceptDataManager {
       specialPrecepts.push(sanYuanRiPrecept)
     }
 
+    // 4. 获取甲子日戒期
+    const jiaZiRiPrecept = this.getJiaZiRiPrecept(date, dayInfo)
+    if (jiaZiRiPrecept) {
+      specialPrecepts.push(jiaZiRiPrecept)
+    }
+
+    // 5. 获取庚申日戒期
+    const gengShenRiPrecept = this.getGengShenRiPrecept(date, dayInfo)
+    if (gengShenRiPrecept) {
+      specialPrecepts.push(gengShenRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -1800,5 +1812,91 @@ export class PreceptDataManager {
    */
   public testPreceptLevel(punishment: string): PreceptLevel {
     return this.determinePreceptLevel(punishment)
+  }
+
+  /**
+   * 获取甲子日戒期
+   * 甲子日：六十甲子首日，犯之减寿一年
+   */
+  private getJiaZiRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 获取当日的干支
+      const ganZhi = lunarDate.getDayInGanZhi()
+
+      // 判断是否为甲子日
+      if (ganZhi === '甲子') {
+        const detail = {
+          reason: '甲子日',
+          punishment: '犯之减寿一年',
+          explanation: '甲子日是六十甲子的首日，天干地支循环之始，具有特殊的神圣意义。此日天地元气更新，犯戒会严重损害寿命',
+          suggestion: '甲子日应严格持戒，可诵经礼佛，修身养性，顺应天地元气更新之机',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['甲子日', '六十甲子', '神圣日'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `甲子日 - 犯之减寿一年 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取甲子日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取庚申日戒期
+   * 庚申日：六庚之首，犯之减寿一年
+   */
+  private getGengShenRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 获取当日的干支
+      const ganZhi = lunarDate.getDayInGanZhi()
+
+      // 判断是否为庚申日
+      if (ganZhi === '庚申') {
+        const detail = {
+          reason: '庚申日',
+          punishment: '犯之减寿一年',
+          explanation: '庚申日是六十甲子中的重要日子，传说此日三尸神会上天庭奏报人间善恶。庚属金，申属猴，此日阴阳交替，犯戒会严重损害寿命',
+          suggestion: '庚申日应严格持戒，可诵经礼佛，反省己过，避免三尸神奏报恶行',
+          category: PreceptCategory.DEITY_INSPECTION,
+          tags: ['庚申日', '三尸神', '神圣日'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `庚申日 - 犯之减寿一年 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：神明监察戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取庚申日信息失败', error)
+    }
+
+    return null
   }
 }
