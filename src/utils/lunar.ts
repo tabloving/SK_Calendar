@@ -48,7 +48,9 @@ export class LunarCalendarUtil {
         isCurrentMonth: true, // 这个值在使用时需要根据上下文确定
         preceptInfos: [],
         solarTerm: lunarDate.getJieQi() || undefined,
-        ganZhi: ganZhi
+        ganZhi: ganZhi,
+        lunarMonth: lunarDate.getMonth(),
+        lunarDay: lunarDate.getDay()
       }
     } catch (error) {
       debug.error('获取农历信息失败', error)
@@ -67,7 +69,9 @@ export class LunarCalendarUtil {
         isCurrentMonth: true,
         preceptInfos: [],
         solarTerm: undefined,
-        ganZhi: undefined
+        ganZhi: undefined,
+        lunarMonth: undefined,
+        lunarDay: undefined
       }
     }
   }

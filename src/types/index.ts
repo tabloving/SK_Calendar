@@ -87,6 +87,8 @@ export interface CalendarDayInfo {
   preceptInfos: PreceptInfo[]; // 当日戒期信息列表
   solarTerm?: string;     // 节气
   ganZhi?: any;           // 干支信息
+  lunarMonth?: number;    // 农历月份（可选，用于测试功能）
+  lunarDay?: number;      // 农历日期（可选，用于测试功能）
 }
 
 // 月份信息接口

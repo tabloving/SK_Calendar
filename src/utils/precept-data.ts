@@ -1288,6 +1288,12 @@ export class PreceptDataManager {
       specialPrecepts.push(bingDingRiPrecept)
     }
 
+    // 7. 获取阳错日戒期
+    const yangCuoRiPrecept = this.getYangCuoRiPrecept(lunarMonth, date, dayInfo)
+    if (yangCuoRiPrecept) {
+      specialPrecepts.push(yangCuoRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -1947,6 +1953,73 @@ export class PreceptDataManager {
       }
     } catch (error) {
       console.error('获取丙丁日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取阳错日戒期
+   * 阳错日：农历每月特定的干支日，此阳不足之日，俱宜戒
+   * 正月甲寅日、二月乙卯日、三月甲辰日、四月丁巳日、五月丙午日、六月丁未日、
+   * 七月庚申日、八月辛酉日、九月庚戌日、十月癸亥日、十一月壬子日、十二月癸丑日
+   */
+  private getYangCuoRiPrecept(lunarMonth: number, date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 获取当日的干支
+      const ganZhi = lunarDate.getDayInGanZhi()
+
+      // 阳错日配置：每月对应的干支
+      const yangCuoConfig: Record<number, string> = {
+        1: '甲寅',  // 正月
+        2: '乙卯',  // 二月
+        3: '甲辰',  // 三月
+        4: '丁巳',  // 四月
+        5: '丙午',  // 五月
+        6: '丁未',  // 六月
+        7: '庚申',  // 七月
+        8: '辛酉',  // 八月
+        9: '庚戌',  // 九月
+        10: '癸亥', // 十月
+        11: '壬子', // 十一月
+        12: '癸丑'  // 十二月
+      }
+
+      const expectedGanZhi = yangCuoConfig[lunarMonth]
+
+      // 判断是否为阳错日
+      if (ganZhi === expectedGanZhi) {
+        // 中文数字映射
+        const chineseMonths = ['', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊']
+        const chineseMonth = chineseMonths[lunarMonth] || lunarMonth.toString()
+
+        const detail = {
+          reason: '阳错日',
+          punishment: '此阳不足之日，俱宜戒',
+          explanation: `阳错日是农历${chineseMonth}月的特定干支日（${ganZhi}）。此日为阳气不足、阴阳失调之时，犯戒易损伤阳气，导致运势不顺`,
+          suggestion: '阳错日应保持内心平静，避免冲动行事，可静心养神，积蓄阳气，以调和阴阳',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['阳错日', '阴阳不足', '天干地支'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MINOR,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `阳错日 - ${detail.punishment} - 小戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：阴阳戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取阳错日信息失败', error)
     }
 
     return null
