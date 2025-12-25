@@ -3,6 +3,72 @@
     <h1 class="text-2xl font-bold mb-4">寿康宝鉴戒期日历 - 测试页面</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 阴错日测试 -->
+      <el-card class="md:col-span-2">
+        <template #header>
+          <span>阴错日测试</span>
+        </template>
+        <div class="space-y-4">
+          <div class="text-sm text-gray-600">
+            测试阴错日戒期（农历每月特定干支日），此阴不足之日，俱宜戒：
+          </div>
+
+          <!-- 选择测试年份 -->
+          <div class="flex gap-2 items-center">
+            <span>测试年份：</span>
+            <el-button @click="yincuoTestYear--" :disabled="yincuoTestYear <= 2024">上一年</el-button>
+            <span class="font-semibold">{{ yincuoTestYear }}</span>
+            <el-button @click="yincuoTestYear++">下一年</el-button>
+            <el-button @click="testYinCuoPrecepts" type="primary">测试阴错日</el-button>
+          </div>
+
+          <!-- 说明 -->
+          <div class="text-xs text-gray-600 bg-blue-50 p-3 rounded">
+            <div class="font-semibold mb-1">说明：</div>
+            <div>阴错日是农历每月特定的干支日，此阴不足之日，俱宜戒：</div>
+            <div>正月庚戌、二月辛酉、三月庚申、四月丁未、五月丙午、六月丁巳、</div>
+            <div>七月甲辰、八月乙卯、九月甲寅、十月癸丑、十一月壬子、十二月癸亥</div>
+          </div>
+
+          <!-- 显示测试结果 -->
+          <div v-if="yincuoPreceptTests.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="(test, index) in yincuoPreceptTests"
+              :key="index"
+              class="border rounded-lg p-3"
+              :class="{
+                'border-yellow-300 bg-yellow-50': test.precept,
+                'border-gray-200 bg-gray-50': !test.precept
+              }"
+            >
+              <div class="font-semibold text-purple-700 mb-2">{{ test.description }}</div>
+              <div class="text-sm text-blue-600 mb-2">
+                农历{{ test.lunarMonth }}月（干支：{{ test.ganZhi }}）
+              </div>
+
+              <div v-if="test.precept" class="space-y-2">
+                <div class="text-sm border-l-2 border-yellow-400 pl-2">
+                  <div class="font-medium text-yellow-700">{{ test.precept.reason }}</div>
+                  <div class="text-gray-700">{{ test.precept.punishment }}</div>
+                  <div class="text-yellow-600 font-semibold">
+                    等级：{{ getPreceptLevelText(test.precept.level) }}
+                  </div>
+                  <div class="text-purple-600 text-xs">
+                    标签：{{ test.precept.detail?.tags?.join(', ') || '无' }}
+                  </div>
+                  <div v-if="test.precept.detail?.explanation" class="text-gray-600 text-xs mt-1">
+                    说明：{{ test.precept.detail.explanation }}
+                  </div>
+                </div>
+              </div>
+              <div v-else class="text-gray-500 text-sm">
+                未找到阴错日戒期
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 阳错日测试 -->
       <el-card class="md:col-span-2">
         <template #header>
@@ -486,6 +552,10 @@ const huibaiPreceptTests = ref<Array<{ description: string; lunarMonth: number; 
 const yangcuoTestYear = ref(new Date().getFullYear())
 const yangcuoPreceptTests = ref<Array<{ description: string; lunarMonth: number; ganZhi: string; dateStr: string; precept: any }>>([])
 
+// 阴错日测试相关
+const yincuoTestYear = ref(new Date().getFullYear())
+const yincuoPreceptTests = ref<Array<{ description: string; lunarMonth: number; ganZhi: string; dateStr: string; precept: any }>>([])
+
 // 新数据结构测试
 const preceptDataManager = PreceptDataManager.getInstance()
 
@@ -697,6 +767,9 @@ onMounted(() => {
 
   // 测试阳错日
   testYangCuoPrecepts()
+
+  // 测试阴错日
+  testYinCuoPrecepts()
 })
 
 const testSpecificDateSolarTerm = () => {
@@ -936,6 +1009,62 @@ const testYangCuoPrecepts = () => {
 
   console.log('阳错日测试结果:', testResults)
   console.log(`找到 ${testResults.length} 个阳错日`)
+}
+
+// 测试阴错日
+const testYinCuoPrecepts = () => {
+  console.log(`=== 测试${yincuoTestYear.value}年阴错日戒期 ===`)
+
+  const testResults: Array<{ description: string; lunarMonth: number; ganZhi: string; dateStr: string; precept: any }> = []
+
+  // 阴错日配置：每月对应的干支
+  const yinCuoConfig: Record<number, string> = {
+    1: '庚戌', 2: '辛酉', 3: '庚申', 4: '丁未', 5: '丙午', 6: '丁巳',
+    7: '甲辰', 8: '乙卯', 9: '甲寅', 10: '癸丑', 11: '壬子', 12: '癸亥'
+  }
+
+  // 遍历全年每一天，查找阴错日
+  for (let month = 0; month < 12; month++) {
+    const daysInMonth = new Date(yincuoTestYear.value, month + 1, 0).getDate()
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      try {
+        const testDate = new Date(yincuoTestYear.value, month, day)
+        const solar = lunar.Solar.fromDate(testDate)
+        const lunarDate = solar.getLunar()
+        const lunarMonth = lunarDate.getMonth()
+        const ganZhi = lunarDate.getDayInGanZhi()
+
+        // 判断是否为阴错日
+        if (ganZhi === yinCuoConfig[lunarMonth]) {
+          const dayInfo = LunarCalendarUtil.getLunarInfo(testDate)
+          const precepts = CalendarUtil.getDayPreceptInfos(dayInfo)
+
+          // 找到阴错日戒期
+          const yinCuoPrecept = precepts.find(p =>
+            p.reason.includes('阴错日') || p.detail?.tags?.includes('阴错日')
+          )
+
+          const description = `${yincuoTestYear.value}年农历${lunarMonth}月${ganZhi}日 (${CalendarUtil.formatDate(testDate)})`
+
+          testResults.push({
+            description,
+            lunarMonth,
+            ganZhi,
+            dateStr: CalendarUtil.formatDate(testDate),
+            precept: yinCuoPrecept || null
+          })
+        }
+      } catch (e) {
+        // 忽略错误，继续查找
+      }
+    }
+  }
+
+  yincuoPreceptTests.value = testResults
+
+  console.log('阴错日测试结果:', testResults)
+  console.log(`找到 ${testResults.length} 个阴错日`)
 }
 </script>
 
