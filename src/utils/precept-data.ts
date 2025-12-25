@@ -1300,6 +1300,12 @@ export class PreceptDataManager {
       specialPrecepts.push(yinCuoRiPrecept)
     }
 
+    // 9. 获取弦日戒期
+    const xianRiPrecept = this.getXianRiPrecept(date, dayInfo)
+    if (xianRiPrecept) {
+      specialPrecepts.push(xianRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -1719,6 +1725,56 @@ export class PreceptDataManager {
       }
     } catch (error) {
       console.error('获取月晦日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取弦日戒期
+   * 弦日：上弦（初七、初八）、下弦（廿二、廿三）
+   * 犯之皆减寿一年
+   */
+  private getXianRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      const lunarDay = lunarDate.getDay()
+
+      // 判断是否为弦日
+      // 上弦：初七、初八
+      // 下弦：二十二、二十三
+      const isShangXian = lunarDay === 7 || lunarDay === 8  // 上弦
+      const isXiaXian = lunarDay === 22 || lunarDay === 23  // 下弦
+
+      if (isShangXian || isXiaXian) {
+        const xianType = isShangXian ? '上弦' : '下弦'
+        const lunarMonthChinese = lunarDate.getMonthInChinese()
+        const lunarDayChinese = lunarDate.getDayInChinese()
+        const detail = {
+          reason: '弦日',
+          punishment: '犯之减寿一年',
+          explanation: `此日为农历${lunarMonthChinese}月${lunarDayChinese}，是${xianType}日（上弦为初七、初八，下弦为廿二、廿三）。弦日是月亮盈亏变化的重要节点，阴阳不调、气机不平，宜静养少欲以养精气神，犯戒会损害寿命`,
+          suggestion: '弦日应严格持戒，可诵经礼佛，静心养性，顺应天体运行变化',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['弦日', xianType],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `弦日${xianType} - 犯之减寿一年 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取弦日信息失败', error)
     }
 
     return null
