@@ -1282,6 +1282,12 @@ export class PreceptDataManager {
       specialPrecepts.push(gengShenRiPrecept)
     }
 
+    // 6. 获取丙丁日戒期
+    const bingDingRiPrecept = this.getBingDingRiPrecept(date, dayInfo)
+    if (bingDingRiPrecept) {
+      specialPrecepts.push(bingDingRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -1895,6 +1901,52 @@ export class PreceptDataManager {
       }
     } catch (error) {
       console.error('获取庚申日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取丙丁日戒期
+   * 丙丁日：天干为丙或丁之日，属火之日，犯之得病
+   */
+  private getBingDingRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 获取当日的干支
+      const ganZhi = lunarDate.getDayInGanZhi()
+
+      // 获取天干（干支的第一个字）
+      const gan = ganZhi.charAt(0)
+
+      // 判断是否为丙丁日
+      if (gan === '丙' || gan === '丁') {
+        const detail = {
+          reason: '丙丁日',
+          punishment: '犯之得病',
+          explanation: `丙丁日是天干为丙或丁的日子，属火之日。火性炎上，易动心火，此日犯戒容易导致疾病缠身`,
+          suggestion: '丙丁日应节制欲念，保持心平气和，可多食清淡食物，避免过度劳累，以防火邪侵扰',
+          category: PreceptCategory.ASTRONOMICAL,
+          tags: ['丙丁日', '火日', '天干日'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MINOR,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `丙丁日 - 犯之得病 - 小戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天干戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取丙丁日信息失败', error)
     }
 
     return null
