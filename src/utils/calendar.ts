@@ -114,8 +114,9 @@ export class CalendarUtil {
     // 添加当前月的日期
     grid.push(...currentMonthDays)
 
-    // 添加下个月的日期以填满网格
-    const totalCells = 42 // 6周 × 7天
+    // 动态计算需要的总格子数：如果第一天星期数+当月天数>35，则需要6行(42格)，否则5行(35格)即可
+    const daysInMonth = currentMonthDays.length
+    const totalCells = (firstDayWeekday + daysInMonth > 35) ? 42 : 35
     const remainingCells = totalCells - grid.length
     if (remainingCells > 0) {
       const nextMonth = month === 12 ? 1 : month + 1
