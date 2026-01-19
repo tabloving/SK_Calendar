@@ -124,8 +124,15 @@ const currentMonth = computed(() => calendarStore.selectedMonth)
 
 const lunarMonthName = computed(() => {
   try {
-    // 使用lunar.js获取该月第一天的农历月份名称
-    const solar = lunar.Solar.fromYmd(currentYear.value, currentMonth.value, 1)
+    // 如果有选中日期，使用选中日期的农历月份；否则使用该月第一天
+    let targetDate: Date
+    if (calendarStore.selectedDate) {
+      targetDate = calendarStore.selectedDate
+    } else {
+      targetDate = new Date(currentYear.value, currentMonth.value - 1, 1)
+    }
+
+    const solar = lunar.Solar.fromDate(targetDate)
     const lunarDate = solar.getLunar()
     return `${lunarDate.getYearInChinese()}年${lunarDate.getMonthInChinese()}月`
   } catch (error) {

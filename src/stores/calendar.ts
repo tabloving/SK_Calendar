@@ -167,6 +167,8 @@ export const useCalendarStore = defineStore('calendar', () => {
 
   const selectDate = (date: Date) => {
     selectedDate.value = date
+    selectedYear.value = date.getFullYear()
+    selectedMonth.value = date.getMonth() + 1
   }
 
   const goToMonth = (year: number, month: number) => {
