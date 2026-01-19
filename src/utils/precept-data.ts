@@ -805,16 +805,16 @@ export class PreceptDataManager {
     const dateKey = `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
     const preceptInfos: PreceptInfo[] = reasons.map(precept => {
       const detail = this.parsePreceptDetail(precept.reason, precept.level || 'minor' as PreceptLevel)
-      // 使用动态判断的等级而不是传入的等级
-      const dynamicLevel = this.determinePreceptLevel(detail.punishment)
+      // 如果明确指定了等级，使用指定的等级；否则使用动态判断的等级
+      const finalLevel = precept.level || this.determinePreceptLevel(detail.punishment)
       return {
         date: dateKey,
-        level: dynamicLevel,
+        level: finalLevel,
         type: 'regular' as PreceptType,
         detail: detail,
         reason: detail.reason,        // 向后兼容
         punishment: detail.punishment, // 向后兼容
-        description: this.generateDescription(detail, dynamicLevel)
+        description: this.generateDescription(detail, finalLevel)
       }
     })
     this.monthlyPrecepts.set(dateKey, preceptInfos)
@@ -925,6 +925,16 @@ export class PreceptDataManager {
       result.explanation = '月晦是农历每月的最后一日，天地交泰、阴阳转换的关键时刻。司命之神在此日向天庭奏报世人善恶。如遇到小月（只有29天），则廿九日即为月晦日。'
       result.suggestion = '月晦日应严格持戒，反省己过，可诵经忏悔，修身养性'
       result.specialNote = '如月小即戒廿九日'
+      return result
+    }
+
+    // 处理释迦如来成道日（必须在处理"诞"之前，因为成道日也包含"诞"字）
+    if (text.includes('释迦如来成道日')) {
+      result.punishment = '宜严格持戒'
+      result.category = PreceptCategory.ANNIVERSARY
+      result.tags = ['释迦如来', '成道日', '佛教圣日', '腊八']
+      result.explanation = this.getExplanation(text)
+      result.suggestion = this.getSuggestion(text, originalLevel)
       return result
     }
 
@@ -1060,6 +1070,7 @@ export class PreceptDataManager {
    */
   private getExplanation(reason: string): string {
     const explanations: Record<string, string> = {
+      '释迦如来成道日': '农历腊月初八是释迦牟尼佛在菩提树下夜睹明星、悟道成佛的殊胜日子。此日是佛教最重要的纪念日之一，佛陀在此日证得无上正等正觉，开启了佛法在人间的传播。此日功德殊胜，持戒修行可获无量福报',
       '四天王巡行': '四天王（东方持国天王、南方增长天王、西方广目天王、北方多闻天王）巡视人间，记录世人善恶',
       '斗降': '斗星君下降之日，监察世人行为',
       '雷斋日': '雷神斋戒之日，持戒可避雷劫之灾',
@@ -1116,6 +1127,11 @@ export class PreceptDataManager {
    * 获取修行建议
    */
   private getSuggestion(reason: string, level: PreceptLevel): string {
+    // 特殊日期的专门建议
+    if (reason.includes('释迦如来成道日')) {
+      return '成道日应严格持戒，可礼佛诵经、持诵《金刚经》《心经》等经典，食用腊八粥以纪念佛陀成道，广修善业，发菩提心'
+    }
+
     const baseSuggestions = {
       major: '大戒之日，应严格持戒，可诵经礼忏，广修善业，以求消灾祈福',
       moderate: '中戒之日，应谨慎持戒，避免不当行为，可修善积德',
