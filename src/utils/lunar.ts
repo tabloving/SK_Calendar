@@ -41,7 +41,7 @@ export class LunarCalendarUtil {
         date: solarDate,
         lunarDate: `${lunarDate.getMonthInChinese()}月${lunarDate.getDayInChinese()}`,
         year: solar.getYear(),
-        month: solar.getMonth() + 1,
+        month: solar.getMonth(),
         day: solar.getDay(),
         weekday: solar.getWeek(),
         isToday,
