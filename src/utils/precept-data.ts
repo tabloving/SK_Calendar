@@ -1345,6 +1345,12 @@ export class PreceptDataManager {
       specialPrecepts.push(xianRiPrecept)
     }
 
+    // 11. 获取三伏日戒期
+    const sanFuRiPrecept = this.getSanFuRiPrecept(date, dayInfo)
+    if (sanFuRiPrecept) {
+      specialPrecepts.push(sanFuRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -2370,5 +2376,56 @@ export class PreceptDataManager {
       punishment: detail.punishment,
       description: `${sheType} - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节日戒期`
     }
+  }
+
+  /**
+   * 获取三伏日戒期
+   * 三伏日：夏季最热的三个时段（初伏、中伏、末伏）
+   * 犯之减寿一年
+   */
+  private getSanFuRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 使用 lunar.js 的 getFu() 方法获取三伏日信息
+      const fu = lunarDate.getFu()
+
+      // 如果当天不是三伏日，返回 null
+      if (!fu) {
+        return null
+      }
+
+      // 获取三伏日名称（初伏、中伏、末伏）
+      const fuName = fu.toString()
+      // 获取完整描述（如"初伏第1天"）
+      const fuFullName = fu.toFullString()
+
+      const detail = {
+        reason: '三伏日',
+        punishment: '犯之减寿一年',
+        explanation: `${fuFullName}。三伏日是夏季最炎热的时段，分为初伏、中伏、末伏三个阶段。此时天地阳气最盛，人体气血外浮，精气易泄，犯戒会损害寿命`,
+        suggestion: '三伏日应清心寡欲，避免过度劳累，可静心养神，饮食清淡，以养护精气',
+        category: PreceptCategory.ASTRONOMICAL,
+        tags: ['三伏日', fuName],
+        source: '《寿康宝鉴》'
+      }
+
+      const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+      return {
+        date: dateStr,
+        level: PreceptLevel.MODERATE,
+        type: PreceptType.SPECIAL,
+        detail: detail,
+        reason: detail.reason,
+        punishment: detail.punishment,
+        description: `三伏日${fuName} - 犯之减寿一年 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：天文戒期`
+      }
+    } catch (error) {
+      console.error('获取三伏日信息失败', error)
+    }
+
+    return null
   }
 }

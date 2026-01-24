@@ -1,4 +1,14 @@
 declare module 'lunar-javascript' {
+  /**
+   * 三伏日类
+   */
+  export class Fu {
+    getName(): string
+    getIndex(): number
+    toString(): string
+    toFullString(): string
+  }
+
   export class Lunar {
     constructor(date: Date)
     getYear(): number
@@ -25,6 +35,7 @@ declare module 'lunar-javascript' {
     getLeapMonth(): number
     toString(): string
     toFullString(): string
+    getFu(): Fu | null
   }
 
   export class LunarMonth {
