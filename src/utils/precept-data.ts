@@ -1050,7 +1050,7 @@ export class PreceptDataManager {
     if (text.includes('四天王')) tags.push('四天王')
     if (text.includes('玉帝') || text.includes('玉皇')) tags.push('玉帝')
     if (text.includes('斗') || text.includes('北斗')) tags.push('斗星')
-    if (text.includes('雷')) tags.push('雷神')
+    if (text.includes('雷')) tags.push('雷祖')
 
     // 事件类型标签
     if (text.includes('巡行')) tags.push('巡行')
@@ -1068,6 +1068,7 @@ export class PreceptDataManager {
     if (text.includes('九毒')) tags.push('九毒日')
     if (text.includes('仓开日')) tags.push('天地仓开日')
     if (text.includes('雷斋')) tags.push('雷斋日')
+    if (text.includes('三辛') || (text.includes('辛') && text.includes('日'))) tags.push('三辛日')
 
     return tags
   }
@@ -1093,7 +1094,8 @@ export class PreceptDataManager {
       '六耗忌': '六耗指阴、阳、晦、明、风、雨所导致的六种疾病，此日犯戒易致病',
       '九毒日': '九毒日天地之气不正，湿热毒气盛行，犯戒易遭奇祸不测',
       '天地交泰': '天地阴阳交合之日，犯戒可能导致严重后果',
-      '阴毒日': '阴毒大忌之日，邪气最盛，犯戒有大凶险'
+      '阴毒日': '阴毒大忌之日，邪气最盛，犯戒有大凶险',
+      '三辛日': '三辛日是每月天干为辛的日子。传统认为辛日为雷祖（九天应元雷声普化天尊）监观万天、亲察人间之日，此日雷祖巡视世间善恶，犯戒会损害寿命'
     }
 
     for (const [key, value] of Object.entries(explanations)) {
@@ -1312,19 +1314,25 @@ export class PreceptDataManager {
       specialPrecepts.push(bingDingRiPrecept)
     }
 
-    // 7. 获取阳错日戒期
+    // 7. 获取三辛日戒期
+    const sanXinRiPrecept = this.getSanXinRiPrecept(date, dayInfo)
+    if (sanXinRiPrecept) {
+      specialPrecepts.push(sanXinRiPrecept)
+    }
+
+    // 8. 获取阳错日戒期
     const yangCuoRiPrecept = this.getYangCuoRiPrecept(lunarMonth, date, dayInfo)
     if (yangCuoRiPrecept) {
       specialPrecepts.push(yangCuoRiPrecept)
     }
 
-    // 8. 获取阴错日戒期
+    // 9. 获取阴错日戒期
     const yinCuoRiPrecept = this.getYinCuoRiPrecept(lunarMonth, date, dayInfo)
     if (yinCuoRiPrecept) {
       specialPrecepts.push(yinCuoRiPrecept)
     }
 
-    // 9. 获取弦日戒期
+    // 10. 获取弦日戒期
     const xianRiPrecept = this.getXianRiPrecept(date, dayInfo)
     if (xianRiPrecept) {
       specialPrecepts.push(xianRiPrecept)
@@ -2039,6 +2047,55 @@ export class PreceptDataManager {
       }
     } catch (error) {
       console.error('获取丙丁日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 获取三辛日戒期
+   * 三辛日：每月天干为辛的三个日子
+   * 辛日为雷祖监观万天，亲察人间之日，犯之减寿一年
+   */
+  private getSanXinRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+
+      // 获取当日的干支
+      const ganZhi = lunarDate.getDayInGanZhi()
+
+      // 获取天干（干支的第一个字）
+      const gan = ganZhi.charAt(0)
+
+      // 判断是否为辛日
+      if (gan === '辛') {
+        const lunarMonthChinese = lunarDate.getMonthInChinese()
+        const lunarDayChinese = lunarDate.getDayInChinese()
+        const detail = {
+          reason: '三辛日',
+          punishment: '犯者减寿一年',
+          explanation: `三辛日是每月天干为辛的日子（农历${lunarMonthChinese}月${lunarDayChinese}，${ganZhi}）。传统认为辛日为雷祖（九天应元雷声普化天尊）监观万天、亲察人间之日，宜斋戒祈福，犯戒会损害寿命`,
+          suggestion: '三辛日应斋戒祈福，保持身心清净，可诵雷祖宝诰或行善积德，以求消灾延寿',
+          category: PreceptCategory.DEITY_INSPECTION,
+          tags: ['三辛日', '雷祖'],
+          source: '《寿康宝鉴》'
+        }
+
+        const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+        return {
+          date: dateStr,
+          level: PreceptLevel.MODERATE,
+          type: PreceptType.SPECIAL,
+          detail: detail,
+          reason: detail.reason,
+          punishment: detail.punishment,
+          description: `三辛日 - 犯之减寿一年 - 中戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：神明监察戒期`
+        }
+      }
+    } catch (error) {
+      console.error('获取三辛日信息失败', error)
     }
 
     return null
