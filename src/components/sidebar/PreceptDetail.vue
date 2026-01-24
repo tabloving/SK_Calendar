@@ -74,6 +74,14 @@
                   <span>诸天斋日，功德倍增</span>
                 </div>
               </div>
+
+              <!-- 如果是社日，添加特殊警告 -->
+              <div v-if="precept.detail?.tags?.includes('二社日')" class="bg-red-100 border border-red-300 rounded p-2 text-red-700 text-sm">
+                <div class="flex items-center">
+                  <WarningFilled class="w-4 h-4 mr-1" />
+                  <span>社日受胎者，毛发皆白</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -121,7 +129,7 @@ import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
 import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { View, Star } from '@element-plus/icons-vue'
+import { View, Star, WarningFilled } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()

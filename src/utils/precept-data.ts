@@ -1418,6 +1418,12 @@ export class PreceptDataManager {
       solarTermPrecepts.push(siLiRi)
     }
 
+    // 检查是否为二社日（立春后第五个戊日为春社日，立秋后第五个戊日为秋社日）
+    const sheRi = this.getSheRiPrecept(date, dayInfo)
+    if (sheRi) {
+      solarTermPrecepts.push(sheRi)
+    }
+
     // 检查是否为毁败日（大月十八日，小月十七日）
     const huiBaiRi = this.getHuiBaiRiPrecept(date, dayInfo)
     if (huiBaiRi) {
@@ -2236,5 +2242,126 @@ export class PreceptDataManager {
     }
 
     return null
+  }
+
+  /**
+   * 获取二社日戒期
+   * 二社日：立春后的第五个戊日为春社日，立秋后的第五个戊日为秋社日
+   * 犯之减寿五年
+   * 社日受胎者，毛发皆白
+   */
+  private getSheRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const year = date.getFullYear()
+      const currentSolarTerms = this.getSolarTerms(year)
+
+      // 查找立春和立秋
+      const liChun = currentSolarTerms.find(term => term.name === '立春')
+      const liQiu = currentSolarTerms.find(term => term.name === '立秋')
+
+      // 计算春社日（立春后第五个戊日）
+      if (liChun) {
+        const chunSheRi = this.calculateNthWuDay(liChun.date, 5)
+        if (chunSheRi && this.isSameDay(date, chunSheRi)) {
+          return this.createSheRiPreceptInfo(date, '春社日', liChun.date)
+        }
+      }
+
+      // 计算秋社日（立秋后第五个戊日）
+      if (liQiu) {
+        const qiuSheRi = this.calculateNthWuDay(liQiu.date, 5)
+        if (qiuSheRi && this.isSameDay(date, qiuSheRi)) {
+          return this.createSheRiPreceptInfo(date, '秋社日', liQiu.date)
+        }
+      }
+    } catch (error) {
+      console.error('获取社日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 计算从指定日期开始的第N个戊日
+   * @param startDate 起始日期（如立春、立秋）
+   * @param n 第几个戊日
+   * @returns 第N个戊日的日期
+   */
+  private calculateNthWuDay(startDate: Date, n: number): Date | null {
+    try {
+      let count = 0
+      let currentDate = new Date(startDate)
+
+      // 从起始日期开始，逐日检查
+      while (count < n) {
+        const solar = lunarLib.Solar.fromDate(currentDate)
+        const lunarDate = solar.getLunar()
+        const ganZhi = lunarDate.getDayInGanZhi()
+        const gan = ganZhi.charAt(0)
+
+        // 检查天干是否为戊
+        if (gan === '戊') {
+          count++
+          if (count === n) {
+            return currentDate
+          }
+        }
+
+        // 移动到下一天
+        currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
+      }
+    } catch (error) {
+      console.error('计算戊日失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 判断两个日期是否为同一天
+   */
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate()
+  }
+
+  /**
+   * 创建社日戒期信息
+   */
+  private createSheRiPreceptInfo(date: Date, sheType: string, liDate: Date): PreceptInfo {
+    const liName = sheType === '春社日' ? '立春' : '立秋'
+    const solar = lunarLib.Solar.fromDate(date)
+    const lunarDate = solar.getLunar()
+    const lunarMonthChinese = lunarDate.getMonthInChinese()
+    const lunarDayChinese = lunarDate.getDayInChinese()
+    const ganZhi = lunarDate.getDayInGanZhi()
+
+    // 根据春社日和秋社日提供不同的解释
+    const sheExplanation = sheType === '春社日'
+      ? '是祭祀土地神、祈求一年风调雨顺、五谷丰登的重要日子'
+      : '是答谢土地神滋养万物、庆贺丰收的吉祥日子'
+
+    const detail = {
+      reason: '二社日',
+      punishment: '犯之减寿五年',
+      explanation: `${sheType}是${liName}后的第五个戊日，${sheExplanation}，当清净身心，修善祈福，犯戒会严重损害寿命`,
+      suggestion: '社日应严格持戒，可祭祀土地神，诵经礼佛，修身养性，避免一切不当行为',
+      category: PreceptCategory.FESTIVAL,
+      tags: ['二社日', sheType, '土地神'],
+      source: '《寿康宝鉴》'
+    }
+
+    const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+    return {
+      date: dateStr,
+      level: PreceptLevel.MAJOR,
+      type: PreceptType.SPECIAL,
+      detail: detail,
+      reason: detail.reason,
+      punishment: detail.punishment,
+      description: `${sheType} - 犯之减寿五年 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节日戒期`
+    }
   }
 }
