@@ -507,7 +507,7 @@ export class PreceptDataManager {
       { reason: '雷声大帝诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(8, 6, [
-      { reason: '雷斋，犯者减寿', level: 'moderate' as PreceptLevel }
+      { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(8, 8, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
@@ -564,6 +564,9 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(9, 3, [
       { reason: '五瘟神诞', level: 'moderate' as PreceptLevel }
+    ])
+    this.addMonthPrecepts(9, 6, [
+      { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 8, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
@@ -630,6 +633,7 @@ export class PreceptDataManager {
       { reason: '下会日，犯者损寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 6, [
+      { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel },
       { reason: '天曹考察，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 8, [
@@ -684,6 +688,7 @@ export class PreceptDataManager {
       { reason: '至圣先师孔子诞，犯者削禄夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 6, [
+      { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel },
       { reason: '西岳大帝诞', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 8, [
@@ -1062,6 +1067,7 @@ export class PreceptDataManager {
     if (text.includes('杨公忌')) tags.push('杨公忌')
     if (text.includes('九毒')) tags.push('九毒日')
     if (text.includes('仓开日')) tags.push('天地仓开日')
+    if (text.includes('雷斋')) tags.push('雷斋日')
 
     return tags
   }
@@ -1074,7 +1080,7 @@ export class PreceptDataManager {
       '释迦如来成道日': '农历腊月初八是释迦牟尼佛在菩提树下夜睹明星、悟道成佛的殊胜日子。此日是佛教最重要的纪念日之一，佛陀在此日证得无上正等正觉，开启了佛法在人间的传播。此日功德殊胜，持戒修行可获无量福报',
       '四天王巡行': '四天王（东方持国天王、南方增长天王、西方广目天王、北方多闻天王）巡视人间，记录世人善恶',
       '斗降': '斗星君下降之日，监察世人行为',
-      '雷斋日': '雷神斋戒之日，持戒可避雷劫之灾',
+      '雷斋日': '雷斋日是每月初六日，为道教斋戒祭祀雷祖（九天应元雷声普化天尊）之日。雷祖巡视考察人类善恶，主持正义、惩恶扬善。此日宜斋戒清净、行善积福，犯戒者减寿',
       '月望': '月圆之日，阴阳交泰，宜清净持戒',
       '月朔': '新月之日，月神诞辰，宜持戒祈福',
       '三元降': '三元（天、地、水）之神下降，校世人善恶',
