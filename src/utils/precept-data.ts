@@ -1356,10 +1356,13 @@ export class PreceptDataManager {
       }
 
       const yuanName = yuanNames[lunarMonth]
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      const lunarMonthChinese = lunarDate.getMonthInChinese()
       const detail = {
         reason: '三元日',
         punishment: '犯之减寿五年',
-        explanation: `${yuanName}（农历${lunarMonth}月15日），三元日之一。三元日是天官、地官、水官巡行世间，校定善恶的重要日子，犯戒会严重损害寿命`,
+        explanation: `${yuanName}（农历${lunarMonthChinese}月十五），三元日之一。三元日是天官、地官、水官巡行世间，校定善恶的重要日子，犯戒会严重损害寿命`,
         suggestion: '三元日应严格持戒，可礼拜三官大帝，诵经礼忏，广修善业，以求消灾祈福',
         category: PreceptCategory.FESTIVAL,
         tags: ['三元日', yuanName, '三官大帝','巡行'],
