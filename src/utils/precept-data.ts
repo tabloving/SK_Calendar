@@ -2402,7 +2402,7 @@ export class PreceptDataManager {
       const fuFullName = fu.toFullString()
 
       const detail = {
-        reason: '三伏日',
+        reason: fuFullName,
         punishment: '犯之减寿一年',
         explanation: `${fuFullName}。三伏日是夏季最炎热的时段，分为初伏、中伏、末伏三个阶段。此时天地阳气最盛，人体气血外浮，精气易泄，犯戒会损害寿命`,
         suggestion: '三伏日应清心寡欲，避免过度劳累，可静心养神，饮食清淡，以养护精气',

@@ -23,7 +23,7 @@
                 class="precept-indicator mr-2"
                 :class="precept.level"
               ></div>
-              <span class="font-semibold">{{ precept.reason }}</span>
+              <span class="font-semibold">{{ getPreceptTitle(precept) }}</span>
               <el-tag
                 size="small"
                 class="ml-2"
@@ -201,6 +201,18 @@ const getPreceptLevelStyle = (level: string) => {
     borderColor: `rgb(${rgb})`,
     color: '#ffffff'
   }
+}
+
+/**
+ * 获取戒期标题
+ * 对于三伏日，统一显示为"三伏日"
+ */
+const getPreceptTitle = (precept: any) => {
+  // 检查是否为三伏日（通过标签判断）
+  if (precept.detail?.tags?.includes('三伏日')) {
+    return '三伏日'
+  }
+  return precept.reason
 }
 </script>
 
