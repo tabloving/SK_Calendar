@@ -1011,10 +1011,10 @@ export class PreceptDataManager {
     }
 
     // 默认情况
-    result.category = PreceptCategory.CUSTOM
+    result.category = this.categorizeByReason(text)
     result.tags = this.extractTags(text)
-    result.explanation = '传统戒期，应持戒清净'
-    result.suggestion = '宜持戒修行，保持身心清净'
+    result.explanation = this.getExplanation(text)
+    result.suggestion = this.getSuggestion(text, originalLevel)
     return result
   }
 
@@ -1047,7 +1047,7 @@ export class PreceptDataManager {
     const tags: string[] = []
 
     // 神明相关标签
-    if (text.includes('四天王')) tags.push('四天王')
+    if (text.includes('四天王')) tags.push('斋日','四天王')
     if (text.includes('玉帝') || text.includes('玉皇')) tags.push('玉帝')
     if (text.includes('斗') || text.includes('北斗')) tags.push('斗星')
     if (text.includes('雷')) tags.push('雷祖')
@@ -1079,7 +1079,7 @@ export class PreceptDataManager {
   private getExplanation(reason: string): string {
     const explanations: Record<string, string> = {
       '释迦如来成道日': '农历腊月初八是释迦牟尼佛在菩提树下夜睹明星、悟道成佛的殊胜日子。此日是佛教最重要的纪念日之一，佛陀在此日证得无上正等正觉，开启了佛法在人间的传播。此日功德殊胜，持戒修行可获无量福报',
-      '四天王巡行': '四天王（东方持国天王、南方增长天王、西方广目天王、北方多闻天王）巡视人间，记录世人善恶',
+      '四天王巡行': '四天王巡行日是每月初八、十四、十五、廿三、廿九、三十日。四天王（东方持国天王、南方增长天王、西方广目天王、北方多闻天王）于此六日巡视人间，考察善恶，记录功过。此日宜持戒清净、行善积德',
       '斗降': '斗星君下降之日，监察世人行为',
       '雷斋日': '雷斋日是每月初六日，为道教斋戒祭祀雷祖（九天应元雷声普化天尊）之日。雷祖巡视考察人类善恶，主持正义、惩恶扬善。此日宜斋戒清净、行善积福，犯戒者减寿',
       '月望': '月圆之日，阴阳交泰，宜清净持戒',
@@ -1362,7 +1362,7 @@ export class PreceptDataManager {
         explanation: `${yuanName}（农历${lunarMonth}月15日），三元日之一。三元日是天官、地官、水官巡行世间，校定善恶的重要日子，犯戒会严重损害寿命`,
         suggestion: '三元日应严格持戒，可礼拜三官大帝，诵经礼忏，广修善业，以求消灾祈福',
         category: PreceptCategory.FESTIVAL,
-        tags: ['三元日', yuanName, '天官大帝', '三官大帝'],
+        tags: ['三元日', yuanName, '三官大帝','巡行'],
         source: '《寿康宝鉴》'
       }
 
