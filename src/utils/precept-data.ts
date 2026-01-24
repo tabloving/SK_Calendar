@@ -267,7 +267,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(4, 18, [
       { reason: '紫微大帝诞，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '天地仓开日', level: 'moderate' as PreceptLevel }
+      { reason: '天地仓开日，犯者损寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(4, 20, [
       { reason: '眼光圣母诞', level: 'moderate' as PreceptLevel }
@@ -380,7 +380,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(6, 6, [
       { reason: '雷斋日，犯者损寿', level: 'moderate' as PreceptLevel },
-      { reason: '天仓开日', level: 'moderate' as PreceptLevel }
+      { reason: '天仓开日，犯者损寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(6, 8, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
@@ -691,7 +691,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(11, 11, [
       { reason: '太乙救苦天尊诞，犯者夺纪', level: 'major' as PreceptLevel },
-      { reason: '天仓开日', level: 'moderate' as PreceptLevel }
+      { reason: '天仓开日，犯者损寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 14, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
@@ -741,7 +741,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(12, 6, [
       { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel },
-      { reason: '天仓开日', level: 'moderate' as PreceptLevel }
+      { reason: '天仓开日，犯者损寿', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(12, 7, [
       { reason: '掠刷大夫降，犯者得恶疾', level: 'major' as PreceptLevel }
@@ -1077,7 +1077,7 @@ export class PreceptDataManager {
       '月望': '月圆之日，阴阳交泰，宜清净持戒',
       '月朔': '新月之日，月神诞辰，宜持戒祈福',
       '三元降': '三元（天、地、水）之神下降，校世人善恶',
-      '天地仓开日': '天地开仓之日，犯戒损寿并影响子孙',
+      '天地仓开日': '天地仓开日是天仓、地仓开启之日，此日天地之气交流，仓廪开放，是吉庆之日，犯戒会损伤寿命',
       '人神在阴': '先祖神灵在阴间之日，犯戒易得疾病，宜先一日即戒',
       '司命奏事': '司命之神向天庭奏报世人善恶',
       '杨公忌': '唐代风水宗师杨筠松所订定的忌日，诸事不宜',
