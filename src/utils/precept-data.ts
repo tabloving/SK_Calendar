@@ -1274,16 +1274,23 @@ export class PreceptDataManager {
     // 1. 获取农历日期相关的固定特殊戒期
     let lunarMonth = 1
     let lunarDay = 1
+    let isLeapMonth = false
     try {
       const solar = lunarLib.Solar.fromDate(date)
       const lunarDate = solar.getLunar()
       lunarMonth = lunarDate.getMonth()
       lunarDay = lunarDate.getDay()
+      // 检查是否为闰月
+      isLeapMonth = lunarDate.isLeap()
     } catch (error) {
       console.warn('获取农历日期失败，使用默认值', error)
     }
 
-    const lunarSpecialPrecepts = this.getSpecialPreceptByLunarDate(lunarMonth, lunarDay)
+    // 处理闰月：闰月的戒期与本月相同
+    // 例如闰六月按照六月计算
+    const preceptMonth = Math.abs(lunarMonth)
+
+    const lunarSpecialPrecepts = this.getSpecialPreceptByLunarDate(preceptMonth, lunarDay)
     specialPrecepts.push(...lunarSpecialPrecepts)
 
     // 2. 获取节气特殊戒期（动态计算）
@@ -1291,7 +1298,7 @@ export class PreceptDataManager {
     specialPrecepts.push(...solarTermPrecepts)
 
     // 3. 获取三元日戒期
-    const sanYuanRiPrecept = this.getSanYuanRiPrecept(lunarMonth, lunarDay, date)
+    const sanYuanRiPrecept = this.getSanYuanRiPrecept(preceptMonth, lunarDay, date)
     if (sanYuanRiPrecept) {
       specialPrecepts.push(sanYuanRiPrecept)
     }
@@ -1321,13 +1328,13 @@ export class PreceptDataManager {
     }
 
     // 8. 获取阳错日戒期
-    const yangCuoRiPrecept = this.getYangCuoRiPrecept(lunarMonth, date, dayInfo)
+    const yangCuoRiPrecept = this.getYangCuoRiPrecept(preceptMonth, date, dayInfo)
     if (yangCuoRiPrecept) {
       specialPrecepts.push(yangCuoRiPrecept)
     }
 
     // 9. 获取阴错日戒期
-    const yinCuoRiPrecept = this.getYinCuoRiPrecept(lunarMonth, date, dayInfo)
+    const yinCuoRiPrecept = this.getYinCuoRiPrecept(preceptMonth, date, dayInfo)
     if (yinCuoRiPrecept) {
       specialPrecepts.push(yinCuoRiPrecept)
     }

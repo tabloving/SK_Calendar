@@ -42,17 +42,24 @@ export class CalendarUtil {
     // 获取农历日期
     let lunarMonth = 1
     let lunarDay = 1
+    let isLeapMonth = false
     try {
       const solar = lunarLib.Solar.fromDate(dayInfo.date)
       const lunarDate = solar.getLunar()
       lunarMonth = lunarDate.getMonth()
       lunarDay = lunarDate.getDay()
+      // 检查是否为闰月
+      isLeapMonth = lunarDate.isLeap()
     } catch (error) {
       console.warn('获取农历日期失败，使用默认值', error)
     }
 
-    // 1. 获取每月固定戒期
-    const monthlyPrecepts = this.preceptManager.getPreceptByLunarDate(lunarMonth, lunarDay)
+    // 处理闰月：闰月的常规戒期与本月相同
+    // 例如闰六月按照六月计算
+    const preceptMonth = Math.abs(lunarMonth)
+
+    // 1. 获取每月固定戒期（闰月使用对应的正常月份）
+    const monthlyPrecepts = this.preceptManager.getPreceptByLunarDate(preceptMonth, lunarDay)
     allPreceptInfos.push(...monthlyPrecepts)
 
     // 2. 获取特殊戒期（包括节气等）
@@ -73,7 +80,7 @@ export class CalendarUtil {
       }
 
       allPreceptInfos.push({
-        date: `${lunarMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
+        date: `${preceptMonth.toString().padStart(2, '0')}-${lunarDay.toString().padStart(2, '0')}`,
         level: PreceptLevel.MODERATE,
         type: PreceptType.PRECEPT_DAY,
         detail: tenPreceptDetail,
