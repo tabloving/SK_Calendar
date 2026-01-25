@@ -128,7 +128,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 15, [
-      { reason: '释迦牟尼佛般涅槃', level: 'major' as PreceptLevel },
+      { reason: '释迦牟尼佛般涅槃，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '太上老君诞，犯者削禄夺纪', level: 'major' as PreceptLevel },
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
       { reason: '月望', level: 'major' as PreceptLevel }
@@ -144,7 +144,7 @@ export class PreceptDataManager {
       { reason: '观音大士诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 21, [
-      { reason: '普贤菩萨诞', level: 'major' as PreceptLevel }
+      { reason: '普贤菩萨诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 23, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
@@ -234,7 +234,7 @@ export class PreceptDataManager {
       { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(4, 4, [
-      { reason: '文殊菩萨诞', level: 'major' as PreceptLevel },
+      { reason: '文殊菩萨诞，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '万神善化，犯者失瘏夭胎', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(4, 6, [
@@ -387,7 +387,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(6, 10, [
-      { reason: '金粟如来诞', level: 'moderate' as PreceptLevel }
+      { reason: '金粟如来诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(6, 13, [
       { reason: '井泉龙王诞', level: 'moderate' as PreceptLevel }
@@ -597,7 +597,7 @@ export class PreceptDataManager {
       { reason: '金龙四大王诞，犯者水厄', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 19, [
-      { reason: '观世音菩萨出家日，犯者减寿', level: 'moderate' as PreceptLevel },
+      { reason: '观世音菩萨出家日，犯者减寿', level: 'major' as PreceptLevel },
       { reason: '日宫月宫会合', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 23, [
@@ -708,7 +708,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行，上半夜犯男死，下半夜犯女死', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 17, [
-      { reason: '阿弥陀佛诞', level: 'major' as PreceptLevel }
+      { reason: '阿弥陀佛诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(11, 19, [
       { reason: '太阳日宫诞，犯者奇祸', level: 'major' as PreceptLevel }
@@ -754,7 +754,7 @@ export class PreceptDataManager {
       { reason: '掠刷大夫降，犯者得恶疾', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(12, 8, [
-      { reason: '释迦如来成道日', level: 'major' as PreceptLevel },
+      { reason: '释迦如来成道日，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
       { reason: '王侯腊，犯者夺纪', level: 'major' as PreceptLevel }
     ])
@@ -797,7 +797,7 @@ export class PreceptDataManager {
       { reason: '人神在阴，犯者得病', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(12, 29, [
-      { reason: '华严菩萨诞', level: 'major' as PreceptLevel },
+      { reason: '华严菩萨诞，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(12, 30, [
