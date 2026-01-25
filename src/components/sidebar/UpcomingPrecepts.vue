@@ -28,7 +28,7 @@
               <svg class="w-3 h-3 mx-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L10 10.414l2.293 2.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
               </svg>
-              <span>{{ getDaysText(precept.daysFromNow) }}</span>
+              <span>{{ getDaysText(precept.daysFromBase) }}</span>
             </div>
           </div>
           <div class="text-right">
@@ -48,10 +48,22 @@ import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
+import { LunarCalendarUtil } from '@/utils/lunar'
 import { Clock } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
+
+// 判断选中的日期是否为今天
+const isSelectedToday = computed(() => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const selected = calendarStore.selectedDate
+  if (!selected) return true
+  const selectedNormalized = new Date(selected)
+  selectedNormalized.setHours(0, 0, 0, 0)
+  return selectedNormalized.getTime() === today.getTime()
+})
 
 const upcomingPrecepts = computed(() => {
   const today = new Date()
@@ -59,6 +71,8 @@ const upcomingPrecepts = computed(() => {
 
   // 获取选中的日期
   const selected = calendarStore.selectedDate
+  let baseDate = today // 基准日期，用于计算近期戒期
+
   if (selected) {
     const selectedDateNormalized = new Date(selected)
     selectedDateNormalized.setHours(0, 0, 0, 0)
@@ -67,13 +81,15 @@ const upcomingPrecepts = computed(() => {
     if (selectedDateNormalized < today) {
       return []
     }
+
+    // 如果选中的是未来日期，以选中日期为基准
+    baseDate = selectedDateNormalized
   }
 
-  const threeMonthsLater = new Date(today)
-  threeMonthsLater.setMonth(today.getMonth() + 3)
-
-  // 按日期分组的戒期信息
-  const preceptsByDate = new Map<string, {
+  // 优化算法：逐天搜索，找到3个有戒期的日期就停止
+  const MAX_SEARCH_DAYS = 15 // 最多搜索15天
+  const TARGET_COUNT = 3 // 目标找到3个戒期日
+  const results: Array<{
     date: Date;
     dateString: string;
     lunarDate: string;
@@ -82,53 +98,40 @@ const upcomingPrecepts = computed(() => {
       level: 'major' | 'moderate' | 'minor';
       type: string;
     }>;
-    daysFromNow: number;
-  }>()
+    daysFromBase: number;
+  }> = []
 
-  // 获取足够多的日历数据（当前月及未来几个月）
-  const currentMonth = calendarStore.currentMonthInfo.days
-  const allDays = [...currentMonth]
+  for (let i = 1; i <= MAX_SEARCH_DAYS && results.length < TARGET_COUNT; i++) {
+    const checkDate = new Date(baseDate)
+    checkDate.setDate(baseDate.getDate() + i)
 
-  allDays.forEach(day => {
-    if (day.date > today && day.date <= threeMonthsLater) {
-      const enabledPrecepts = day.preceptInfos.filter(precept =>
-        settingsStore.settings.enabledPreceptTypes.includes(precept.type)
-      )
+    // 获取该日期的信息
+    const dayInfo = LunarCalendarUtil.getLunarInfo(checkDate)
+    const preceptInfos = CalendarUtil.getDayPreceptInfos(dayInfo)
 
-      if (enabledPrecepts.length > 0) {
-        const dateKey = day.date.toDateString()
-        const daysFromNow = Math.ceil((day.date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-        const lunarInfo = CalendarUtil.getFullLunarMonthDay(day.date)
+    // 过滤启用的戒期类型
+    const enabledPrecepts = preceptInfos.filter(precept =>
+      settingsStore.settings.enabledPreceptTypes.includes(precept.type)
+    )
 
-        if (!preceptsByDate.has(dateKey)) {
-          preceptsByDate.set(dateKey, {
-            date: day.date,
-            dateString: `${day.month}月${day.day}日`,
-            lunarDate: lunarInfo.full,
-            precepts: [],
-            daysFromNow: daysFromNow
-          })
-        }
-
-        const dayData = preceptsByDate.get(dateKey)!
-        enabledPrecepts.forEach(precept => {
-          dayData.precepts.push({
-            reason: precept.reason,
-            level: precept.level as 'major' | 'moderate' | 'minor',
-            type: precept.type
-          })
-        })
-      }
+    if (enabledPrecepts.length > 0) {
+      const lunarInfo = CalendarUtil.getFullLunarMonthDay(checkDate)
+      results.push({
+        date: checkDate,
+        dateString: `${checkDate.getMonth() + 1}月${checkDate.getDate()}日`,
+        lunarDate: lunarInfo.full,
+        precepts: enabledPrecepts.map(p => ({
+          reason: p.reason,
+          level: p.level as 'major' | 'moderate' | 'minor',
+          type: p.type
+        })),
+        daysFromBase: i
+      })
     }
-  })
-
-  // 转换为数组并排序，取前3个戒期日
-  const sortedPreceptDays = Array.from(preceptsByDate.values())
-    .sort((a, b) => a.daysFromNow - b.daysFromNow)
-    .slice(0, 3)
+  }
 
   // 合并同一天的戒期为一个卡片
-  return sortedPreceptDays.map(dayData => {
+  return results.map(dayData => {
     // 获取当天最高戒期等级
     const highestLevel = dayData.precepts.reduce((highest, precept) => {
       const levelOrder = { major: 3, moderate: 2, minor: 1 }
@@ -152,7 +155,7 @@ const upcomingPrecepts = computed(() => {
       fullDate: dayData.date,
       lunarDate: dayData.lunarDate,
       level: highestLevel,
-      daysFromNow: dayData.daysFromNow,
+      daysFromBase: dayData.daysFromBase,
       preceptCount: dayData.precepts.length,
       allPrecepts: dayData.precepts
     }
@@ -178,12 +181,17 @@ const getPreceptIndicatorClass = (level: 'major' | 'moderate' | 'minor') => {
   return classMap[level] || 'minor-indicator'
 }
 
-const getDaysText = (daysFromNow: number) => {
-  if (daysFromNow === 0) return '今天'
-  if (daysFromNow === 1) return '明天'
-  if (daysFromNow === 2) return '后天'
-  if (daysFromNow <= 7) return `${daysFromNow}天后`
-  return `${daysFromNow}天后`
+const getDaysText = (daysFromBase: number) => {
+  // 如果选中的是今天，使用"今天"、"明天"等文案
+  if (isSelectedToday.value) {
+    if (daysFromBase === 0) return '今天'
+    if (daysFromBase === 1) return '明天'
+    if (daysFromBase === 2) return '后天'
+    return `${daysFromBase}天后`
+  }
+  // 如果选中的是未来日期，使用"当天"、"1天后"等文案
+  if (daysFromBase === 0) return '当天'
+  return `${daysFromBase}天后`
 }
 
 const getWeekdayText = (date: Date) => {
