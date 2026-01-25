@@ -110,7 +110,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(2, 3, [
       { reason: '文昌帝君诞，犯者削禄夺纪', level: 'major' as PreceptLevel },
-      { reason: '斗降', level: 'major' as PreceptLevel }
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(2, 6, [
       { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel },
@@ -169,7 +169,7 @@ export class PreceptDataManager {
     ])
     this.addMonthPrecepts(3, 3, [
       { reason: '玄天上帝诞，犯者夺纪', level: 'major' as PreceptLevel },
-      { reason: '斗降', level: 'major' as PreceptLevel }
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(3, 6, [
       { reason: '雷斋日，犯者减寿', level: 'moderate' as PreceptLevel }
@@ -210,7 +210,7 @@ export class PreceptDataManager {
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(3, 27, [
-      { reason: '斗降', level: 'major' as PreceptLevel },
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '七殿泰山王诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(3, 28, [
@@ -355,7 +355,7 @@ export class PreceptDataManager {
       { reason: '九毒日，犯者夭亡，奇祸不测', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(5, 27, [
-      { reason: '斗降', level: 'major' as PreceptLevel },
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '九毒日，犯者夭亡，奇祸不测', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(5, 28, [
@@ -500,7 +500,7 @@ export class PreceptDataManager {
       { reason: '许真君诞', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(8, 3, [
-      { reason: '斗降', level: 'major' as PreceptLevel },
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '北斗诞，犯者削禄夺纪', level: 'major' as PreceptLevel },
       { reason: '司命灶君诞，犯者遭回禄', level: 'major' as PreceptLevel }
     ])
@@ -541,7 +541,7 @@ export class PreceptDataManager {
       { reason: '灶君夫人诞', level: 'moderate' as PreceptLevel }
     ])
     this.addMonthPrecepts(8, 27, [
-      { reason: '斗降', level: 'major' as PreceptLevel },
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '至圣先师孔子诞，削禄夺纪', level: 'major' as PreceptLevel },
       { reason: '杨公忌', level: 'major' as PreceptLevel }
     ])
@@ -627,7 +627,7 @@ export class PreceptDataManager {
       { reason: '民岁腊，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 3, [
-      { reason: '斗降', level: 'major' as PreceptLevel },
+      { reason: '斗降，犯者夺纪', level: 'major' as PreceptLevel },
       { reason: '三茅诞，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 5, [
