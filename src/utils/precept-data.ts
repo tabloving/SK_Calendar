@@ -945,30 +945,6 @@ export class PreceptDataManager {
       return result
     }
 
-    // 处理神明诞辰
-    if (text.includes('诞')) {
-      result.punishment = '犯者夺纪'
-      // 使用新的等级判断逻辑
-      const newLevel = this.determinePreceptLevel(result.punishment)
-      result.category = PreceptCategory.ANNIVERSARY
-      result.tags = this.extractTags(text)
-      result.explanation = this.getBirthExplanation(text)
-      result.suggestion = '神明诞辰日应持戒清净，可诵经礼忏，积德行善'
-      return result
-    }
-
-    // 处理神明降世事件
-    if (text.includes('降')) {
-      result.punishment = '犯者夺纪'
-      // 使用新的等级判断逻辑
-      const newLevel = this.determinePreceptLevel(result.punishment)
-      result.category = PreceptCategory.DEITY_INSPECTION
-      result.tags = this.extractTags(text)
-      result.explanation = this.getDescentExplanation(text)
-      result.suggestion = '神明降世之日应虔诚持戒，可诵经祈福'
-      return result
-    }
-
     // 处理其他特殊事件
     if (text.includes('暴亡') || text.includes('贫夭') || text.includes('血死') ||
         text.includes('水厄') || text.includes('绝嗣') || text.includes('夭亡')) {
