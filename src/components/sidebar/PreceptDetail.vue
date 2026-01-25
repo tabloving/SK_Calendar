@@ -82,6 +82,26 @@
                   <span>社日受胎者，毛发皆白</span>
                 </div>
               </div>
+
+              <!-- 如果是二分日，添加特殊警告 -->
+              <div v-if="precept.detail?.tags?.includes('二分日')" class="bg-orange-100 border border-orange-300 rounded p-2 text-orange-700 text-sm">
+                <div class="flex items-center">
+                  <WarningFilled class="w-4 h-4 mr-1" />
+                  <span>{{ getEquinoxWarningText(precept) }}之前三后三共七日，犯之必得危疾，尤宜切戒</span>
+                </div>
+              </div>
+
+              <!-- 如果是二至日，添加特殊警告 -->
+              <div v-if="precept.detail?.tags?.includes('二至日')" class="bg-orange-100 border border-orange-300 rounded p-2 text-orange-700 text-sm">
+                <div class="flex items-center">
+                  <WarningFilled class="w-4 h-4 mr-1" />
+                  <span>{{ getSolsticeWarningText(precept) }}之前三后三共七日，犯之必得急疾，尤宜切戒</span>
+                </div>
+                <div v-if="precept.detail?.tags?.includes('冬至') && !precept.detail?.tags?.includes('前后戒期')" class="flex items-center mt-1">
+                  <WarnTriangleFilled class="w-4 h-4 mr-1" />
+                  <span>冬至半夜子时犯之，主在一年内亡</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +149,7 @@ import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept-data'
 import { PreceptType } from '@/types'
 import * as lunar from 'lunar-javascript'
-import { View, Star, WarningFilled } from '@element-plus/icons-vue'
+import { View, Star, WarningFilled, WarnTriangleFilled } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 const settingsStore = useSettingsStore()
@@ -213,6 +233,34 @@ const getPreceptTitle = (precept: any) => {
     return '三伏日'
   }
   return precept.reason
+}
+
+/**
+ * 获取二分日警告文本中的节气名称
+ */
+const getEquinoxWarningText = (precept: any) => {
+  const tags = precept.detail?.tags || []
+  if (tags.includes('春分')) {
+    return '春分'
+  }
+  if (tags.includes('秋分')) {
+    return '秋分'
+  }
+  return '二分日'
+}
+
+/**
+ * 获取二至日警告文本中的节气名称
+ */
+const getSolsticeWarningText = (precept: any) => {
+  const tags = precept.detail?.tags || []
+  if (tags.includes('夏至')) {
+    return '夏至'
+  }
+  if (tags.includes('冬至')) {
+    return '冬至'
+  }
+  return '二至日'
 }
 </script>
 
