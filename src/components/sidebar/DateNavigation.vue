@@ -55,6 +55,7 @@
             size="small"
             :icon="CalendarIcon"
             @click="goToToday"
+            :disabled="isToday"
             class="today-btn"
           >
             今天
@@ -147,6 +148,16 @@ const preceptPercentage = computed(() => {
   if (monthStats.value.total === 0) return 0
   const preceptDays = monthStats.value.major + monthStats.value.moderate + monthStats.value.minor
   return Math.round((preceptDays / monthStats.value.total) * 100)
+})
+
+// 判断当前选中日期是否为今天
+const isToday = computed(() => {
+  const today = new Date()
+  const selected = calendarStore.selectedDate
+  if (!selected) return false
+  return selected.getFullYear() === today.getFullYear() &&
+         selected.getMonth() === today.getMonth() &&
+         selected.getDate() === today.getDate()
 })
 
 // 导航方法
@@ -247,6 +258,24 @@ const goToToday = () => {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
   border-color: #7c3aed;
+}
+
+.today-btn:disabled,
+.today-btn.is-disabled {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #a78bfa;
+  border-color: #ddd6fe;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.today-btn:disabled:hover,
+.today-btn.is-disabled:hover {
+  transform: none;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  box-shadow: none;
+  border-color: #ddd6fe;
 }
 
 /* 月度统计卡片样式 */
