@@ -55,6 +55,20 @@ const settingsStore = useSettingsStore()
 
 const upcomingPrecepts = computed(() => {
   const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // 获取选中的日期
+  const selected = calendarStore.selectedDate
+  if (selected) {
+    const selectedDateNormalized = new Date(selected)
+    selectedDateNormalized.setHours(0, 0, 0, 0)
+
+    // 如果选中的是过去的日期，不显示近期戒期
+    if (selectedDateNormalized < today) {
+      return []
+    }
+  }
+
   const threeMonthsLater = new Date(today)
   threeMonthsLater.setMonth(today.getMonth() + 3)
 
