@@ -442,8 +442,8 @@ const getMonthYear = (date: Date) => {
   .ganzhi-year-badge,
   .ganzhi-month-badge,
   .ganzhi-day-badge {
-    font-size: 10px;
-    padding: 1px 4px;
+    font-size: 13px;
+    padding: 2px 6px;
   }
 
   /* 移动端节气样式调整 */
@@ -463,9 +463,9 @@ const getMonthYear = (date: Date) => {
 
   /* 移动端农历月份天数Badge调整 */
   .lunar-month-days-badge {
-    font-size: 9px;
-    padding: 1px 3px;
-    min-width: 18px;
+    font-size: 12px;
+    padding: 2px 5px;
+    min-width: 22px;
   }
 }
 </style>

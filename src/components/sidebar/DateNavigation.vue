@@ -413,26 +413,42 @@ const goToToday = () => {
 }
 
 @media (max-width: 640px) {
+  /* 导航按钮区域不换行 */
+  .navigation-buttons .flex {
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+
   /* 导航按钮样式 */
   .nav-btn {
-    padding: 3px 1px;
-    height: 20px;
-    width: 20px;
+    padding: 4px 3px;
+    height: 28px;
+    width: 28px;
+    border-radius: 6px;
+    flex-shrink: 0;
   }
 
   .date-title-centered {
-    min-width: 50px;
-    font-size: 0.75rem;
+    min-width: 60px;
+    flex-shrink: 1;
   }
 
+  /* 增大阳历文本 */
   .date-title-centered h2 {
+    font-size: 1rem;
+  }
+
+  /* 增大农历文本 */
+  .date-title-centered .text-xs {
     font-size: 0.75rem;
   }
 
   .today-btn {
-    padding: 3px 4px;
-    height: 20px;
-    font-size: 9px;
+    padding: 4px 8px;
+    height: 28px;
+    font-size: 11px;
+    border-radius: 6px;
+    flex-shrink: 0;
   }
 
   /* 统计卡片样式 - 隐藏月份和进度条，只保留核心统计 */
@@ -464,10 +480,12 @@ const goToToday = () => {
 
   .month-stats-card .w-1\.5 {
     display: inline-block; /* 保留指示器 */
+    width: 8px;
+    height: 8px;
   }
 
   .month-stats-card .text-xs {
-    font-size: 0.625rem;
+    font-size: 0.875rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

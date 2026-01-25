@@ -719,19 +719,101 @@ const getDisplayReason = (reason: string): string => {
 
 @media (max-width: 480px) {
   .calendar-day {
-    height: 75px !important;
-    min-height: 75px !important;
-    max-height: 75px !important;
-    padding: 5px 8px;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    padding: 6px 8px;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .day-header {
-    margin-bottom: 3px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    position: relative;
+    z-index: 1;
   }
 
+  .solar-date {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+
+  /* 阳历日期水印样式 */
+  .solar-day-text {
+    font-size: 28px;
+    font-weight: 700;
+    opacity: 0.15;
+    color: #000;
+  }
+
+  /* 选中状态下阳历日期不减淡，颜色稍浅 */
+  .calendar-day.selected .solar-day-text {
+    opacity: 0.5;
+    color: #3B82F6;
+  }
+
+  .lunar-date {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+  }
+
+  /* 选中状态下农历文字为深灰色 */
+  .calendar-day.selected .lunar-date {
+    color: #1F2937;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* 手机屏幕隐藏戒期详情、干支信息 */
+  .ganzhi-info,
   .precept-details {
-    margin-top: 3px;
+    display: none !important;
+  }
+
+  /* 节气保持右下角，缩小尺寸 */
+  .solar-term-corner .solar-term-content {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+
+  .solar-term-corner .solar-term-icon {
+    font-size: 8px;
+  }
+
+  .solar-term-corner .solar-term-text {
+    font-size: 8px;
+  }
+
+  /* 戒期指示器固定在左上角，纵向排布 */
+  .precept-indicators {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    margin: 0;
+  }
+
+  .precept-indicators .flex {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .precept-indicator {
+    width: 5px;
+    height: 5px;
+    margin-right: 0;
   }
 }
 </style>

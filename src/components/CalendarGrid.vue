@@ -17,9 +17,9 @@
 
     <!-- 日历格子 -->
     <div class="calendar-body flex-1">
-      <div class="calendar-grid-days">
+      <div class="calendar-grid-days" :class="{ 'week-view': isMobile }">
         <CalendarDay
-          v-for="dayInfo in currentMonthDays"
+          v-for="dayInfo in displayDays"
           :key="`${dayInfo.year}-${dayInfo.month}-${dayInfo.day}`"
           :day-info="dayInfo"
           :is-selected="isSelected(dayInfo)"
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import CalendarDay from './CalendarDay.vue'
 import type { CalendarDayInfo } from '@/types'
@@ -41,9 +41,52 @@ const calendarStore = useCalendarStore()
 // 星期标题
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 
+// 响应式检测是否为移动端
+const isMobile = ref(false)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 480
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
 // 计算属性
 const currentMonthDays = computed(() => {
   return calendarStore.currentMonthInfo.days
+})
+
+// 获取当前选中日期所在周的日期
+const currentWeekDays = computed(() => {
+  const selectedDate = calendarStore.selectedDate || new Date()
+  const allDays = currentMonthDays.value
+
+  // 找到选中日期在数组中的索引
+  const selectedIndex = allDays.findIndex(day =>
+    day.date.getFullYear() === selectedDate.getFullYear() &&
+    day.date.getMonth() === selectedDate.getMonth() &&
+    day.date.getDate() === selectedDate.getDate()
+  )
+
+  if (selectedIndex === -1) {
+    // 如果选中日期不在当前月份，返回第一周
+    return allDays.slice(0, 7)
+  }
+
+  // 计算选中日期所在周的起始索引（每周7天）
+  const weekStartIndex = Math.floor(selectedIndex / 7) * 7
+  return allDays.slice(weekStartIndex, weekStartIndex + 7)
+})
+
+// 根据屏幕大小决定显示的日期
+const displayDays = computed(() => {
+  return isMobile.value ? currentWeekDays.value : currentMonthDays.value
 })
 
 // 计算日历行数，用于动态设置格子高度
@@ -198,13 +241,9 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .week-day {
-    padding: 10px 4px;
-    font-size: 11px;
-  }
-
-  .week-day {
-    padding: 5px;
-    font-size: 11px;
+    padding: 8px 4px;
+    font-size: 14px;
+    font-weight: 600;
   }
 
   .calendar-body {
@@ -216,13 +255,13 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
   .calendar-grid-days {
     gap: 2px;
-    grid-auto-rows: 75px; /* 小屏幕固定行高 */
+    grid-auto-rows: 60px; /* 周视图固定行高 */
   }
 
   .calendar-grid-days > * {
     border-right: 1px solid #f8fafc;
-    border-bottom: 1px solid #f8fafc;
-    height: 75px; /* 小屏幕固定格子高度 */
+    border-bottom: none; /* 周视图只有一行，不需要底边框 */
+    height: 60px; /* 周视图固定格子高度 */
   }
 
   .calendar-grid-days > *:nth-child(7n) {
