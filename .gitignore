@@ -143,3 +143,15 @@ videos/
 
 # AI doc
 CLAUDE.md
+AGENTS.md
+GEMINI.md
+.cursorrules
+.cursor/
+.codeium/
+.github/copilot-instructions.md
+
+# JetBrains IDE (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
