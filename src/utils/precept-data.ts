@@ -580,7 +580,7 @@ export class PreceptDataManager {
       { reason: '斗母降，犯者夺纪', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 11, [
-      { reason: '宜戒', level: 'moderate' as PreceptLevel }
+      { reason: '宜戒', level: 'minor' as PreceptLevel }
     ])
     this.addMonthPrecepts(9, 13, [
       { reason: '孟婆尊神诞', level: 'moderate' as PreceptLevel }
@@ -644,7 +644,7 @@ export class PreceptDataManager {
       { reason: '四天王降，犯者一年内死', level: 'major' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 11, [
-      { reason: '宜戒', level: 'moderate' as PreceptLevel }
+      { reason: '宜戒', level: 'minor' as PreceptLevel }
     ])
     this.addMonthPrecepts(10, 14, [
       { reason: '四天王巡行', level: 'moderate' as PreceptLevel },
