@@ -661,20 +661,42 @@ const getDisplayReason = (reason: string): string => {
   }
 
   .day-header {
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 4px;
+    padding-bottom: 0;
+    border-bottom: none;
   }
 
   .solar-day-text {
-    font-size: 16px;
+    font-size: 22px;
+    opacity: 0.4;
+  }
+
+  /* 非本月日期整体更淡 */
+  .calendar-day:not(.is-current-month) {
+    opacity: 0.3;
+  }
+
+  /* 今日阳历不减淡 */
+  .calendar-day.today .solar-day-text {
+    opacity: 1;
+  }
+
+  /* 选中日期阳历不减淡 */
+  .calendar-day.selected .solar-day-text {
+    opacity: 1;
+    color: #3B82F6;
   }
 
   .lunar-date {
-    font-size: 10px;
+    font-size: 11px;
+    margin-top: 2px;
   }
 
+  /* 隐藏戒期详情文本 */
   .precept-details {
-    font-size: 10px;
-    margin-top: 4px;
+    display: none !important;
   }
 
   .precept-indicator {

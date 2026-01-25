@@ -196,14 +196,9 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .week-day {
-    padding: 12px 6px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .week-day {
-    padding: 6px;
-    font-size: 12px;
+    padding: 8px 6px;
+    font-size: 14px;
+    font-weight: 600;
   }
 
   .calendar-body {

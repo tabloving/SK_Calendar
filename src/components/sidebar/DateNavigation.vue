@@ -421,32 +421,32 @@ const goToToday = () => {
 
   /* 导航按钮样式 */
   .nav-btn {
-    padding: 4px 3px;
-    height: 28px;
-    width: 28px;
+    padding: 6px 4px;
+    height: 32px;
+    width: 32px;
     border-radius: 6px;
     flex-shrink: 0;
   }
 
   .date-title-centered {
-    min-width: 60px;
+    min-width: 80px;
     flex-shrink: 1;
   }
 
   /* 增大阳历文本 */
   .date-title-centered h2 {
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
 
   /* 增大农历文本 */
   .date-title-centered .text-xs {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
 
   .today-btn {
-    padding: 4px 8px;
-    height: 28px;
-    font-size: 11px;
+    padding: 6px 10px;
+    height: 32px;
+    font-size: 12px;
     border-radius: 6px;
     flex-shrink: 0;
   }

@@ -311,4 +311,10 @@ onMounted(async () => {
     border-radius: 8px;
   }
 }
+
+@media (max-width: 640px) {
+  .calendar-view {
+    padding: 0 4px; /* 减少两侧填充 */
+  }
+}
 </style>
