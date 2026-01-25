@@ -9,6 +9,8 @@ export class PreceptDataManager {
   private static instance: PreceptDataManager
   private monthlyPrecepts: Map<string, PreceptInfo[]> = new Map()
   private specialPrecepts: Map<string, PreceptInfo[]> = new Map()
+  // 节气缓存：key为年份，value为该年所有节气
+  private solarTermsCache: Map<number, Array<{ name: string; date: Date }>> = new Map()
 
   private constructor() {
     this.initializePreceptData()
@@ -1825,9 +1827,14 @@ export class PreceptDataManager {
   }
 
   /**
-   * 获取指定年份的所有节气
+   * 获取指定年份的所有节气（带缓存）
    */
   private getSolarTerms(year: number): Array<{ name: string; date: Date }> {
+    // 检查缓存
+    if (this.solarTermsCache.has(year)) {
+      return this.solarTermsCache.get(year)!
+    }
+
     try {
       const terms: Array<{ name: string; date: Date }> = []
 
@@ -1853,7 +1860,10 @@ export class PreceptDataManager {
         }
       }
 
-      return terms.sort((a, b) => a.date.getTime() - b.date.getTime())
+      const sortedTerms = terms.sort((a, b) => a.date.getTime() - b.date.getTime())
+      // 存入缓存
+      this.solarTermsCache.set(year, sortedTerms)
+      return sortedTerms
     } catch (error) {
       console.error('获取节气信息失败', error)
       return []
