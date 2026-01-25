@@ -110,6 +110,14 @@
                   <span>冬至后第三戌日犯之，主在一年内亡</span>
                 </div>
               </div>
+
+              <!-- 如果是冬至后庚辛日，添加特殊警告 -->
+              <div v-if="precept.reason === '冬至后庚辛日'" class="bg-red-100 border border-red-300 rounded p-2 text-red-700 text-sm">
+                <div class="flex items-center">
+                  <WarnTriangleFilled class="w-4 h-4 mr-1" />
+                  <span>冬至后庚辛日犯之，主在一年内亡</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

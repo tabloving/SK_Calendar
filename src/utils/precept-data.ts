@@ -1359,6 +1359,12 @@ export class PreceptDataManager {
       specialPrecepts.push(dongZhiSanXuRiPrecept)
     }
 
+    // 13. 获取冬至后庚辛日戒期
+    const dongZhiGengXinRiPrecept = this.getDongZhiGengXinRiPrecept(date, dayInfo)
+    if (dongZhiGengXinRiPrecept) {
+      specialPrecepts.push(dongZhiGengXinRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -2543,6 +2549,88 @@ export class PreceptDataManager {
       reason: detail.reason,
       punishment: detail.punishment,
       description: `冬至后第三戌日 - 犯者一年内亡 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+    }
+  }
+
+  /**
+   * 获取冬至后庚辛日戒期
+   * 冬至后庚辛日：冬至到立春之间天干为庚或辛的日子
+   * 犯者一年内亡
+   */
+  private getDongZhiGengXinRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const year = date.getFullYear()
+
+      // 获取当年和上一年的节气
+      const currentYearTerms = this.getSolarTerms(year)
+      const prevYearTerms = this.getSolarTerms(year - 1)
+
+      // 查找当年冬至和立春
+      const currentDongZhi = currentYearTerms.find(term => term.name === '冬至')
+      const currentLiChun = currentYearTerms.find(term => term.name === '立春')
+      // 查找上一年冬至
+      const prevDongZhi = prevYearTerms.find(term => term.name === '冬至')
+
+      // 获取当日的天干
+      const solar = lunarLib.Solar.fromDate(date)
+      const lunarDate = solar.getLunar()
+      const ganZhi = lunarDate.getDayInGanZhi()
+      const gan = ganZhi.charAt(0)
+
+      // 检查天干是否为庚或辛
+      if (gan !== '庚' && gan !== '辛') {
+        return null
+      }
+
+      // 检查是否在上一年冬至到当年立春之间
+      if (prevDongZhi && currentLiChun) {
+        if (date > prevDongZhi.date && date < currentLiChun.date) {
+          return this.createDongZhiGengXinRiPreceptInfo(date, ganZhi)
+        }
+      }
+
+      // 检查是否在当年冬至到次年立春之间（当年冬至后）
+      if (currentDongZhi && date > currentDongZhi.date) {
+        // 获取次年立春
+        const nextYearTerms = this.getSolarTerms(year + 1)
+        const nextLiChun = nextYearTerms.find(term => term.name === '立春')
+        if (nextLiChun && date < nextLiChun.date) {
+          return this.createDongZhiGengXinRiPreceptInfo(date, ganZhi)
+        }
+      }
+    } catch (error) {
+      console.error('获取冬至后庚辛日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 创建冬至后庚辛日戒期信息
+   */
+  private createDongZhiGengXinRiPreceptInfo(date: Date, ganZhi: string): PreceptInfo {
+    const gan = ganZhi.charAt(0)
+
+    const detail = {
+      reason: '冬至后庚辛日',
+      punishment: '犯者一年内亡',
+      explanation: `此日为冬至到立春之间的${gan}日（${ganZhi}）。《寿康宝鉴》记载：冬至后庚辛日犯之，主在一年内亡。冬至后阳气初生，庚辛属金，金气肃杀，此时犯戒后果极为严重`,
+      suggestion: '此日应严格持戒，可诵经礼佛，修身养性，避免一切不当行为，以保平安',
+      category: PreceptCategory.SOLAR_TERM,
+      tags: ['冬至', '庚辛日', '大凶日'],
+      source: '《寿康宝鉴》'
+    }
+
+    const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+    return {
+      date: dateStr,
+      level: PreceptLevel.MAJOR,
+      type: PreceptType.SPECIAL,
+      detail: detail,
+      reason: detail.reason,
+      punishment: detail.punishment,
+      description: `冬至后庚辛日 - 犯者一年内亡 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
     }
   }
 }
