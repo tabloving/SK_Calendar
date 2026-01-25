@@ -1353,6 +1353,12 @@ export class PreceptDataManager {
       specialPrecepts.push(sanFuRiPrecept)
     }
 
+    // 12. 获取冬至后第三戌日戒期
+    const dongZhiSanXuRiPrecept = this.getDongZhiSanXuRiPrecept(date, dayInfo)
+    if (dongZhiSanXuRiPrecept) {
+      specialPrecepts.push(dongZhiSanXuRiPrecept)
+    }
+
     return specialPrecepts
   }
 
@@ -2429,5 +2435,114 @@ export class PreceptDataManager {
     }
 
     return null
+  }
+
+  /**
+   * 获取冬至后第三戌日戒期
+   * 冬至后第三戌日：冬至之后第三个地支为戌的日子
+   * 犯者一年内亡
+   */
+  private getDongZhiSanXuRiPrecept(date: Date, dayInfo: any): PreceptInfo | null {
+    try {
+      const year = date.getFullYear()
+
+      // 获取当年和上一年的冬至日期
+      const currentYearTerms = this.getSolarTerms(year)
+      const prevYearTerms = this.getSolarTerms(year - 1)
+
+      // 查找当年冬至
+      const currentDongZhi = currentYearTerms.find(term => term.name === '冬至')
+      // 查找上一年冬至
+      const prevDongZhi = prevYearTerms.find(term => term.name === '冬至')
+
+      // 计算当年冬至后的第三戌日
+      if (currentDongZhi) {
+        const sanXuRi = this.calculateNthXuDay(currentDongZhi.date, 3)
+        if (sanXuRi && this.isSameDay(date, sanXuRi)) {
+          return this.createDongZhiSanXuRiPreceptInfo(date, currentDongZhi.date)
+        }
+      }
+
+      // 计算上一年冬至后的第三戌日（可能落在当年）
+      if (prevDongZhi) {
+        const sanXuRi = this.calculateNthXuDay(prevDongZhi.date, 3)
+        if (sanXuRi && this.isSameDay(date, sanXuRi)) {
+          return this.createDongZhiSanXuRiPreceptInfo(date, prevDongZhi.date)
+        }
+      }
+    } catch (error) {
+      console.error('获取冬至后第三戌日信息失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 计算从指定日期开始的第N个戌日
+   * @param startDate 起始日期（如冬至）
+   * @param n 第几个戌日
+   * @returns 第N个戌日的日期
+   */
+  private calculateNthXuDay(startDate: Date, n: number): Date | null {
+    try {
+      let count = 0
+      let currentDate = new Date(startDate)
+      // 从起始日期的下一天开始计算
+      currentDate.setDate(currentDate.getDate() + 1)
+
+      // 从起始日期开始，逐日检查
+      while (count < n) {
+        const solar = lunarLib.Solar.fromDate(currentDate)
+        const lunarDate = solar.getLunar()
+        const ganZhi = lunarDate.getDayInGanZhi()
+        const zhi = ganZhi.charAt(1) // 获取地支（干支的第二个字）
+
+        // 检查地支是否为戌
+        if (zhi === '戌') {
+          count++
+          if (count === n) {
+            return currentDate
+          }
+        }
+
+        // 移动到下一天
+        currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
+      }
+    } catch (error) {
+      console.error('计算戌日失败', error)
+    }
+
+    return null
+  }
+
+  /**
+   * 创建冬至后第三戌日戒期信息
+   */
+  private createDongZhiSanXuRiPreceptInfo(date: Date, dongZhiDate: Date): PreceptInfo {
+    const solar = lunarLib.Solar.fromDate(date)
+    const lunarDate = solar.getLunar()
+    const ganZhi = lunarDate.getDayInGanZhi()
+
+    const detail = {
+      reason: '冬至后第三戌日',
+      punishment: '犯者一年内亡',
+      explanation: `此日为冬至后的第三个戌日（${ganZhi}）。《寿康宝鉴》记载：冬至后第三戌日犯之，主在一年内亡。此日为冬至后阴阳交替的关键时刻，犯戒后果极为严重`,
+      suggestion: '此日应严格持戒，可诵经礼佛，修身养性，避免一切不当行为，以保平安',
+      category: PreceptCategory.SOLAR_TERM,
+      tags: ['冬至', '戌日', '大凶日'],
+      source: '《寿康宝鉴》'
+    }
+
+    const dateStr = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+    return {
+      date: dateStr,
+      level: PreceptLevel.MAJOR,
+      type: PreceptType.SPECIAL,
+      detail: detail,
+      reason: detail.reason,
+      punishment: detail.punishment,
+      description: `冬至后第三戌日 - 犯者一年内亡 - 大戒\n说明：${detail.explanation}\n建议：${detail.suggestion}\n分类：节气戒期`
+    }
   }
 }
