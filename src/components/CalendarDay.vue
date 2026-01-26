@@ -3,7 +3,7 @@
     class="calendar-day cursor-pointer"
     :class="[
       dayClasses,
-      { 'selected': isSelected, 'today': dayInfo.isToday, 'is-current-month': dayInfo.isCurrentMonth }
+      { 'selected': isSelected || dayInfo.isToday, 'today': dayInfo.isToday, 'is-current-month': dayInfo.isCurrentMonth }
     ]"
     @click="handleClick"
   >
@@ -52,7 +52,7 @@
         </div>
         <div
           v-if="displayPreceptInfos.length > maxDisplayItems"
-          class="text-gray-500 text-xs"
+          class="extra-count text-xs"
         >
           +{{ displayPreceptInfos.length - maxDisplayItems }}项
         </div>
@@ -377,7 +377,7 @@ const getDisplayReason = (reason: string): string => {
   box-sizing: border-box;
 }
 
-.calendar-day:hover {
+.calendar-day:not(.selected):hover {
   box-shadow: 0 2px 8px var(--paper-shadow),
               inset 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
@@ -387,103 +387,85 @@ const getDisplayReason = (reason: string): string => {
   background-color: #EFF6FF;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15),
               inset 0 0 0 1px #3B82F6; /* 统一使用内阴影作为边框 */
+}
+
+.calendar-day.selected:not(.today) {
   transform: scale(1.01);
 }
 
-.calendar-day.today {
-  background: var(--paper-light);
-  border: 1px solid var(--paper-border);
-  box-shadow: 0 1px 3px var(--paper-shadow);
-  position: relative;
-}
-
-
-
-/* 今天日期文字低调强调 */
-.calendar-day.today .solar-date span {
-  color: #3B82F6;
-  font-weight: 600;
-}
-
 .calendar-day:not(.is-current-month) {
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 /* 确保选中状态在非当前月份时也可见 */
 .calendar-day.selected:not(.is-current-month) {
-  opacity: 0.7;
+  opacity: 0.5;
   border: none;
   background-color: #EFF6FF;
   box-shadow: inset 0 0 0 1px #3B82F6;
 }
 
-/* 恢复原有戒期等级填充色，去除左边框 */
+/* 戒期等级填充色 - 降低透明度使整体更柔和 */
 .calendar-day.precept-major {
-  background-color: rgba(220, 38, 38, 0.08);
+  background-color: rgba(220, 38, 38, 0.035);
 }
 
 .calendar-day.precept-moderate {
-  background-color: rgba(139, 92, 246, 0.08);
+  background-color: rgba(139, 92, 246, 0.035);
 }
 
 .calendar-day.precept-minor {
-  background-color: rgba(59, 130, 246, 0.08);
+  background-color: rgba(59, 130, 246, 0.03);
 }
 
 .calendar-day.precept-safe {
-  background-color: rgba(22, 163, 74, 0.08);
+  background-color: rgba(22, 163, 74, 0.025);
 }
 
 /* 戒期状态的悬停效果 */
-.calendar-day.precept-major:hover {
+.calendar-day.precept-major:not(.selected):hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(220, 38, 38, 0.25);
 }
 
-.calendar-day.precept-moderate:hover {
+.calendar-day.precept-moderate:not(.selected):hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(139, 92, 246, 0.25);
 }
 
-.calendar-day.precept-minor:hover {
+.calendar-day.precept-minor:not(.selected):hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(59, 130, 246, 0.25);
 }
 
-.calendar-day.precept-safe:hover {
+.calendar-day.precept-safe:not(.selected):hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
               inset 0 0 0 1px rgba(22, 163, 74, 0.25);
 }
 
 /* 选中状态与戒期状态的组合处理 */
 .calendar-day.selected.precept-major {
-  background-color: rgba(220, 38, 38, 0.12);
+  background-color: rgba(220, 38, 38, 0.08);
   border: none;
   box-shadow: inset 0 0 0 1px #DC2626;
 }
 
 .calendar-day.selected.precept-moderate {
-  background-color: rgba(139, 92, 246, 0.12);
+  background-color: rgba(139, 92, 246, 0.08);
   border: none;
   box-shadow: inset 0 0 0 1px #8B5CF6;
 }
 
 .calendar-day.selected.precept-minor {
-  background-color: rgba(59, 130, 246, 0.12);
+  background-color: rgba(59, 130, 246, 0.08);
   border: none;
   box-shadow: inset 0 0 0 1px #3B82F6;
 }
 
 .calendar-day.selected.precept-safe {
-  background-color: rgba(22, 163, 74, 0.12);
+  background-color: rgba(22, 163, 74, 0.08);
   border: none;
   box-shadow: inset 0 0 0 1px #16A34A;
-}
-
-/* 选中状态下的悬停效果 */
-.calendar-day.selected:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 0 0 1px #3B82F6;
 }
 
 .precept-indicator {
@@ -530,7 +512,30 @@ const getDisplayReason = (reason: string): string => {
   word-break: break-all;
   font-size: 12px;
   font-weight: 500;
+  color: #9ca3af;
+}
+
+/* 今日戒期文本保持原色 */
+.calendar-day.today .precept-item {
   color: #374151;
+}
+
+/* 选中日期戒期文本 */
+.calendar-day.selected .precept-item {
+  color: #6b7280;
+}
+
+/* 额外项数文本 */
+.extra-count {
+  color: #9ca3af;
+}
+
+.calendar-day.today .extra-count {
+  color: #6b7280;
+}
+
+.calendar-day.selected .extra-count {
+  color: #6b7280;
 }
 
 /* 增强日期头部样式 */
@@ -553,11 +558,33 @@ const getDisplayReason = (reason: string): string => {
   font-weight: 600;
   line-height: 1.2;
   font-family: 'Gravitas One', cursive;
+  color: #9ca3af;
+}
+
+/* 选中日期阳历文字 */
+.calendar-day.selected .solar-day-text {
   color: #6b7280;
+}
+
+/* 今日阳历文字 */
+.calendar-day.today .solar-day-text {
+  color: #3B82F6;
 }
 
 .lunar-date {
   display: block;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* 选中日期农历文字 */
+.calendar-day.selected .lunar-date {
+  color: #6b7280;
+}
+
+/* 今日农历保持原色 */
+.calendar-day.today .lunar-date {
+  color: #4b5563;
 }
 
 .ganzhi-info {
