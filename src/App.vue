@@ -6,15 +6,23 @@
         <div class="nav-pattern-top"></div>
 
         <div class="nav-container">
-          <!-- Logo区域 - 印章风格 -->
+          <!-- Logo区域 - 书卷印章风格 -->
           <div class="nav-brand">
-            <div class="brand-seal">
-              <span class="seal-text">寿</span>
-            </div>
-            <div class="brand-text">
-              <span class="brand-title">寿康日历</span>
-              <span class="brand-divider"></span>
-              <span class="brand-subtitle">保身立命</span>
+            <div class="brand-scroll">
+              <div class="scroll-left"></div>
+              <div class="scroll-content">
+                <div class="brand-seal">
+                  <span class="seal-text">寿</span>
+                </div>
+                <div class="brand-text">
+                  <span class="brand-title">寿康日历</span>
+                </div>
+                <div class="brand-subtitle-group">
+                  <span class="brand-subtitle-line">保身立命</span>
+                  <span class="brand-subtitle-line">福寿延年</span>
+                </div>
+              </div>
+              <div class="scroll-right"></div>
             </div>
           </div>
 
@@ -102,41 +110,117 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 8px 24px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-/* Logo品牌区域 - 印章风格 */
+/* Logo品牌区域 - 书卷印章风格 */
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+}
+
+.brand-scroll {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.scroll-left,
+.scroll-right {
+  width: 10px;
+  height: 48px;
+  background: linear-gradient(180deg, #d4a574 0%, #c9956a 50%, #d4a574 100%);
+  border-radius: 5px;
+  box-shadow:
+    inset 2px 0 4px rgba(255, 255, 255, 0.3),
+    inset -1px 0 2px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(139, 90, 43, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.scroll-left::after,
+.scroll-right::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(139, 90, 43, 0.3) 20%,
+    rgba(139, 90, 43, 0.3) 80%,
+    transparent 100%
+  );
+}
+
+.scroll-left::after {
+  right: 3px;
+}
+
+.scroll-right::after {
+  left: 3px;
+}
+
+.scroll-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  background: linear-gradient(180deg, #faf6f0 0%, #f5efe5 100%);
+  border-top: 1px solid #e8dcc8;
+  border-bottom: 1px solid #e8dcc8;
+  margin: 0 -2px;
+  position: relative;
+  height: 48px;
+}
+
+.scroll-content::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 108, 0.4), transparent);
+}
+
+.scroll-content::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 108, 0.4), transparent);
 }
 
 .brand-seal {
-  width: 40px;
-  height: 40px;
-  background: #b8372e;
-  border: 2px solid #8b2920;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #c94a3f 0%, #b8372e 100%);
+  border: 1.5px solid #8b2920;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 2px 6px rgba(139, 41, 32, 0.35);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 2px 4px rgba(139, 41, 32, 0.4);
+  transform: rotate(-3deg);
 }
 
 .brand-seal::before {
   content: '';
   position: absolute;
-  inset: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  inset: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .seal-text {
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 900;
   color: #f5e6d3;
   font-family: 'SimSun', 'STSong', serif;
@@ -146,28 +230,34 @@
 .brand-text {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .brand-title {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 600;
+  color: #3d2817;
+  letter-spacing: 6px;
+  font-family: 'KaiTi', 'STKaiti', 'SimSun', 'STSong', serif;
+  line-height: 1.2;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.brand-subtitle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid #c9a86c;
+}
+
+.brand-subtitle-line {
+  font-size: 12px;
   color: #5c4033;
   letter-spacing: 3px;
-  font-family: 'SimSun', 'STSong', 'PingFang SC', serif;
-}
-
-.brand-divider {
-  width: 1px;
-  height: 16px;
-  background: linear-gradient(180deg, transparent, #c9a86c, transparent);
-}
-
-.brand-subtitle {
-  font-size: 12px;
-  color: #8b7355;
-  letter-spacing: 2px;
-  font-family: 'SimSun', 'STSong', 'PingFang SC', serif;
+  font-family: 'KaiTi', 'STKaiti', 'SimSun', 'STSong', serif;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 /* 导航链接 */
@@ -288,25 +378,32 @@
     padding: 10px 16px;
   }
 
+  .scroll-left,
+  .scroll-right {
+    width: 8px;
+    height: 40px;
+  }
+
+  .scroll-content {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
   .brand-seal {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
   }
 
   .seal-text {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .brand-title {
-    font-size: 16px;
-    letter-spacing: 2px;
+    font-size: 22px;
+    letter-spacing: 5px;
   }
 
-  .brand-divider {
-    display: none;
-  }
-
-  .brand-subtitle {
+  .brand-subtitle-group {
     display: none;
   }
 

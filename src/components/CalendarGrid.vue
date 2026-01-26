@@ -8,7 +8,8 @@
         class="week-day text-center font-medium text-sm"
         :class="{
           'weekend': index === 0 || index === 6,
-          'weekday': index > 0 && index < 6
+          'weekday': index > 0 && index < 6,
+          'today-weekday': index === todayWeekIndex
         }"
       >
         {{ day }}
@@ -40,6 +41,11 @@ const calendarStore = useCalendarStore()
 
 // 星期标题
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
+
+// 今日是星期几（0-6，0为周日）
+const todayWeekIndex = computed(() => {
+  return new Date().getDay()
+})
 
 // 响应式检测是否为移动端
 const isMobile = ref(false)
@@ -149,6 +155,17 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 .weekend {
   color: #dc2626;
   font-weight: 600;
+}
+
+/* 今日星期特殊样式 */
+.today-weekday {
+  color: #8B4513 !important;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5e6d3 0%, #ede0cc 100%);
+  border-radius: 16px;
+  margin: 0 4px;
+  border: 1.5px solid #c9a86c;
+  box-shadow: 0 1px 4px rgba(139, 115, 85, 0.2);
 }
 
 .calendar-body {
