@@ -1,0 +1,103 @@
+name: Bug 问题报告
+description: 使用时遇到的问题或缺陷
+title: "[Bug] "
+labels: ["问题报告"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你花时间填写这份 Bug 报告！请尽可能详细地描述问题，这将帮助我们更快地定位和修复。
+
+        - **提交错误报告前**：请检查 [已有 Issues](https://github.com/tabloving/SK_Calendar/issues)列表，了解是否有类似问题被报告。如果不确定，请进行搜索，这有助于我们高效地专注于改进项目。
+  
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: 检查现有问题
+      description: 确认您在提交新报告之前已经检查了现有报告。
+      options:
+        - label: 我已经搜索了现有问题和讨论。
+          required: true
+        - label: 我正在使用最新版本应用。
+          required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 你看到了什么？
+      description: 请详细描述您正在进行的操作，您期待看到什么，实际发生了什么。
+      placeholder: 请告诉我们您看到了什么！
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: 复现步骤
+      description: 请提供复现此问题的详细步骤
+      placeholder: |
+        1. 在此环境中...
+        2. 运行...
+        3. 滚动到...
+        4. 看到错误...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: 设备类型
+      description: 你使用的是什么设备？
+      options:
+        - 桌面端
+        - 平板
+        - 手机
+        - 其他（在其他信息中补充）
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统
+      description: 你使用的操作系统和版本
+      placeholder: 例如：Windows 11, macOS 14, iOS 17, Android 14
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 其他补充信息
+      description: 添加任何其他关于此问题的上下文信息
+      placeholder: 其他相关信息...
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 确认
+      description: 确保已满足以下先决条件。
+      options:
+        - label: 我已阅读并遵循了 `README.md` 中的所有说明。
+          required: true
+        - label: 我正在使用 tabloving/SK_Calendar 的最新版本。
+          required: true
+        - label: 我已提供我能够提供的尽可能多的相关日志，屏幕截图等。
+          required: true
+        - label: |
+            我已详细记录了精确、按顺序且无歧义的逐步重现说明。我的步骤：
+            - 从正在执行的操作开始，
+            - 指定进入了什么页面，
+            - 列出访问的 URL、用户输入（包括所需的示例值/电子邮件/密码），
+            - 描述所有已启用或更改的选项和开关，
+            - 包含任何可能的浏览器控制台日志，
+            - 识别每个阶段的预期和实际结果，
+            - 确保任何有合理技能的用户都可以遵循并遇到相同的问题。
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## 注意
+        如果 Bug 报告不完整或不遵循说明，则可能不会得到处理。请确保您已遵循所有 **README.md** 指南，并提供所有必要信息以便我们重现该问题。
+        感谢您为 tabloving/SK_Calendar 做出贡献！
