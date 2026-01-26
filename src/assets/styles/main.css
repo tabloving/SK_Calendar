@@ -2,7 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 全局滚动条美化 */
+/* 宣纸暖黄护眼配色 */
+:root {
+  --paper-bg: #f8f4e9;           /* 主背景 - 宣纸色 */
+  --paper-light: #faf7ef;        /* 浅宣纸色 - 卡片背景 */
+  --paper-cream: #f5f0e3;        /* 奶油宣纸 - 次级背景 */
+  --paper-warm: #f2ead8;         /* 暖宣纸 - 边框/分隔 */
+  --paper-border: #e8dfc9;       /* 边框色 */
+  --paper-shadow: rgba(139, 115, 85, 0.08); /* 阴影色 */
+}
+
+.bg-paper {
+  background: linear-gradient(180deg, var(--paper-bg) 0%, var(--paper-cream) 100%);
+}
+
+.bg-paper-light {
+  background: var(--paper-light);
+}
+
+.bg-paper-card {
+  background: var(--paper-light);
+  border-color: var(--paper-border);
+}
+
+/* 全局滚动条美化 - 宣纸配色 */
 
 ::-webkit-scrollbar {
   width: 3px;
@@ -10,17 +33,17 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #C4B5FD50;
+  background: var(--paper-cream);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C4B5FD;
+  background: #c9a86c;
   border-radius: 3px;
 }
 
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A78BFA;
+  background: #b8956a;
 }
 
 /* 自定义戒期颜色样式 */

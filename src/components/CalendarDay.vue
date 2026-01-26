@@ -367,18 +367,18 @@ const getDisplayReason = (reason: string): string => {
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  border: 1px solid #f0f0f0;
-  background: #ffffff;
+  border: 1px solid var(--paper-border);
+  background: var(--paper-light);
   height: 100%;
   min-height: 120px;
   padding: 12px 16px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px var(--paper-shadow);
   box-sizing: border-box;
 }
 
 .calendar-day:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+  box-shadow: 0 2px 8px var(--paper-shadow),
               inset 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
@@ -391,9 +391,9 @@ const getDisplayReason = (reason: string): string => {
 }
 
 .calendar-day.today {
-  background: #ffffff;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  background: var(--paper-light);
+  border: 1px solid var(--paper-border);
+  box-shadow: 0 1px 3px var(--paper-shadow);
   position: relative;
 }
 
@@ -540,7 +540,7 @@ const getDisplayReason = (reason: string): string => {
   justify-content: space-between;
   margin-bottom: 8px;
   padding-bottom: 4px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--paper-warm);
 }
 
 .solar-date span {

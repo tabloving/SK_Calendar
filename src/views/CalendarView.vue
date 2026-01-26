@@ -21,7 +21,7 @@
       <!-- 右侧边栏区域 -->
       <div
         ref="sidebarContainerRef"
-        class="lg:col-span-1 bg-white py-4 rounded-lg shadow-sm sidebar-outer-container"
+        class="lg:col-span-1 bg-paper-light py-4 rounded-lg shadow-sm sidebar-outer-container"
         :style="{ height: calendarGridHeight + 'px' }">
         <div
           ref="sidebarRef"
@@ -47,7 +47,7 @@
       </div>
 
       <!-- 边栏区域 -->
-      <div class="sidebar-section bg-white rounded-lg shadow-sm">
+      <div class="sidebar-section bg-paper-light rounded-lg shadow-sm">
         <div
           ref="sidebarContainerRef"
           class="sidebar-outer-container  py-4">
@@ -229,10 +229,10 @@ onMounted(async () => {
   /* 流式布局样式 */
   .calendar-mobile-container {
     width: 100%;
-    background: white;
+    background: var(--paper-light);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f1f5f9;
+    box-shadow: 0 2px 8px var(--paper-shadow);
+    border: 1px solid var(--paper-border);
     overflow: hidden;
   }
 
@@ -245,9 +245,9 @@ onMounted(async () => {
   }
 
   .sidebar-outer-container {
-    background: white;
+    background: var(--paper-light);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 8px var(--paper-shadow);
   }
 }
 
@@ -309,6 +309,7 @@ onMounted(async () => {
   .calendar-mobile-container,
   .sidebar-outer-container {
     border-radius: 8px;
+    border: 1px solid var(--paper-border);
   }
 }
 

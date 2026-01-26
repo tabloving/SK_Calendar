@@ -1,7 +1,7 @@
 <template>
-  <div class="calendar-grid bg-white rounded-lg shadow-sm pb-2 h-full flex flex-col">
+  <div class="calendar-grid bg-paper-light rounded-lg shadow-sm pb-2 h-full flex flex-col">
     <!-- 星期标题 -->
-    <div class="week-header grid grid-cols-7 bg-white border-b border-gray-100 flex-shrink-0">
+    <div class="week-header grid grid-cols-7 border-b flex-shrink-0">
       <div
         v-for="(day, index) in weekDays"
         :key="index"
@@ -114,14 +114,15 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 .calendar-grid {
   user-select: none;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px var(--paper-shadow);
+  border: 1px solid var(--paper-border);
   overflow: hidden;
+  background: var(--paper-light);
 }
 
 .week-header {
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  background: var(--paper-cream);
+  border-bottom: 1px solid var(--paper-border);
   padding: 12px 0;
 }
 
@@ -151,7 +152,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 }
 
 .calendar-body {
-  background: #ffffff;
+  background: var(--paper-light);
   padding: 6px 10px; /* 增加底部padding为transform提供空间 */
   overflow: visible; /* 改为visible，允许子元素溢出 */
   flex: 1;
@@ -167,8 +168,8 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
 
 /* 格子之间的分隔 */
 .calendar-grid-days > * {
-  border-right: 1px solid #f8fafc;
-  border-bottom: 1px solid #f8fafc;
+  border-right: 1px solid var(--paper-warm);
+  border-bottom: 1px solid var(--paper-warm);
   padding: 5px 8px;
   box-sizing: border-box;
 }
@@ -192,7 +193,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   .calendar-grid {
     font-size: 12px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 4px var(--paper-shadow);
   }
 
   .week-day {
@@ -215,8 +216,8 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .calendar-grid-days > * {
-    border-right: 1px solid #f8fafc;
-    border-bottom: 1px solid #f8fafc;
+    border-right: 1px solid var(--paper-warm);
+    border-bottom: 1px solid var(--paper-warm);
     height: 85px; /* 移动端固定格子高度 */
   }
 
@@ -254,7 +255,7 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
   }
 
   .calendar-grid-days > * {
-    border-right: 1px solid #f8fafc;
+    border-right: 1px solid var(--paper-warm);
     border-bottom: none; /* 周视图只有一行，不需要底边框 */
     height: 60px; /* 周视图固定格子高度 */
   }
