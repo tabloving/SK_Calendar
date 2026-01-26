@@ -773,20 +773,21 @@ const getDisplayReason = (reason: string): string => {
     max-height: 60px !important;
     padding: 6px 8px;
     box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
   }
 
   .day-header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-bottom: 0;
     padding-bottom: 0;
     border-bottom: none;
-    position: relative;
-    z-index: 1;
+    width: 100%;
   }
 
   .solar-date {
@@ -796,19 +797,26 @@ const getDisplayReason = (reason: string): string => {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 0;
+    width: 100%;
   }
 
   /* 阳历日期水印样式 */
   .solar-day-text {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
     opacity: 0.15;
     color: #000;
   }
 
-  /* 选中状态下阳历日期不减淡，颜色稍浅 */
+  /* 选中状态下阳历日期放大 */
   .calendar-day.selected .solar-day-text {
-    opacity: 0.5;
+    font-size: 32px;
+    opacity: 0.2;
+    color: #000;
+  }
+
+  /* 今日阳历日期蓝色 */
+  .calendar-day.today.selected .solar-day-text {
     color: #3B82F6;
   }
 
@@ -819,11 +827,28 @@ const getDisplayReason = (reason: string): string => {
     font-size: 12px;
   }
 
-  /* 选中状态下农历文字为深灰色 */
+  /* 选中状态下农历文字使用边框颜色 */
   .calendar-day.selected .lunar-date {
-    color: #1F2937;
-    font-weight: 600;
-    font-size: 14px;
+    color: #3B82F6;
+    font-weight: 700;
+    font-size: 16px;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  }
+
+  .calendar-day.selected.precept-major .lunar-date {
+    color: #DC2626;
+  }
+
+  .calendar-day.selected.precept-moderate .lunar-date {
+    color: #8B5CF6;
+  }
+
+  .calendar-day.selected.precept-minor .lunar-date {
+    color: #3B82F6;
+  }
+
+  .calendar-day.selected.precept-safe .lunar-date {
+    color: #16A34A;
   }
 
   /* 手机屏幕隐藏戒期详情、干支信息 */
