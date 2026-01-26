@@ -1,220 +1,274 @@
 <template>
-  <div class="settings-view space-y-6">
-    <el-card>
-      <template #header>
-        <div class="flex items-center">
-          <el-icon class="mr-2"><Setting /></el-icon>
-          <span class="text-lg font-semibold">应用设置</span>
+  <div class="settings-view">
+    <!-- 页面标题区域 -->
+    <div class="page-header">
+      <div class="header-decoration-left"></div>
+      <div class="header-content">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
         </div>
-      </template>
+        <h1 class="header-title">应用设置</h1>
+      </div>
+      <div class="header-decoration-right"></div>
+    </div>
 
-      <el-form :model="settings" label-width="120px" class="settings-form">
-        <!-- 主题设置 -->
-        <el-form-item label="主题模式">
-          <el-radio-group v-model="settings.theme" @change="handleThemeChange">
-            <el-radio value="light">浅色模式</el-radio>
-            <el-radio value="dark">深色模式</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <!-- 显示设置 -->
-        <el-divider content-position="left">显示设置</el-divider>
-
-        <el-form-item label="显示戒期标识">
-          <el-switch
-            v-model="settings.showPreceptIndicators"
-            @change="handleShowPreceptIndicatorsChange"
-          />
-          <div class="text-sm text-gray-500 mt-1">
-            在日历格子中显示戒期等级指示器
+    <!-- 设置内容区域 -->
+    <div class="settings-content">
+      <!-- 显示设置卡片 -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
           </div>
-        </el-form-item>
-
-        <el-form-item label="显示农历日期">
-          <el-switch
-            v-model="settings.showLunarDates"
-            @change="handleShowLunarDatesChange"
-          />
-          <div class="text-sm text-gray-500 mt-1">
-            在日历中显示农历日期信息
-          </div>
-        </el-form-item>
-
-        <!-- 戒期类型设置 -->
-        <el-divider content-position="left">戒期类型</el-divider>
-
-        <el-form-item label="启用的戒期">
-          <el-checkbox-group
-            v-model="settings.enabledPreceptTypes"
-            @change="handleEnabledPreceptTypesChange"
-          >
-            <el-checkbox value="regular" class="mb-2">常规戒期</el-checkbox>
-            <el-checkbox value="special" class="mb-2">特殊戒期（佛菩萨圣诞）</el-checkbox>
-            <el-checkbox value="precept_day" class="mb-2">斋日（六斋日、十斋日）</el-checkbox>
-            <el-checkbox value="personal" class="mb-2">个人戒期</el-checkbox>
-          </el-checkbox-group>
-          <div class="text-sm text-gray-500 mt-1">
-            选择需要在日历中显示的戒期类型
-          </div>
-        </el-form-item>
-
-        <!-- 戒期等级说明 -->
-        <el-divider content-position="left">戒期等级说明</el-divider>
-
-        <el-form-item label="等级说明">
-          <div class="space-y-2">
-            <div class="flex items-center">
-              <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-              <span class="font-semibold">大罪</span>
-              <span class="ml-2 text-gray-600">- 严重犯戒，应严格避免</span>
-            </div>
-            <div class="flex items-center">
-              <div class="w-4 h-4 bg-orange-500 rounded-full mr-2"></div>
-              <span class="font-semibold">中罪</span>
-              <span class="ml-2 text-gray-600">- 中等犯戒，应当谨慎</span>
-            </div>
-            <div class="flex items-center">
-              <div class="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-              <span class="font-semibold">小罪</span>
-              <span class="ml-2 text-gray-600">- 轻微犯戒，建议注意</span>
-            </div>
-            <div class="flex items-center">
-              <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
-              <span class="font-semibold">安全</span>
-              <span class="ml-2 text-gray-600">- 无特殊戒期</span>
-            </div>
-          </div>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <!-- 个人戒期管理 -->
-    <el-card>
-      <template #header>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <el-icon class="mr-2"><User /></el-icon>
-            <span class="text-lg font-semibold">个人戒期</span>
-          </div>
-          <el-button type="primary" @click="showAddPersonalPreceptDialog">
-            <el-icon class="mr-1"><Plus /></el-icon>
-            添加个人戒期
-          </el-button>
+          <span class="card-title">显示设置</span>
         </div>
-      </template>
+        <div class="card-body">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">主题模式</span>
+              <span class="setting-desc">选择应用的显示主题</span>
+            </div>
+            <div class="setting-control">
+              <el-radio-group v-model="settings.theme" @change="handleThemeChange" class="theme-radio-group">
+                <el-radio value="light">浅色</el-radio>
+                <el-radio value="dark">深色</el-radio>
+              </el-radio-group>
+            </div>
+          </div>
 
-      <div v-if="personalPrecepts.length === 0" class="text-center text-gray-500 py-8">
-        <el-icon size="48" class="mb-4"><Document /></el-icon>
-        <p>暂无个人戒期</p>
-        <p class="text-sm mt-2">点击上方按钮添加您的个人戒期</p>
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">显示戒期标识</span>
+              <span class="setting-desc">在日历格子中显示戒期等级指示器</span>
+            </div>
+            <div class="setting-control">
+              <el-switch
+                v-model="settings.showPreceptIndicators"
+                @change="handleShowPreceptIndicatorsChange"
+                active-color="#b8372e"
+              />
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">显示农历日期</span>
+              <span class="setting-desc">在日历中显示农历日期信息</span>
+            </div>
+            <div class="setting-control">
+              <el-switch
+                v-model="settings.showLunarDates"
+                @change="handleShowLunarDatesChange"
+                active-color="#b8372e"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div v-else class="space-y-3">
-        <div
-          v-for="precept in personalPrecepts"
-          :key="precept.id"
-          class="personal-precept-item border rounded-lg p-4"
-          :class="{ 'opacity-50': !precept.enabled }"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center mb-2">
-                <span class="font-semibold">{{ precept.name }}</span>
-                <el-tag
-                  :type="getTagType(precept.level)"
-                  size="small"
-                  class="ml-2"
-                >
+      <!-- 戒期类型设置卡片 -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="4" width="18" height="18" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="card-title">戒期类型</span>
+        </div>
+        <div class="card-body">
+          <div class="precept-type-grid">
+            <div
+              v-for="preceptType in preceptTypeOptions"
+              :key="preceptType.value"
+              class="precept-type-item"
+              :class="{ 'precept-type-active': settings.enabledPreceptTypes.includes(preceptType.value) }"
+              @click="togglePreceptType(preceptType.value)"
+            >
+              <div class="precept-type-checkbox">
+                <svg v-if="settings.enabledPreceptTypes.includes(preceptType.value)" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="precept-type-info">
+                <span class="precept-type-name">{{ preceptType.label }}</span>
+                <span class="precept-type-desc">{{ preceptType.desc }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 戒期等级说明卡片 -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="card-title">戒期等级说明</span>
+        </div>
+        <div class="card-body">
+          <div class="level-grid">
+            <div class="level-item level-major">
+              <div class="level-indicator"></div>
+              <div class="level-info">
+                <span class="level-name">大戒</span>
+                <span class="level-desc">严重犯戒，应严格避免</span>
+              </div>
+            </div>
+            <div class="level-item level-moderate">
+              <div class="level-indicator"></div>
+              <div class="level-info">
+                <span class="level-name">中戒</span>
+                <span class="level-desc">中等犯戒，应当谨慎</span>
+              </div>
+            </div>
+            <div class="level-item level-minor">
+              <div class="level-indicator"></div>
+              <div class="level-info">
+                <span class="level-name">宜戒</span>
+                <span class="level-desc">轻微犯戒，建议注意</span>
+              </div>
+            </div>
+            <div class="level-item level-safe">
+              <div class="level-indicator"></div>
+              <div class="level-info">
+                <span class="level-name">安泰</span>
+                <span class="level-desc">无特殊戒期</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 个人戒期管理卡片 -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="card-title">个人戒期</span>
+          <button class="add-btn" @click="showAddPersonalPreceptDialog">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>添加</span>
+          </button>
+        </div>
+        <div class="card-body">
+          <div v-if="personalPrecepts.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="empty-text">暂无个人戒期</p>
+            <p class="empty-hint">点击上方按钮添加您的个人戒期</p>
+          </div>
+
+          <div v-else class="personal-precept-list">
+            <div
+              v-for="precept in personalPrecepts"
+              :key="precept.id"
+              class="personal-precept-card"
+              :class="{ 'precept-disabled': !precept.enabled }"
+            >
+              <div class="precept-header">
+                <span class="precept-name">{{ precept.name }}</span>
+                <span class="precept-level-tag" :class="`tag-${precept.level}`">
                   {{ getPreceptLevelText(precept.level) }}
-                </el-tag>
-                <el-tag
-                  v-if="!precept.enabled"
-                  type="info"
-                  size="small"
-                  class="ml-2"
-                >
-                  已禁用
-                </el-tag>
+                </span>
+                <span v-if="!precept.enabled" class="precept-status-tag">已禁用</span>
               </div>
-              <div class="text-sm text-gray-600">
-                <div>日期：农历{{ precept.date }}</div>
-                <div>原因：{{ precept.reason }}</div>
+              <div class="precept-details">
+                <div class="precept-detail-item">
+                  <span class="detail-label">日期</span>
+                  <span class="detail-value">农历 {{ precept.date }}</span>
+                </div>
+                <div class="precept-detail-item">
+                  <span class="detail-label">原因</span>
+                  <span class="detail-value">{{ precept.reason }}</span>
+                </div>
               </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <el-button
-                type="text"
-                size="small"
-                @click="togglePersonalPrecept(precept.id)"
-              >
-                {{ precept.enabled ? '禁用' : '启用' }}
-              </el-button>
-              <el-button
-                type="text"
-                size="small"
-                @click="editPersonalPrecept(precept)"
-              >
-                编辑
-              </el-button>
-              <el-button
-                type="text"
-                size="small"
-                class="text-red-600"
-                @click="deletePersonalPrecept(precept.id)"
-              >
-                删除
-              </el-button>
+              <div class="precept-actions">
+                <button class="action-btn" @click="togglePersonalPrecept(precept.id)">
+                  {{ precept.enabled ? '禁用' : '启用' }}
+                </button>
+                <button class="action-btn" @click="editPersonalPrecept(precept)">编辑</button>
+                <button class="action-btn action-btn-danger" @click="deletePersonalPrecept(precept.id)">删除</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </el-card>
 
-    <!-- 数据管理 -->
-    <el-card>
-      <template #header>
-        <div class="flex items-center">
-          <el-icon class="mr-2"><FolderOpened /></el-icon>
-          <span class="text-lg font-semibold">数据管理</span>
+      <!-- 数据管理卡片 -->
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="card-title">数据管理</span>
         </div>
-      </template>
+        <div class="card-body">
+          <div class="data-actions">
+            <div class="data-action-group">
+              <h4 class="action-group-title">导出数据</h4>
+              <button class="data-btn" @click="exportSettings">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>导出设置</span>
+              </button>
+            </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="space-y-3">
-          <h4 class="font-semibold">导出数据</h4>
-          <el-button class="w-full" @click="exportSettings">
-            <el-icon class="mr-2"><Download /></el-icon>
-            导出设置
-          </el-button>
-        </div>
+            <div class="data-action-group">
+              <h4 class="action-group-title">导入数据</h4>
+              <el-upload
+                :auto-upload="false"
+                :show-file-list="false"
+                accept=".json"
+                :on-change="handleImportSettings"
+              >
+                <button class="data-btn">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>导入设置</span>
+                </button>
+              </el-upload>
+            </div>
+          </div>
 
-        <div class="space-y-3">
-          <h4 class="font-semibold">导入数据</h4>
-          <el-upload
-            class="w-full"
-            :auto-upload="false"
-            :show-file-list="false"
-            accept=".json"
-            :on-change="handleImportSettings"
-          >
-            <el-button class="w-full">
-              <el-icon class="mr-2"><Upload /></el-icon>
-              导入设置
-            </el-button>
-          </el-upload>
+          <div class="reset-section">
+            <button class="reset-btn" @click="resetSettings">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>重置所有设置</span>
+            </button>
+            <p class="reset-warning">重置将清除所有个人设置和戒期，请谨慎操作</p>
+          </div>
         </div>
       </div>
-
-      <div class="mt-6 pt-6 border-t">
-        <el-button type="danger" @click="resetSettings">
-          <el-icon class="mr-2"><RefreshLeft /></el-icon>
-          重置所有设置
-        </el-button>
-        <div class="text-sm text-gray-500 mt-2">
-          重置将清除所有个人设置和戒期，请谨慎操作
-        </div>
-      </div>
-    </el-card>
+    </div>
 
     <!-- 添加/编辑个人戒期对话框 -->
     <el-dialog
@@ -256,9 +310,9 @@
 
         <el-form-item label="等级" prop="level">
           <el-radio-group v-model="personalPreceptDialog.form.level">
-            <el-radio value="major">大罪</el-radio>
-            <el-radio value="moderate">中罪</el-radio>
-            <el-radio value="minor">小罪</el-radio>
+            <el-radio value="major">大戒</el-radio>
+            <el-radio value="moderate">中戒</el-radio>
+            <el-radio value="minor">宜戒</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -279,16 +333,6 @@
 import { ref, computed, reactive } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import {
-  Setting,
-  User,
-  Plus,
-  Document,
-  FolderOpened,
-  Download,
-  Upload,
-  RefreshLeft
-} from '@element-plus/icons-vue'
 import type { PersonalPrecept } from '@/types'
 
 const settingsStore = useSettingsStore()
@@ -296,6 +340,26 @@ const settingsStore = useSettingsStore()
 // 响应式数据
 const settings = computed(() => settingsStore.settings)
 const personalPrecepts = computed(() => settingsStore.settings.personalPrecepts)
+
+// 戒期类型选项
+const preceptTypeOptions = [
+  { value: 'regular', label: '常规戒期', desc: '每月固定日期的戒期' },
+  { value: 'special', label: '特殊戒期', desc: '佛菩萨圣诞等重要日期' },
+  { value: 'precept_day', label: '斋日', desc: '六斋日、十斋日等' },
+  { value: 'personal', label: '个人戒期', desc: '您自定义的戒期' }
+]
+
+// 切换戒期类型
+const togglePreceptType = (type: string) => {
+  const types = [...settings.value.enabledPreceptTypes]
+  const index = types.indexOf(type as any)
+  if (index > -1) {
+    types.splice(index, 1)
+  } else {
+    types.push(type as any)
+  }
+  settingsStore.setEnabledPreceptTypes(types as any)
+}
 
 // 个人戒期对话框
 const personalPreceptDialog = reactive({
@@ -343,26 +407,13 @@ const handleShowLunarDatesChange = (value: boolean) => {
   settingsStore.setShowLunarDates(value)
 }
 
-const handleEnabledPreceptTypesChange = (types: string[]) => {
-  settingsStore.setEnabledPreceptTypes(types as any)
-}
-
 const getPreceptLevelText = (level: string) => {
   const levelMap = {
-    major: '大罪',
-    moderate: '中罪',
-    minor: '小罪'
+    major: '大戒',
+    moderate: '中戒',
+    minor: '宜戒'
   }
   return levelMap[level as keyof typeof levelMap] || '未知'
-}
-
-const getTagType = (level: string) => {
-  const typeMap = {
-    major: 'danger',
-    moderate: 'warning',
-    minor: 'info'
-  }
-  return typeMap[level as keyof typeof typeMap] || 'info'
 }
 
 const showAddPersonalPreceptDialog = () => {
@@ -493,33 +544,663 @@ const resetSettings = async () => {
 
 <style scoped>
 .settings-view {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  height: calc(100vh - 80px);
-  overflow-y: auto;
-  padding-bottom: 24px;
+  padding: 0 16px 32px;
 }
 
-.settings-form .el-form-item {
-  margin-bottom: 24px;
+/* 页面标题区域 */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 0 32px;
+  position: relative;
 }
 
-.personal-precept-item {
+.header-decoration-left,
+.header-decoration-right {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c9a86c, transparent);
+  position: relative;
+}
+
+.header-decoration-left::before,
+.header-decoration-right::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  background: #c9a86c;
+  transform: rotate(45deg);
+}
+
+.header-decoration-left::before {
+  right: 0;
+}
+
+.header-decoration-right::before {
+  left: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 32px;
+  height: 32px;
+  color: #b8372e;
+}
+
+.header-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #5c4033;
+  letter-spacing: 4px;
+  font-family: 'SimSun', 'STSong', 'PingFang SC', serif;
+  margin: 0;
+}
+
+/* 设置内容区域 */
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 设置卡片 */
+.settings-card {
+  background: linear-gradient(180deg, #fffdf9 0%, #faf8f5 100%);
+  border: 1px solid #e8e2d9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(139, 90, 43, 0.06);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, #faf8f5 0%, #f5f2ed 100%);
+  border-bottom: 1px solid #e8e2d9;
+  position: relative;
+}
+
+.card-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: linear-gradient(180deg, #b8372e, #c94a3f);
+  border-radius: 0 2px 2px 0;
+}
+
+.card-icon {
+  width: 20px;
+  height: 20px;
+  color: #b8372e;
+}
+
+.card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5c4033;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* 设置项 */
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px dashed #e8e2d9;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.setting-item:first-child {
+  padding-top: 0;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #5c4033;
+}
+
+.setting-desc {
+  font-size: 13px;
+  color: #8b7355;
+}
+
+.setting-control {
+  flex-shrink: 0;
+}
+
+/* 主题单选组 */
+.theme-radio-group :deep(.el-radio) {
+  margin-right: 16px;
+}
+
+.theme-radio-group :deep(.el-radio__input.is-checked .el-radio__inner) {
+  background: #b8372e;
+  border-color: #b8372e;
+}
+
+.theme-radio-group :deep(.el-radio__input.is-checked + .el-radio__label) {
+  color: #b8372e;
+}
+
+/* 戒期类型网格 */
+.precept-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.precept-type-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #faf8f5;
+  border: 1px solid #e8e2d9;
+  border-radius: 8px;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.personal-precept-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.precept-type-item:hover {
+  border-color: #c9a86c;
+  background: #fffdf9;
 }
 
+.precept-type-active {
+  border-color: #b8372e;
+  background: linear-gradient(135deg, #fef7f6 0%, #fdf2f1 100%);
+}
+
+.precept-type-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d4cfc6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.2s ease;
+}
+
+.precept-type-active .precept-type-checkbox {
+  background: #b8372e;
+  border-color: #b8372e;
+}
+
+.precept-type-checkbox svg {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+.precept-type-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.precept-type-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5c4033;
+}
+
+.precept-type-desc {
+  font-size: 12px;
+  color: #8b7355;
+}
+
+/* 戒期等级网格 */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.level-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #faf8f5;
+  border-radius: 8px;
+  border: 1px solid #e8e2d9;
+}
+
+.level-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.level-major .level-indicator {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+}
+
+.level-moderate .level-indicator {
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+}
+
+.level-minor .level-indicator {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+}
+
+.level-safe .level-indicator {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);
+}
+
+.level-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.level-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #5c4033;
+}
+
+.level-desc {
+  font-size: 12px;
+  color: #8b7355;
+}
+
+/* 添加按钮 */
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #b8372e 0%, #c94a3f 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(135deg, #a32f27 0%, #b8372e 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(184, 55, 46, 0.3);
+}
+
+.add-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: #8b7355;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  color: #c9a86c;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.empty-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.empty-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #5c4033;
+  margin: 0 0 8px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #8b7355;
+  margin: 0;
+}
+
+/* 个人戒期列表 */
+.personal-precept-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.personal-precept-card {
+  padding: 16px;
+  background: #faf8f5;
+  border: 1px solid #e8e2d9;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.personal-precept-card:hover {
+  border-color: #c9a86c;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.08);
+}
+
+.precept-disabled {
+  opacity: 0.6;
+}
+
+.precept-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.precept-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #5c4033;
+}
+
+.precept-level-tag {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-major {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.tag-moderate {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+}
+
+.tag-minor {
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1px solid #bfdbfe;
+}
+
+.precept-status-tag {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.precept-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.precept-detail-item {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: #8b7355;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: #5c4033;
+}
+
+.precept-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px dashed #e8e2d9;
+}
+
+.action-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid #d4cfc6;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #5c4033;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  border-color: #c9a86c;
+  background: #faf8f5;
+}
+
+.action-btn-danger {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.action-btn-danger:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+/* 数据管理 */
+.data-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.data-action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-group-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5c4033;
+  margin: 0;
+}
+
+.data-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  background: #faf8f5;
+  border: 1px solid #d4cfc6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #5c4033;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.data-btn:hover {
+  border-color: #c9a86c;
+  background: #fffdf9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.08);
+}
+
+.data-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #8b7355;
+}
+
+/* 重置区域 */
+.reset-section {
+  padding-top: 20px;
+  border-top: 1px solid #e8e2d9;
+}
+
+.reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+.reset-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.reset-warning {
+  font-size: 13px;
+  color: #8b7355;
+  margin: 10px 0 0;
+}
+
+/* 对话框样式 */
+.dialog-form {
+  padding: 10px 0;
+}
+
+.form-item {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5c4033;
+  margin-bottom: 8px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #8b7355;
+  margin-top: 6px;
+}
+
+/* 响应式 */
 @media (max-width: 768px) {
   .settings-view {
-    padding: 16px;
+    padding: 0 12px 24px;
     height: auto;
   }
 
-  .grid.grid-cols-1.md\\:grid-cols-2 {
+  .page-header {
+    padding: 16px 0 24px;
+  }
+
+  .header-decoration-left,
+  .header-decoration-right {
+    width: 40px;
+  }
+
+  .header-title {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .header-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .precept-type-grid,
+  .level-grid,
+  .data-actions {
     grid-template-columns: 1fr;
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+  }
+
+  .add-btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

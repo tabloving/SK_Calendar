@@ -55,7 +55,7 @@
         </div>
       </el-header>
 
-      <el-main class="main-container px-2 lg:px-6 pt-4 lg:pt-6 pb-4 lg:pb-6">
+      <el-main class="main-container px-2 lg:px-6 pt-4 lg:pt-6 pb-4 lg:pb-6" :class="{ 'settings-page': $route.name === 'settings' }">
         <router-view />
       </el-main>
     </el-container>
@@ -270,6 +270,11 @@
 @media (min-width: 1024px) {
   .main-container {
     overflow: hidden;
+  }
+
+  /* 设置页面允许滚动 */
+  .main-container.settings-page {
+    overflow: auto;
   }
 }
 
