@@ -145,6 +145,7 @@ videos/
 CLAUDE.md
 AGENTS.md
 GEMINI.md
+.claude/
 .cursorrules
 .cursor/
 .codeium/
