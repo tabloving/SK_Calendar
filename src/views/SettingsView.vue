@@ -495,6 +495,9 @@ const resetSettings = async () => {
 .settings-view {
   max-width: 1200px;
   margin: 0 auto;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding-bottom: 24px;
 }
 
 .settings-form .el-form-item {
@@ -512,6 +515,7 @@ const resetSettings = async () => {
 @media (max-width: 768px) {
   .settings-view {
     padding: 16px;
+    height: auto;
   }
 
   .grid.grid-cols-1.md\\:grid-cols-2 {
