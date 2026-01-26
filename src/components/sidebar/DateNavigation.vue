@@ -65,7 +65,7 @@
     </div>
 
     <!-- 月度统计信息 -->
-    <div class="month-stats-card bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-100">
+    <div class="month-stats-card">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <!-- 左侧标题 -->
         <div class="month-title flex items-center gap-1 min-w-fit">
@@ -185,7 +185,7 @@ const goToToday = () => {
 <style scoped>
 /* 导航按钮样式 */
 .navigation-buttons {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--paper-warm, #f2ead8);
   padding-bottom: 12px;
 }
 
@@ -224,20 +224,19 @@ const goToToday = () => {
   padding: 6px 8px;
   height: 32px;
   width: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #faf6f0 0%, #f0e8da 100%);
+  border: 1px solid #d4c4a8;
+  color: #8b7355;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(139, 90, 43, 0.08);
 }
 
 .nav-btn:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border-color: #cbd5e1;
-  color: #475569;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, #f5efe5 0%, #e8dcc8 100%);
+  border-color: #c9a86c;
+  color: #5c4033;
+  box-shadow: 0 2px 6px rgba(139, 90, 43, 0.15);
 }
 
 .today-btn {
@@ -280,13 +279,15 @@ const goToToday = () => {
 
 /* 月度统计卡片样式 */
 .month-stats-card {
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+  background: linear-gradient(180deg, #faf6f0 0%, #f5efe5 100%);
+  border: 1px solid #e8dcc8;
+  border-radius: 8px;
+  padding: 8px 12px;
 }
 
 .month-stats-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(139, 90, 43, 0.1);
 }
 
 /* 统计项样式 */
