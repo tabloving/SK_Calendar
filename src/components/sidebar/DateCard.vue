@@ -2,11 +2,13 @@
   <div v-if="selectedDayInfo" class="date-card">
     <div class="info-grid grid grid-cols-1 gap-3">
       <div class="info-card bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+        <!-- 阳历日期水印（流式布局显示） -->
+        <div class="solar-watermark">{{ selectedDayInfo.day }}</div>
         <div class="flex items-start justify-between">
           <!-- 左侧：阳历信息（主要信息） -->
           <div class="flex-1">
-            <div class="text-xs text-purple-600 font-medium mb-2">阳历</div>
-            <div class="flex items-center mb-1">
+            <div class="solar-label text-xs text-purple-600 font-medium mb-2">阳历</div>
+            <div class="solar-date-row flex items-center mb-1">
               <div class="solar-number-large">
                 {{ selectedDayInfo.day }}
               </div>
@@ -14,15 +16,15 @@
                 今
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-2">
+            <div class="solar-weekday text-sm text-gray-700 mb-2">
               {{ weekDayText }}
             </div>
-            <div class="text-xs text-gray-600">
+            <div class="solar-month-year text-xs text-gray-600">
               {{ getMonthYear(selectedDayInfo.date) }}
             </div>
 
             <!-- 节气信息 -->
-            <div v-if="solarTermInfo" class="mt-2">
+            <div v-if="solarTermInfo" class="solar-term-section mt-2">
               <div v-if="solarTermInfo.isToday" class="solar-term-content">
                 <span class="solar-term-icon">{{ solarTermInfo.icon }}</span>
                 <span class="solar-term-text">{{ solarTermInfo.name }}</span>
@@ -37,24 +39,41 @@
           </div>
 
           <!-- 右侧：农历和干支信息（次要信息） -->
-          <div class="text-right ml-4 pl-4 border-l border-purple-200">
-            <div class="flex items-center justify-end mb-2">
-              <!-- 农历月份天数Badge -->
-              <span v-if="lunarMonthInfo" class="lunar-month-days-badge mr-2">
+          <div class="lunar-section text-right ml-4 pl-4 border-l border-purple-200">
+            <div class="lunar-header flex items-center justify-end mb-2">
+              <!-- 农历月份天数Badge（桌面端在标题左边） -->
+              <span v-if="lunarMonthInfo" class="lunar-month-days-badge lunar-badge-desktop mr-2">
                 {{ lunarMonthInfo.isLeap ? '闰' : '' }}{{ lunarMonthInfo.isBigMonth ? '大' : '小' }}
               </span>
-              <div class="text-xs text-purple-600 font-medium">农历</div>
+              <!-- 农历标题 -->
+              <div class="lunar-label text-xs text-purple-600 font-medium">农历</div>
+              <!-- 农历日期（流式布局显示在标题右侧） -->
+              <div class="lunar-date-inline text-gray-700 font-medium ml-2">
+                {{ lunarInfo.full }}
+              </div>
+              <!-- 农历月份天数Badge（流式布局在日期右边） -->
+              <span v-if="lunarMonthInfo" class="lunar-month-days-badge lunar-badge-mobile ml-2">
+                {{ lunarMonthInfo.isLeap ? '闰' : '' }}{{ lunarMonthInfo.isBigMonth ? '大' : '小' }}
+              </span>
             </div>
-            <div class="space-y-2">
-              <!-- 农历日期 -->
-              <div class="mb-2 text-right">
-                <div class="text-sm text-gray-700 font-medium">
+            <!-- 干支信息（流式布局横向排列） -->
+            <div class="ganzhi-row-mobile flex items-center gap-2 mt-2">
+              <span class="ganzhi-year-badge">{{ ganZhiInfo.year }}年</span>
+              <span class="ganzhi-month-badge">{{ ganZhiInfo.month }}月</span>
+              <span class="ganzhi-day-badge">{{ ganZhiInfo.day }}日</span>
+              <span class="weekday-badge">{{ weekDayText }}</span>
+              <span v-if="selectedDayInfo.isToday" class="today-badge-mobile">今天</span>
+            </div>
+            <div class="lunar-content space-y-2">
+              <!-- 农历日期（桌面端显示） -->
+              <div class="lunar-date-desktop mb-2 text-right">
+                <div class="lunar-date-text text-sm text-gray-700 font-medium">
                   {{ lunarInfo.full }}
                 </div>
               </div>
 
               <!-- 干支信息 -->
-              <div class="flex flex-col items-end space-y-1">
+              <div class="ganzhi-section flex flex-col items-end space-y-1">
                 <div class="flex items-center space-x-1">
                   <span class="ganzhi-year-badge">
                     {{ ganZhiInfo.year }}年
@@ -408,7 +427,209 @@ const getMonthYear = (date: Date) => {
   line-height: 1;
 }
 
+/* 桌面端：隐藏 inline 日期，显示 desktop 日期和 badge */
+.lunar-date-inline {
+  display: none;
+}
+
+.lunar-date-desktop {
+  display: block;
+}
+
+.lunar-badge-desktop {
+  display: inline-block;
+}
+
+.lunar-badge-mobile {
+  display: none;
+}
+
+/* 桌面端隐藏流式布局的干支行 */
+.ganzhi-row-mobile {
+  display: none;
+}
+
+/* 阳历日期水印（桌面端隐藏） */
+.solar-watermark {
+  display: none;
+}
+
 /* 响应式设计 */
+
+/* 流式布局设备：隐藏阳历展示，保留节气预告 */
+@media (max-width: 1024px) {
+  .solar-label,
+  .solar-date-row,
+  .solar-weekday,
+  .solar-month-year {
+    display: none;
+  }
+
+  .solar-term-section {
+    margin-top: 0;
+  }
+
+  /* 节气样式增大 */
+  .solar-term-content {
+    padding: 8px 14px;
+    font-size: 16px;
+    gap: 6px;
+  }
+
+  .solar-term-content .solar-term-icon {
+    font-size: 18px;
+  }
+
+  .solar-term-text {
+    font-size: 16px;
+  }
+
+  .next-solar-term {
+    padding: 8px 14px;
+  }
+
+  .next-solar-term .text-xs {
+    font-size: 16px;
+  }
+
+  .next-solar-term .solar-term-icon {
+    font-size: 16px;
+  }
+
+  /* 农历区域调整：移到左侧原阳历位置，不分左右两栏 */
+  .info-card > .flex {
+    flex-direction: column;
+  }
+
+  /* 卡片需要相对定位以容纳水印 */
+  .info-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 阳历日期水印 */
+  .solar-watermark {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: -10px;
+    font-size: 100px;
+    font-weight: bold;
+    color: rgba(139, 92, 246, 0.1);
+    font-family: 'Gravitas One', cursive;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* 确保内容在水印之上 */
+  .info-card > .flex {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 节气信息的父容器（左侧区域）调整顺序 */
+  .info-card > .flex > .flex-1 {
+    order: 2;
+  }
+
+  .lunar-section {
+    order: 1;
+    text-align: left;
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    width: 100%;
+  }
+
+  /* 节气预告显示在底部 */
+  .solar-term-section {
+    margin-top: 8px;
+  }
+
+  .lunar-header {
+    flex-direction: row;
+    justify-content: flex-start !important;
+    margin-bottom: 0 !important;
+  }
+
+  .lunar-header .lunar-label {
+    font-size: 14px;
+    font-family: 'Songti SC', 'STSongti-SC', 'SimSun', 'STSong', 'PMingLiU', 'Noto Serif SC', serif;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+    border: 1px solid #d8b4fe;
+    border-radius: 12px;
+    padding: 8px 6px;
+    letter-spacing: 2px;
+    box-shadow: 0 1px 3px rgba(139, 92, 246, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 流式布局：显示 inline 日期和 mobile badge，隐藏 desktop 版本 */
+  .lunar-date-inline {
+    display: block;
+    font-size: 32px;
+    font-family: 'STSong', 'Songti SC', STSongti-SC-Regular, 'SimSun', 'PMingLiU', 'Noto Serif CJK SC', serif;
+    font-weight: normal;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .lunar-date-desktop {
+    display: none;
+  }
+
+  .lunar-badge-desktop {
+    display: none;
+  }
+
+  .lunar-badge-mobile {
+    display: inline-block;
+  }
+
+  .lunar-header .lunar-month-days-badge {
+    font-size: 14px;
+    padding: 3px 8px;
+  }
+
+  /* 隐藏农历日期和干支信息的原有位置 */
+  .lunar-content {
+    display: none;
+  }
+
+  /* 流式布局显示干支横向排列 */
+  .ganzhi-row-mobile {
+    display: flex;
+  }
+
+  .ganzhi-row-mobile .ganzhi-year-badge,
+  .ganzhi-row-mobile .ganzhi-month-badge,
+  .ganzhi-row-mobile .ganzhi-day-badge {
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  .ganzhi-row-mobile .weekday-badge {
+    font-size: 14px;
+    padding: 4px 10px;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+  }
+
+  .ganzhi-row-mobile .today-badge-mobile {
+    font-size: 14px;
+    padding: 4px 10px;
+    color: #8b5cf6;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+}
+
 @media (max-width: 640px) {
   .info-grid {
     grid-template-columns: 1fr;
@@ -448,24 +669,43 @@ const getMonthYear = (date: Date) => {
 
   /* 移动端节气样式调整 */
   .solar-term-content {
-    padding: 1px 4px;
-    font-size: 8px;
-    gap: 1px;
+    padding: 6px 12px;
+    font-size: 14px;
+    gap: 4px;
+  }
+
+  .solar-term-content .solar-term-icon {
+    font-size: 16px;
   }
 
   .solar-term-icon {
-    font-size: 9px;
+    font-size: 14px;
   }
 
   .next-solar-term {
-    padding: 1px 4px;
+    padding: 6px 12px;
+  }
+
+  .next-solar-term .text-xs {
+    font-size: 14px;
+  }
+
+  /* 移动端农历日期增大 */
+  .lunar-date-inline {
+    font-size: 36px;
+  }
+
+  /* 移动端农历标题调整 */
+  .lunar-header .lunar-label {
+    font-size: 14px;
+    padding: 8px 6px;
   }
 
   /* 移动端农历月份天数Badge调整 */
   .lunar-month-days-badge {
-    font-size: 12px;
-    padding: 2px 5px;
-    min-width: 22px;
+    font-size: 14px;
+    padding: 4px 8px;
+    min-width: 24px;
   }
 }
 </style>
