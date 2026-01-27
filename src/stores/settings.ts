@@ -9,6 +9,7 @@ export const useSettingsStore = defineStore('settings', () => {
     theme: 'light',
     showPreceptIndicators: true,
     showLunarDates: true,
+    limitedYearRange: true,
     enabledPreceptTypes: [
       PreceptTypeEnum.REGULAR,
       PreceptTypeEnum.SPECIAL,
@@ -58,6 +59,11 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const setShowLunarDates = (show: boolean) => {
     settings.value.showLunarDates = show
+    saveSettings()
+  }
+
+  const setLimitedYearRange = (limited: boolean) => {
+    settings.value.limitedYearRange = limited
     saveSettings()
   }
 
@@ -153,6 +159,7 @@ export const useSettingsStore = defineStore('settings', () => {
     toggleTheme,
     setShowPreceptIndicators,
     setShowLunarDates,
+    setLimitedYearRange,
     setEnabledPreceptTypes,
     togglePreceptType,
     addPersonalPrecept,

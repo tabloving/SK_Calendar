@@ -19,13 +19,24 @@
     <!-- 日历格子 -->
     <div class="calendar-body flex-1">
       <div class="calendar-grid-days" :class="{ 'week-view': isMobile }">
-        <CalendarDay
+        <el-tooltip
           v-for="dayInfo in displayDays"
           :key="`${dayInfo.year}-${dayInfo.month}-${dayInfo.day}`"
-          :day-info="dayInfo"
-          :is-selected="isSelected(dayInfo)"
-          @click="handleDayClick"
-        />
+          :content="getDisabledTooltip(dayInfo.date)"
+          :disabled="!getDisabledTooltip(dayInfo.date)"
+          placement="top"
+          effect="light"
+          :show-after="0"
+          :hide-after="0"
+          popper-class="disabled-date-tooltip"
+        >
+          <CalendarDay
+            :day-info="dayInfo"
+            :is-selected="isSelected(dayInfo)"
+            :is-disabled="!isDateInRange(dayInfo.date)"
+            @click="handleDayClick"
+          />
+        </el-tooltip>
       </div>
     </div>
   </div>
@@ -34,10 +45,12 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
+import { useSettingsStore } from '@/stores/settings'
 import CalendarDay from './CalendarDay.vue'
 import type { CalendarDayInfo } from '@/types'
 
 const calendarStore = useCalendarStore()
+const settingsStore = useSettingsStore()
 
 // 星期标题
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
@@ -101,6 +114,39 @@ const calendarRows = computed(() => {
   return Math.ceil(dayCount / 7)
 })
 
+// 年份范围限制 - 以今日月份为基准的前后半年
+const today = new Date()
+const currentRealYear = today.getFullYear()
+const currentRealMonth = today.getMonth() + 1 // 1-12
+
+// 计算最小允许的年月（往前6个月）
+const minDate = new Date(currentRealYear, currentRealMonth - 1 - 6, 1)
+const minAllowedYear = minDate.getFullYear()
+const minAllowedMonth = minDate.getMonth() + 1
+
+// 计算最大允许的年月（往后6个月）
+const maxDate = new Date(currentRealYear, currentRealMonth - 1 + 6, 1)
+const maxAllowedYear = maxDate.getFullYear()
+const maxAllowedMonth = maxDate.getMonth() + 1
+
+// 判断日期是否在允许范围内
+const isDateInRange = (date: Date): boolean => {
+  if (!settingsStore.settings.limitedYearRange) return true
+
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+
+  // 检查是否在最小允许范围之前
+  if (year < minAllowedYear) return false
+  if (year === minAllowedYear && month < minAllowedMonth) return false
+
+  // 检查是否在最大允许范围之后
+  if (year > maxAllowedYear) return false
+  if (year === maxAllowedYear && month > maxAllowedMonth) return false
+
+  return true
+}
+
 // 方法
 const isSelected = (dayInfo: CalendarDayInfo) => {
   if (!calendarStore.selectedDate) return false
@@ -110,7 +156,40 @@ const isSelected = (dayInfo: CalendarDayInfo) => {
          dayInfo.date.getDate() === calendarStore.selectedDate.getDate()
 }
 
+// 判断日期是否在允许范围之前（过去）
+const isDateBeforeRange = (date: Date): boolean => {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+
+  if (year < minAllowedYear) return true
+  if (year === minAllowedYear && month < minAllowedMonth) return true
+  return false
+}
+
+// 判断日期是否在允许范围之后（未来）
+const isDateAfterRange = (date: Date): boolean => {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+
+  if (year > maxAllowedYear) return true
+  if (year === maxAllowedYear && month > maxAllowedMonth) return true
+  return false
+}
+
+// 获取禁用日期的提示文本
+const getDisabledTooltip = (date: Date): string => {
+  if (!settingsStore.settings.limitedYearRange) return ''
+  if (isDateBeforeRange(date)) return '不要执着于过去，向前看！'
+  if (isDateAfterRange(date)) return '未来还很远，过好当下！'
+  return ''
+}
+
 const handleDayClick = (dayInfo: CalendarDayInfo) => {
+  // 检查日期是否在允许范围内
+  if (!isDateInRange(dayInfo.date)) {
+    return
+  }
+
   // 选中日期并在右侧边栏显示
   calendarStore.selectDate(dayInfo.date)
 }

@@ -11,6 +11,7 @@
             title="上个月"
             size="small"
             class="nav-btn"
+            :disabled="!canGoPrevious"
           />
           <el-button
             :icon="CaretLeft"
@@ -18,6 +19,7 @@
             title="上一天"
             size="small"
             class="nav-btn"
+            :disabled="!canGoPreviousDay"
           />
         </div>
 
@@ -43,6 +45,7 @@
             title="下一天"
             size="small"
             class="nav-btn"
+            :disabled="!canGoNextDay"
           />
           <el-button
             :icon="ArrowRight"
@@ -50,6 +53,7 @@
             title="下个月"
             size="small"
             class="nav-btn"
+            :disabled="!canGoNext"
           />
         </div>
       </div>
@@ -102,10 +106,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
+import { useSettingsStore } from '@/stores/settings'
 import * as lunar from 'lunar-javascript'
 import { DataAnalysis, ArrowLeft, ArrowRight, CaretLeft, CaretRight } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
+const settingsStore = useSettingsStore()
 
 // 计算属性
 const selectedMonth = computed(() => calendarStore.selectedMonth)
@@ -141,20 +147,79 @@ const preceptPercentage = computed(() => {
   return Math.round((preceptDays / monthStats.value.total) * 100)
 })
 
+// 年份范围限制 - 以今日月份为基准的前后半年
+const today = new Date()
+const currentRealYear = today.getFullYear()
+const currentRealMonth = today.getMonth() + 1 // 1-12
+
+// 计算最小允许的年月（往前6个月）
+const minDate = new Date(currentRealYear, currentRealMonth - 1 - 6, 1)
+const minAllowedYear = computed(() => minDate.getFullYear())
+const minAllowedMonth = computed(() => minDate.getMonth() + 1)
+
+// 计算最大允许的年月（往后6个月）
+const maxDate = new Date(currentRealYear, currentRealMonth - 1 + 6, 1)
+const maxAllowedYear = computed(() => maxDate.getFullYear())
+const maxAllowedMonth = computed(() => maxDate.getMonth() + 1)
+
+// 判断是否可以向前导航（上个月）
+const canGoPrevious = computed(() => {
+  if (!settingsStore.settings.limitedYearRange) return true
+  // 如果当前已经是最小允许的年月，则不能再向前
+  if (calendarStore.selectedYear < minAllowedYear.value) return false
+  if (calendarStore.selectedYear === minAllowedYear.value &&
+      calendarStore.selectedMonth <= minAllowedMonth.value) return false
+  return true
+})
+
+// 判断是否可以向后导航（下个月）
+const canGoNext = computed(() => {
+  if (!settingsStore.settings.limitedYearRange) return true
+  // 如果当前已经是最大允许的年月，则不能再向后
+  if (calendarStore.selectedYear > maxAllowedYear.value) return false
+  if (calendarStore.selectedYear === maxAllowedYear.value &&
+      calendarStore.selectedMonth >= maxAllowedMonth.value) return false
+  return true
+})
+
+// 判断上一天是否可用
+const canGoPreviousDay = computed(() => {
+  if (!settingsStore.settings.limitedYearRange) return true
+  if (!calendarStore.selectedDate) return canGoPrevious.value
+  const selectedDate = calendarStore.selectedDate
+  // 如果当前日期是最小允许月份的第一天，则不能再向前
+  const minFirstDay = new Date(minAllowedYear.value, minAllowedMonth.value - 1, 1)
+  return selectedDate > minFirstDay
+})
+
+// 判断下一天是否可用
+const canGoNextDay = computed(() => {
+  if (!settingsStore.settings.limitedYearRange) return true
+  if (!calendarStore.selectedDate) return canGoNext.value
+  const selectedDate = calendarStore.selectedDate
+  // 如果当前日期是最大允许月份的最后一天，则不能再向后
+  const maxLastDay = new Date(maxAllowedYear.value, maxAllowedMonth.value, 0) // 月份的最后一天
+  return selectedDate < maxLastDay
+})
+
 // 导航方法
 const goToPreviousMonth = () => {
+  if (!canGoPrevious.value) return
   calendarStore.goToPreviousMonth()
 }
 
 const goToNextMonth = () => {
+  if (!canGoNext.value) return
   calendarStore.goToNextMonth()
 }
 
 const goToPreviousDay = () => {
+  if (!canGoPreviousDay.value) return
   calendarStore.goToPreviousDay()
 }
 
 const goToNextDay = () => {
+  if (!canGoNextDay.value) return
   calendarStore.goToNextDay()
 }
 </script>
@@ -214,6 +279,26 @@ const goToNextDay = () => {
   border-color: #c9a86c;
   color: #5c4033;
   box-shadow: 0 2px 6px rgba(139, 90, 43, 0.15);
+}
+
+/* 禁用状态样式 */
+.nav-btn:disabled,
+.nav-btn.is-disabled {
+  background: #f5f5f5 !important;
+  border-color: #e0e0e0 !important;
+  color: #c0c0c0 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  opacity: 0.6;
+}
+
+.nav-btn:disabled:hover,
+.nav-btn.is-disabled:hover {
+  background: #f5f5f5 !important;
+  border-color: #e0e0e0 !important;
+  color: #c0c0c0 !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* 月度统计卡片样式 */

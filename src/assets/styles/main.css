@@ -213,3 +213,21 @@
     display: block;
   }
 }
+
+/* 禁用日期提示样式 */
+.disabled-date-tooltip {
+  --el-bg-color-overlay: #b8372e !important;
+}
+
+.disabled-date-tooltip .el-popper__arrow::before {
+  background: #b8372e !important;
+  border-color: #b8372e !important;
+}
+
+.disabled-date-tooltip.el-popper.is-light {
+  background: linear-gradient(135deg, #c94a3f 0%, #b8372e 100%) !important;
+  border: 1px solid #8b2920 !important;
+  color: #fff !important;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(184, 55, 46, 0.4);
+}

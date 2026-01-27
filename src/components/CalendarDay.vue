@@ -1,9 +1,16 @@
 <template>
   <div
-    class="calendar-day cursor-pointer"
+    class="calendar-day"
     :class="[
       dayClasses,
-      { 'selected': isSelected || dayInfo.isToday, 'today': dayInfo.isToday, 'is-current-month': dayInfo.isCurrentMonth }
+      {
+        'selected': isSelected || dayInfo.isToday,
+        'today': dayInfo.isToday,
+        'is-current-month': dayInfo.isCurrentMonth,
+        'is-disabled': isDisabled,
+        'cursor-pointer': !isDisabled,
+        'cursor-not-allowed': isDisabled
+      }
     ]"
     @click="handleClick"
   >
@@ -118,11 +125,13 @@ const SOLAR_TERM_ICONS: Record<string, string> = {
 interface Props {
   dayInfo: CalendarDayInfo
   isSelected?: boolean
+  isDisabled?: boolean
   maxDisplayItems?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isSelected: false,
+  isDisabled: false,
   maxDisplayItems: 2
 })
 
@@ -395,6 +404,18 @@ const getDisplayReason = (reason: string): string => {
 
 .calendar-day:not(.is-current-month) {
   opacity: 0.3;
+}
+
+/* 禁用状态样式 */
+.calendar-day.is-disabled {
+  opacity: 0.25;
+  filter: grayscale(0.5);
+  cursor: default;
+}
+
+.calendar-day.is-disabled:hover {
+  box-shadow: none;
+  transform: none;
 }
 
 /* 确保选中状态在非当前月份时也可见 */

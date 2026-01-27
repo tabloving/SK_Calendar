@@ -69,6 +69,20 @@
               />
             </div>
           </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">限制查询范围</span>
+              <span class="setting-desc">仅允许查询以当前月份为基准的前后半年</span>
+            </div>
+            <div class="setting-control">
+              <el-switch
+                v-model="settings.limitedYearRange"
+                @change="handleLimitedYearRangeChange"
+                active-color="#b8372e"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -405,6 +419,10 @@ const handleShowPreceptIndicatorsChange = (value: boolean) => {
 
 const handleShowLunarDatesChange = (value: boolean) => {
   settingsStore.setShowLunarDates(value)
+}
+
+const handleLimitedYearRangeChange = (value: boolean) => {
+  settingsStore.setLimitedYearRange(value)
 }
 
 const getPreceptLevelText = (level: string) => {

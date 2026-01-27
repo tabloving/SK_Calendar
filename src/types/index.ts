@@ -116,6 +116,7 @@ export interface AppSettings {
   theme: 'light' | 'dark';
   showPreceptIndicators: boolean;
   showLunarDates: boolean;
+  limitedYearRange: boolean;  // 限制查询范围为最近三年
   enabledPreceptTypes: PreceptType[];
   personalPrecepts: PersonalPrecept[];
 }

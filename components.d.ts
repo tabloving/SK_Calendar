@@ -32,6 +32,7 @@ declare module 'vue' {
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Info: typeof import('./src/components/icons/Info.vue')['default']
     PracticeAdvice: typeof import('./src/components/sidebar/PracticeAdvice.vue')['default']
