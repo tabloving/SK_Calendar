@@ -51,15 +51,6 @@
             size="small"
             class="nav-btn"
           />
-          <el-button
-            size="small"
-            :icon="CalendarIcon"
-            @click="goToToday"
-            :disabled="isToday"
-            class="today-btn"
-          >
-            今天
-          </el-button>
         </div>
       </div>
     </div>
@@ -112,7 +103,7 @@
 import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import * as lunar from 'lunar-javascript'
-import { Calendar as CalendarIcon, DataAnalysis, ArrowLeft, ArrowRight, CaretLeft, CaretRight } from '@element-plus/icons-vue'
+import { DataAnalysis, ArrowLeft, ArrowRight, CaretLeft, CaretRight } from '@element-plus/icons-vue'
 
 const calendarStore = useCalendarStore()
 
@@ -150,16 +141,6 @@ const preceptPercentage = computed(() => {
   return Math.round((preceptDays / monthStats.value.total) * 100)
 })
 
-// 判断当前选中日期是否为今天
-const isToday = computed(() => {
-  const today = new Date()
-  const selected = calendarStore.selectedDate
-  if (!selected) return false
-  return selected.getFullYear() === today.getFullYear() &&
-         selected.getMonth() === today.getMonth() &&
-         selected.getDate() === today.getDate()
-})
-
 // 导航方法
 const goToPreviousMonth = () => {
   calendarStore.goToPreviousMonth()
@@ -175,10 +156,6 @@ const goToPreviousDay = () => {
 
 const goToNextDay = () => {
   calendarStore.goToNextDay()
-}
-
-const goToToday = () => {
-  calendarStore.goToToday()
 }
 </script>
 
@@ -237,44 +214,6 @@ const goToToday = () => {
   border-color: #c9a86c;
   color: #5c4033;
   box-shadow: 0 2px 6px rgba(139, 90, 43, 0.15);
-}
-
-.today-btn {
-  padding: 6px 12px;
-  height: 32px;
-  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-  color: white;
-  border: 1px solid #8b5cf6;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(167, 139, 250, 0.15);
-}
-
-.today-btn:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-  border-color: #7c3aed;
-}
-
-.today-btn:disabled,
-.today-btn.is-disabled {
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-  color: #a78bfa;
-  border-color: #ddd6fe;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
-.today-btn:disabled:hover,
-.today-btn.is-disabled:hover {
-  transform: none;
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-  box-shadow: none;
-  border-color: #ddd6fe;
 }
 
 /* 月度统计卡片样式 */
@@ -340,19 +279,23 @@ const goToToday = () => {
   }
 
   .nav-btn {
-    padding: 6px 4px;
-    height: 28px;
-    width: 28px;
+    padding: 10px 8px;
+    height: 40px;
+    width: 40px;
   }
 
   .date-title-centered {
     min-width: 90px;
   }
 
-  .today-btn {
-    padding: 6px 8px;
-    height: 28px;
-    font-size: 11px;
+  /* 流式布局下增大阳历文本 */
+  .date-title-centered h2 {
+    font-size: 2rem;
+  }
+
+  /* 流式布局下增大农历文本 */
+  .date-title-centered .text-xs {
+    font-size: 1rem;
   }
 }
 
@@ -383,10 +326,10 @@ const goToToday = () => {
   }
 
   .nav-btn {
-    padding: 4px 2px;
-    height: 24px;
-    width: 24px;
-    font-size: 10px;
+    padding: 8px 6px;
+    height: 38px;
+    width: 38px;
+    font-size: 12px;
   }
 
   .date-title-centered {
@@ -394,18 +337,12 @@ const goToToday = () => {
   }
 
   .date-title-centered h2 {
-    font-size: 1.125rem;
+    font-size: 1.875rem;
     font-weight: 700;
   }
 
   .date-title-centered .text-xs {
-    font-size: 0.625rem;
-  }
-
-  .today-btn {
-    padding: 4px 6px;
-    height: 24px;
-    font-size: 10px;
+    font-size: 1rem;
   }
 
   .navigation-buttons .flex {
@@ -422,9 +359,9 @@ const goToToday = () => {
 
   /* 导航按钮样式 */
   .nav-btn {
-    padding: 6px 4px;
-    height: 32px;
-    width: 32px;
+    padding: 8px 6px;
+    height: 36px;
+    width: 36px;
     border-radius: 6px;
     flex-shrink: 0;
   }
@@ -436,20 +373,12 @@ const goToToday = () => {
 
   /* 增大阳历文本 */
   .date-title-centered h2 {
-    font-size: 1.25rem;
+    font-size: 1.75rem;
   }
 
   /* 增大农历文本 */
   .date-title-centered .text-xs {
-    font-size: 0.875rem;
-  }
-
-  .today-btn {
-    padding: 6px 10px;
-    height: 32px;
-    font-size: 12px;
-    border-radius: 6px;
-    flex-shrink: 0;
+    font-size: 1.125rem;
   }
 
   /* 统计卡片样式 - 隐藏月份和进度条，只保留核心统计 */

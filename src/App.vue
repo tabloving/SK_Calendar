@@ -7,7 +7,7 @@
 
         <div class="nav-container">
           <!-- Logo区域 - 书卷印章风格 -->
-          <div class="nav-brand">
+          <router-link to="/" class="nav-brand">
             <div class="brand-scroll">
               <div class="scroll-left"></div>
               <div class="scroll-content">
@@ -24,23 +24,26 @@
               </div>
               <div class="scroll-right"></div>
             </div>
-          </div>
+          </router-link>
 
           <!-- 导航链接 -->
           <nav class="nav-links">
-            <router-link
-              to="/"
-              class="nav-link"
-              :class="{ 'nav-link-active': $route.name === 'calendar' }"
+            <button
+              v-if="route.name === 'calendar'"
+              class="nav-link today-nav-btn"
+              :class="{ 'nav-link-disabled': isToday }"
+              :disabled="isToday"
+              @click="goToToday"
             >
               <span class="nav-link-icon">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="3" y="4" width="18" height="18" rx="1" stroke="currentColor" stroke-width="1.5"/>
                   <path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="12" cy="16" r="2" fill="currentColor"/>
                 </svg>
               </span>
-              <span class="nav-link-text">日历</span>
-            </router-link>
+              <span class="nav-link-text">今天</span>
+            </button>
             <router-link
               to="/settings"
               class="nav-link"
@@ -71,7 +74,32 @@
 </template>
 
 <script setup lang="ts">
-// App组件逻辑
+import { computed } from 'vue'
+import { useCalendarStore } from '@/stores/calendar'
+import { useRouter, useRoute } from 'vue-router'
+
+const calendarStore = useCalendarStore()
+const router = useRouter()
+const route = useRoute()
+
+// 判断当前选中日期是否为今天
+const isToday = computed(() => {
+  const today = new Date()
+  const selected = calendarStore.selectedDate
+  if (!selected) return false
+  return selected.getFullYear() === today.getFullYear() &&
+         selected.getMonth() === today.getMonth() &&
+         selected.getDate() === today.getDate()
+})
+
+// 回到今天
+const goToToday = () => {
+  calendarStore.goToToday()
+  // 如果不在首页，跳转到首页
+  if (route.name !== 'calendar') {
+    router.push('/')
+  }
+}
 </script>
 
 <style scoped>
@@ -119,6 +147,13 @@
 .nav-brand {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.nav-brand:hover {
+  transform: scale(1.02);
 }
 
 .brand-scroll {
@@ -310,6 +345,35 @@
   display: none;
 }
 
+/* 今天按钮样式 */
+.today-nav-btn {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
+}
+
+.today-nav-btn::before {
+  display: none;
+}
+
+.today-nav-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.nav-link-disabled {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+  color: #a78bfa !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+.nav-link-disabled:hover {
+  transform: none !important;
+}
+
 .nav-link-icon {
   width: 18px;
   height: 18px;
@@ -413,6 +477,11 @@
 
   .nav-link-text {
     display: none;
+  }
+
+  /* 今天按钮在移动端保持完整展示 */
+  .today-nav-btn .nav-link-text {
+    display: inline;
   }
 
   .nav-link-icon {
