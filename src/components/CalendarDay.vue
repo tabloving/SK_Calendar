@@ -374,7 +374,7 @@ const getDisplayReason = (reason: string): string => {
 .calendar-day {
   position: relative;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.2s ease, background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   border: 1px solid var(--paper-border);
   background: var(--paper-light);
