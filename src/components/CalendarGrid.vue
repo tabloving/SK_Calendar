@@ -354,11 +354,11 @@ const handleDayClick = (dayInfo: CalendarDayInfo) => {
     border-right: 1px solid var(--paper-warm);
     border-bottom: none; /* 周视图只有一行，不需要底边框 */
     height: 60px; /* 周视图固定格子高度 */
+    padding: 0; /* 统一所有格子的 padding */
   }
 
   .calendar-grid-days > *:nth-child(7n) {
     border-right: none;
-    padding-right: 5px;
   }
 
   .calendar-grid-days > *:nth-last-child(-n+7) {

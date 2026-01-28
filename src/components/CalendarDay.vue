@@ -789,86 +789,175 @@ const getDisplayReason = (reason: string): string => {
 
 @media (max-width: 480px) {
   .calendar-day {
-    height: 60px !important;
-    min-height: 60px !important;
-    max-height: 60px !important;
-    padding: 6px 8px;
+    height: 70px !important;
+    min-height: 70px !important;
+    max-height: 70px !important;
+    padding: 8px;
     box-sizing: border-box;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* 垂直居中 */
+    /* 统一所有状态的边框，避免位置跳动 */
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 
   .day-header {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: static;
+    transform: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     margin-bottom: 0;
     padding-bottom: 0;
     border-bottom: none;
     width: 100%;
+    gap: 2px;
   }
 
   .solar-date {
     text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
+    position: static;
+    transform: none;
+    z-index: 1;
     width: 100%;
   }
 
-  /* 阳历日期水印样式 */
-  .solar-day-text {
-    font-size: 22px;
-    font-weight: 700;
-    opacity: 0.15;
-    color: #000;
+  .solar-date span {
+    margin-bottom: 0;
   }
 
-  /* 选中状态下阳历日期放大 */
-  .calendar-day.selected .solar-day-text {
-    font-size: 32px;
-    opacity: 0.2;
-    color: #000;
+  /* 阳历日期样式 */
+  .solar-day-text {
+    font-size: 20px;
+    font-weight: 700;
+    opacity: 0.5;
+    color: #374151;
+    line-height: 1.2;
+  }
+
+  /* 非今日选中状态下阳历日期 - 字号不变，颜色稍淡 */
+  .calendar-day.selected:not(.today) .solar-day-text {
+    font-size: 20px;
+    opacity: 0.7;
+    color: #6b7280;
+    line-height: 1.2;
+  }
+
+  /* 今日选中状态下阳历日期 - 字号放大，颜色鲜明 */
+  .calendar-day.today.selected .solar-day-text {
+    font-size: 24px;
+    opacity: 1;
+    color: #3B82F6;
   }
 
   /* 今日阳历日期蓝色 */
-  .calendar-day.today.selected .solar-day-text {
+  .calendar-day.today .solar-day-text {
     color: #3B82F6;
+    opacity: 1;
   }
 
   .lunar-date {
     text-align: center;
-    position: relative;
+    position: static;
     z-index: 1;
+    font-size: 11px;
+    margin-top: 0;
+    color: #9ca3af;
+    line-height: 1.3;
+  }
+
+  /* 非今日选中状态下农历文字 - 颜色稍淡 */
+  .calendar-day.selected:not(.today) .lunar-date {
+    color: #9ca3af;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  /* 今日选中状态下农历文字 */
+  .calendar-day.today.selected .lunar-date {
+    color: #6b7280;
+    font-weight: 600;
     font-size: 12px;
   }
 
-  /* 选中状态下农历文字使用边框颜色 */
-  .calendar-day.selected .lunar-date {
-    color: #3B82F6;
-    font-weight: 700;
-    font-size: 16px;
-    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  /* 今日农历文字 */
+  .calendar-day.today .lunar-date {
+    color: #6b7280;
+    font-weight: 500;
   }
 
-  .calendar-day.selected.precept-major .lunar-date {
+  /* 非今日选中+戒期的农历颜色（稍淡） */
+  .calendar-day.selected:not(.today).precept-major .lunar-date {
+    color: rgba(220, 38, 38, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-moderate .lunar-date {
+    color: rgba(139, 92, 246, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-minor .lunar-date {
+    color: rgba(59, 130, 246, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-safe .lunar-date {
+    color: rgba(22, 163, 74, 0.6);
+  }
+
+  /* 今日选中+戒期的农历颜色 */
+  .calendar-day.today.selected.precept-major .lunar-date {
     color: #DC2626;
   }
 
-  .calendar-day.selected.precept-moderate .lunar-date {
+  .calendar-day.today.selected.precept-moderate .lunar-date {
     color: #8B5CF6;
   }
 
-  .calendar-day.selected.precept-minor .lunar-date {
+  .calendar-day.today.selected.precept-minor .lunar-date {
     color: #3B82F6;
   }
 
-  .calendar-day.selected.precept-safe .lunar-date {
+  .calendar-day.today.selected.precept-safe .lunar-date {
+    color: #16A34A;
+  }
+
+  /* 非今日选中+戒期的阳历颜色（稍淡） */
+  .calendar-day.selected:not(.today).precept-major .solar-day-text {
+    color: rgba(220, 38, 38, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-moderate .solar-day-text {
+    color: rgba(139, 92, 246, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-minor .solar-day-text {
+    color: rgba(59, 130, 246, 0.6);
+  }
+
+  .calendar-day.selected:not(.today).precept-safe .solar-day-text {
+    color: rgba(22, 163, 74, 0.6);
+  }
+
+  /* 今日选中+戒期的阳历颜色 */
+  .calendar-day.today.selected.precept-major .solar-day-text {
+    color: #DC2626;
+  }
+
+  .calendar-day.today.selected.precept-moderate .solar-day-text {
+    color: #8B5CF6;
+  }
+
+  .calendar-day.today.selected.precept-minor .solar-day-text {
+    color: #3B82F6;
+  }
+
+  .calendar-day.today.selected.precept-safe .solar-day-text {
     color: #16A34A;
   }
 
@@ -909,6 +998,16 @@ const getDisplayReason = (reason: string): string => {
     width: 5px;
     height: 5px;
     margin-right: 0;
+  }
+
+  /* 非今日日期的指示圆点降低透明度 */
+  .calendar-day:not(.today) .precept-indicator {
+    opacity: 0.35;
+  }
+
+  /* 非今日选中时指示圆点透明度稍微恢复 */
+  .calendar-day.selected:not(.today) .precept-indicator {
+    opacity: 0.85;
   }
 }
 </style>

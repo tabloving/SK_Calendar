@@ -1,7 +1,7 @@
 <template>
   <div v-if="selectedDayInfo" class="date-card">
     <div class="info-grid grid grid-cols-1 gap-3">
-      <div class="info-card bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+      <div class="info-card rounded-lg p-4" :style="cardStyle" :class="`precept-level-${highestPreceptLevel}`">
         <!-- 阳历日期水印（流式布局显示） -->
         <div class="solar-watermark">{{ selectedDayInfo.day }}</div>
         <div class="flex items-start justify-between">
@@ -48,7 +48,7 @@
               <!-- 农历标题 -->
               <div class="lunar-label text-xs text-purple-600 font-medium">农历</div>
               <!-- 农历日期（流式布局显示在标题右侧） -->
-              <div class="lunar-date-inline text-gray-700 font-medium ml-2">
+              <div class="lunar-date-inline font-medium ml-2" :style="{ color: preceptLevelColor }">
                 {{ lunarInfo.full }}
               </div>
               <!-- 农历月份天数Badge（流式布局在日期右边） -->
@@ -224,6 +224,56 @@ const solarTermInfo = computed(() => {
 const getMonthYear = (date: Date) => {
   return `${date.getFullYear()}年 ${date.getMonth() + 1}月`
 }
+
+// 获取当前选中日期的最高戒期等级
+const highestPreceptLevel = computed(() => {
+  if (!selectedDayInfo.value) return 'safe'
+  return CalendarUtil.getHighestPreceptLevel(selectedDayInfo.value.preceptInfos)
+})
+
+// 根据戒期等级返回对应颜色
+const preceptLevelColor = computed(() => {
+  const colorMap: Record<string, string> = {
+    major: '#DC2626',     // 红色
+    moderate: '#8B5CF6',  // 紫色
+    minor: '#3B82F6',     // 蓝色
+    safe: '#16A34A'       // 绿色
+  }
+  return colorMap[highestPreceptLevel.value] || '#374151'
+})
+
+// 卡片样式（背景渐变、边框颜色）
+const cardStyle = computed(() => {
+  const level = highestPreceptLevel.value
+  const styleMap: Record<string, { background: string; border: string }> = {
+    major: {
+      background: 'linear-gradient(to right, rgba(220, 38, 38, 0.08), rgba(220, 38, 38, 0.03))',
+      border: '1px solid rgba(220, 38, 38, 0.2)'
+    },
+    moderate: {
+      background: 'linear-gradient(to right, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.03))',
+      border: '1px solid rgba(139, 92, 246, 0.2)'
+    },
+    minor: {
+      background: 'linear-gradient(to right, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.03))',
+      border: '1px solid rgba(59, 130, 246, 0.2)'
+    },
+    safe: {
+      background: 'linear-gradient(to right, rgba(22, 163, 74, 0.08), rgba(22, 163, 74, 0.03))',
+      border: '1px solid rgba(22, 163, 74, 0.2)'
+    }
+  }
+  const style = styleMap[level] || styleMap.safe
+  return {
+    background: style.background,
+    border: style.border
+  }
+})
+
+// 左侧边框颜色
+const leftBorderColor = computed(() => {
+  return preceptLevelColor.value
+})
 </script>
 
 <style scoped>
@@ -345,9 +395,21 @@ const getMonthYear = (date: Date) => {
   opacity: 0.8;
 }
 
-/* 综合时间信息卡片（第一个info-card）- 紫色主题 */
-.info-grid:first-child .info-card::before {
-  background: linear-gradient(to bottom, #a855f7, #9333ea);
+/* 根据戒期等级设置左侧边框颜色 */
+.info-card.precept-level-major::before {
+  background: linear-gradient(to bottom, #DC2626, #B91C1C);
+}
+
+.info-card.precept-level-moderate::before {
+  background: linear-gradient(to bottom, #8B5CF6, #7C3AED);
+}
+
+.info-card.precept-level-minor::before {
+  background: linear-gradient(to bottom, #3B82F6, #2563EB);
+}
+
+.info-card.precept-level-safe::before {
+  background: linear-gradient(to bottom, #16A34A, #15803D);
 }
 
 .info-card:hover {
