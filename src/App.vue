@@ -66,7 +66,7 @@
         </div>
       </el-header>
 
-      <el-main class="main-container px-2 lg:px-6 pt-4 lg:pt-6 pb-4 lg:pb-6" :class="{ 'settings-page': $route.name === 'settings' }">
+      <el-main ref="mainContainerRef" class="main-container px-2 lg:px-6 pt-4 lg:pt-6 pb-4 lg:pb-6" :class="{ 'settings-page': $route.name === 'settings' }">
         <router-view />
       </el-main>
     </el-container>
@@ -74,13 +74,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useRouter, useRoute } from 'vue-router'
 
 const calendarStore = useCalendarStore()
 const router = useRouter()
 const route = useRoute()
+
+// main-container 引用
+const mainContainerRef = ref<InstanceType<typeof import('element-plus')['ElMain']> | null>(null)
+
+// 监听路由变化，重置滚动位置
+watch(() => route.path, async () => {
+  await nextTick()
+  if (mainContainerRef.value?.$el) {
+    mainContainerRef.value.$el.scrollTop = 0
+  }
+})
 
 // 判断当前选中日期是否为今天
 const isToday = computed(() => {
