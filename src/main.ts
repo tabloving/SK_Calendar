@@ -16,21 +16,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-// 注册自定义图标
-import {
-  CheckCircle,
-  Warning,
-  AlertTriangle,
-  AlertCircle,
-  Info
-} from './components/icons'
-
-app.component('CheckCircle', CheckCircle)
-app.component('Warning', Warning)
-app.component('AlertTriangle', AlertTriangle)
-app.component('AlertCircle', AlertCircle)
-app.component('Info', Info)
-
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
