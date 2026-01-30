@@ -164,6 +164,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept'
 import { PreceptType } from '@/types'
+import { getPreceptLevelText } from '@/data/precept/precept-config'
 import * as lunar from 'lunar-javascript'
 import { View, Star, WarningFilled, WarnTriangleFilled } from '@element-plus/icons-vue'
 
@@ -197,10 +198,6 @@ const isTenPreceptDay = computed(() => {
     return false
   }
 })
-
-const getPreceptLevelText = (level: string) => {
-  return CalendarUtil.getPreceptLevelText(level as any)
-}
 
 const getPreceptTypeText = (type: string) => {
   const typeMap = {

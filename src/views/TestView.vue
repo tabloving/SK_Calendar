@@ -528,6 +528,7 @@ import { ref, computed, onMounted } from 'vue'
 import { CalendarUtil } from '@/utils/calendar'
 import { LunarCalendarUtil } from '@/utils/lunar'
 import { PreceptDataManager } from '@/utils/precept'
+import { getPreceptLevelText } from '@/data/precept/precept-config'
 import * as lunar from 'lunar-javascript'
 
 const currentDate = ref(new Date())
@@ -693,16 +694,6 @@ const getPreceptClass = (level: string) => {
     safe: 'bg-green-50 border-green-200'
   }
   return classMap[level as keyof typeof classMap] || 'bg-gray-50 border-gray-200'
-}
-
-const getPreceptLevelText = (level: string) => {
-  const levelMap = {
-    major: '大罪',
-    moderate: '中罪',
-    minor: '小罪',
-    safe: '安全'
-  }
-  return levelMap[level as keyof typeof levelMap] || '未知'
 }
 
 const testLunarLibrary = () => {

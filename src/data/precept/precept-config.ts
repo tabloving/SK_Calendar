@@ -155,6 +155,13 @@ export const LEVEL_TEXT: Record<PreceptLevel, string> = {
 }
 
 /**
+ * 获取戒期等级文本
+ */
+export function getPreceptLevelText(level: PreceptLevel): string {
+  return LEVEL_TEXT[level]
+}
+
+/**
  * 基础修行建议
  */
 export const BASE_SUGGESTIONS: Record<PreceptLevel, string> = {

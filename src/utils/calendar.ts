@@ -3,6 +3,7 @@ import { PreceptDataManager } from './precept'
 import * as lunarLib from 'lunar-javascript'
 import type { CalendarDayInfo, PreceptInfo } from '@/types'
 import { PreceptLevel, PreceptType, PreceptCategory } from '@/types'
+import { getPreceptLevelText as _getPreceptLevelText } from '@/data/precept/precept-config'
 
 /**
  * 日历工具类
@@ -171,14 +172,8 @@ export class CalendarUtil {
   /**
    * 获取戒期等级的显示文本
    */
-  static getPreceptLevelText(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
-    const textMap = {
-      major: '大戒',
-      moderate: '中戒',
-      minor: '宜戒',
-      safe: '安全'
-    }
-    return textMap[level] || '安全'
+  static getPreceptLevelText(level: PreceptLevel): string {
+    return _getPreceptLevelText(level)
   }
 
   /**

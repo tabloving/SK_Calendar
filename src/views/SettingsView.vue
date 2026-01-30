@@ -349,6 +349,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import type { PersonalPrecept } from '@/types'
 import { PreceptType } from '@/types'
+import { getPreceptLevelText } from '@/data/precept/precept-config'
 
 const settingsStore = useSettingsStore()
 
@@ -424,15 +425,6 @@ const handleShowLunarDatesChange = (value: boolean) => {
 
 const handleLimitedYearRangeChange = (value: boolean) => {
   settingsStore.setLimitedYearRange(value)
-}
-
-const getPreceptLevelText = (level: string) => {
-  const levelMap = {
-    major: '大戒',
-    moderate: '中戒',
-    minor: '宜戒'
-  }
-  return levelMap[level as keyof typeof levelMap] || '未知'
 }
 
 const showAddPersonalPreceptDialog = () => {
