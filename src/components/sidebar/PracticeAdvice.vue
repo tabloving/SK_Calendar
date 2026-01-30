@@ -35,7 +35,7 @@
 import { computed } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
-import { PreceptDataManager } from '@/utils/precept-data'
+import { PreceptDataManager } from '@/utils/precept'
 import * as lunar from 'lunar-javascript'
 
 const calendarStore = useCalendarStore()

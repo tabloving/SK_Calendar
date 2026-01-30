@@ -527,7 +527,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { CalendarUtil } from '@/utils/calendar'
 import { LunarCalendarUtil } from '@/utils/lunar'
-import { PreceptDataManager } from '@/utils/precept-data'
+import { PreceptDataManager } from '@/utils/precept'
 import * as lunar from 'lunar-javascript'
 
 const currentDate = ref(new Date())

@@ -1,5 +1,5 @@
 import { LunarCalendarUtil } from './lunar'
-import { PreceptDataManager } from './precept-data'
+import { PreceptDataManager } from './precept'
 import * as lunarLib from 'lunar-javascript'
 import type { CalendarDayInfo, PreceptInfo } from '@/types'
 import { PreceptLevel, PreceptType, PreceptCategory } from '@/types'
