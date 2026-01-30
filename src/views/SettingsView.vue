@@ -348,6 +348,7 @@ import { ref, computed, reactive } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import type { PersonalPrecept } from '@/types'
+import { PreceptType } from '@/types'
 
 const settingsStore = useSettingsStore()
 
@@ -357,22 +358,22 @@ const personalPrecepts = computed(() => settingsStore.settings.personalPrecepts)
 
 // 戒期类型选项
 const preceptTypeOptions = [
-  { value: 'regular', label: '常规戒期', desc: '每月固定日期的戒期' },
-  { value: 'special', label: '特殊戒期', desc: '佛菩萨圣诞等重要日期' },
-  { value: 'precept_day', label: '斋日', desc: '六斋日、十斋日等' },
-  { value: 'personal', label: '个人戒期', desc: '您自定义的戒期' }
+  { value: PreceptType.REGULAR, label: '常规戒期', desc: '每月固定日期的戒期' },
+  { value: PreceptType.SPECIAL, label: '特殊戒期', desc: '佛菩萨圣诞等重要日期' },
+  { value: PreceptType.PRECEPT_DAY, label: '斋日', desc: '六斋日、十斋日等' },
+  { value: PreceptType.PERSONAL, label: '个人戒期', desc: '您自定义的戒期' }
 ]
 
 // 切换戒期类型
-const togglePreceptType = (type: string) => {
+const togglePreceptType = (type: PreceptType) => {
   const types = [...settings.value.enabledPreceptTypes]
-  const index = types.indexOf(type as any)
+  const index = types.indexOf(type)
   if (index > -1) {
     types.splice(index, 1)
   } else {
-    types.push(type as any)
+    types.push(type)
   }
-  settingsStore.setEnabledPreceptTypes(types as any)
+  settingsStore.setEnabledPreceptTypes(types)
 }
 
 // 个人戒期对话框
