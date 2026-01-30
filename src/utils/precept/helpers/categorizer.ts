@@ -1,25 +1,83 @@
 import { PreceptCategory } from '@/types'
 
 /**
+ * 分类规则配置
+ * 按优先级排序，匹配到第一个即返回
+ */
+const CATEGORY_RULES: Array<{ keywords: string[]; category: PreceptCategory }> = [
+  // 神明监察类
+  { keywords: ['四天王'], category: PreceptCategory.DEITY_INSPECTION },
+  { keywords: ['斗降', '北斗'], category: PreceptCategory.DEITY_INSPECTION },
+  { keywords: ['仓开'], category: PreceptCategory.DEITY_INSPECTION },
+  { keywords: ['人神'], category: PreceptCategory.DEITY_INSPECTION },
+  { keywords: ['司命'], category: PreceptCategory.DEITY_INSPECTION },
+
+  // 节日类
+  { keywords: ['雷斋'], category: PreceptCategory.FESTIVAL },
+  { keywords: ['三元', '三官'], category: PreceptCategory.FESTIVAL },
+  { keywords: ['腊'], category: PreceptCategory.FESTIVAL },
+
+  // 天文类
+  { keywords: ['月望', '月朔', '月晦'], category: PreceptCategory.ASTRONOMICAL },
+  { keywords: ['天地交泰'], category: PreceptCategory.ASTRONOMICAL },
+
+  // 因果类
+  { keywords: ['杨公忌'], category: PreceptCategory.KARMA },
+  { keywords: ['九毒'], category: PreceptCategory.KARMA },
+  { keywords: ['五虚'], category: PreceptCategory.KARMA },
+  { keywords: ['六耗'], category: PreceptCategory.KARMA },
+  { keywords: ['阴毒'], category: PreceptCategory.KARMA }
+]
+
+/**
+ * 标签提取规则配置
+ */
+const TAG_RULES: Array<{ keywords: string[]; tags: string[] }> = [
+  // 神明相关
+  { keywords: ['四天王'], tags: ['斋日', '四天王'] },
+  { keywords: ['玉帝', '玉皇'], tags: ['玉帝'] },
+  { keywords: ['斗', '北斗'], tags: ['斗星'] },
+  { keywords: ['雷'], tags: ['雷祖'] },
+
+  // 事件类型
+  { keywords: ['巡行'], tags: ['巡行'] },
+  { keywords: ['诞'], tags: ['诞辰'] },
+  { keywords: ['降'], tags: ['降世'] },
+  { keywords: ['奏事'], tags: ['奏事'] },
+
+  // 时间相关
+  { keywords: ['月望'], tags: ['月望'] },
+  { keywords: ['月朔'], tags: ['月朔'] },
+  { keywords: ['月晦'], tags: ['月晦'] },
+
+  // 特殊日期
+  { keywords: ['杨公忌'], tags: ['杨公忌'] },
+  { keywords: ['九毒'], tags: ['九毒日'] },
+  { keywords: ['仓开日'], tags: ['天地仓开日'] },
+  { keywords: ['雷斋'], tags: ['雷斋日'] }
+]
+
+/**
+ * 节气分组配置
+ */
+const SOLAR_TERM_GROUPS: Record<string, { terms: string[]; suffix: string }> = {
+  二分日: { terms: ['春分', '秋分'], suffix: '二分日' },
+  二至日: { terms: ['夏至', '冬至'], suffix: '二至日' },
+  四立日: { terms: ['立春', '立夏', '立秋', '立冬'], suffix: '四立日' }
+}
+
+/**
+ * 检查文本是否包含任一关键词
+ */
+const matchesAny = (text: string, keywords: string[]): boolean =>
+  keywords.some(keyword => text.includes(keyword))
+
+/**
  * 根据原因内容分类
  */
 export function categorizeByReason(reason: string): PreceptCategory {
-  if (reason.includes('四天王')) return PreceptCategory.DEITY_INSPECTION
-  if (reason.includes('斗降') || reason.includes('北斗')) return PreceptCategory.DEITY_INSPECTION
-  if (reason.includes('雷斋')) return PreceptCategory.FESTIVAL
-  if (reason.includes('月望') || reason.includes('月朔') || reason.includes('月晦')) return PreceptCategory.ASTRONOMICAL
-  if (reason.includes('三元') || reason.includes('三官')) return PreceptCategory.FESTIVAL
-  if (reason.includes('腊')) return PreceptCategory.FESTIVAL
-  if (reason.includes('仓开')) return PreceptCategory.DEITY_INSPECTION
-  if (reason.includes('杨公忌')) return PreceptCategory.KARMA
-  if (reason.includes('人神')) return PreceptCategory.DEITY_INSPECTION
-  if (reason.includes('司命')) return PreceptCategory.DEITY_INSPECTION
-  if (reason.includes('九毒')) return PreceptCategory.KARMA
-  if (reason.includes('五虚')) return PreceptCategory.KARMA
-  if (reason.includes('六耗')) return PreceptCategory.KARMA
-  if (reason.includes('天地交泰')) return PreceptCategory.ASTRONOMICAL
-  if (reason.includes('阴毒')) return PreceptCategory.KARMA
-  return PreceptCategory.CUSTOM
+  const matched = CATEGORY_RULES.find(rule => matchesAny(reason, rule.keywords))
+  return matched?.category ?? PreceptCategory.CUSTOM
 }
 
 /**
@@ -28,29 +86,17 @@ export function categorizeByReason(reason: string): PreceptCategory {
 export function extractTags(text: string): string[] {
   const tags: string[] = []
 
-  // 神明相关标签
-  if (text.includes('四天王')) tags.push('斋日', '四天王')
-  if (text.includes('玉帝') || text.includes('玉皇')) tags.push('玉帝')
-  if (text.includes('斗') || text.includes('北斗')) tags.push('斗星')
-  if (text.includes('雷')) tags.push('雷祖')
+  // 遍历规则，收集匹配的标签
+  TAG_RULES.forEach(rule => {
+    if (matchesAny(text, rule.keywords)) {
+      tags.push(...rule.tags)
+    }
+  })
 
-  // 事件类型标签
-  if (text.includes('巡行')) tags.push('巡行')
-  if (text.includes('诞')) tags.push('诞辰')
-  if (text.includes('降')) tags.push('降世')
-  if (text.includes('奏事')) tags.push('奏事')
-
-  // 时间标签
-  if (text.includes('月望')) tags.push('月望')
-  if (text.includes('月朔')) tags.push('月朔')
-  if (text.includes('月晦')) tags.push('月晦')
-
-  // 特殊标签
-  if (text.includes('杨公忌')) tags.push('杨公忌')
-  if (text.includes('九毒')) tags.push('九毒日')
-  if (text.includes('仓开日')) tags.push('天地仓开日')
-  if (text.includes('雷斋')) tags.push('雷斋日')
-  if (text.includes('三辛') || (text.includes('辛') && text.includes('日'))) tags.push('三辛日')
+  // 特殊处理：三辛日（需要组合条件）
+  if (text.includes('三辛') || (text.includes('辛') && text.includes('日'))) {
+    tags.push('三辛日')
+  }
 
   return tags
 }
@@ -59,14 +105,10 @@ export function extractTags(text: string): string[] {
  * 获取节气标签
  */
 export function getSolarTermTags(solarTerm: string): string[] {
-  if (solarTerm === '春分' || solarTerm === '秋分') {
-    return [solarTerm, '二分日']
-  }
-  if (solarTerm === '夏至' || solarTerm === '冬至') {
-    return [solarTerm, '二至日']
-  }
-  if (solarTerm === '立春' || solarTerm === '立夏' || solarTerm === '立秋' || solarTerm === '立冬') {
-    return [solarTerm, '四立日']
+  for (const group of Object.values(SOLAR_TERM_GROUPS)) {
+    if (group.terms.includes(solarTerm)) {
+      return [solarTerm, group.suffix]
+    }
   }
   return [solarTerm]
 }
