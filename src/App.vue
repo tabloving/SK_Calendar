@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useCalendarStore } from '@/stores/calendar'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -91,6 +91,23 @@ watch(() => route.path, async () => {
   if (mainContainerRef.value?.$el) {
     mainContainerRef.value.$el.scrollTop = 0
   }
+})
+
+// 监听窗口大小变化，当从移动端切换到桌面端时重置滚动位置
+const handleResize = () => {
+  const isDesktop = window.innerWidth >= 1024
+  if (isDesktop && mainContainerRef.value?.$el) {
+    // 桌面端时重置滚动位置，避免从移动端切换时内容被截断
+    mainContainerRef.value.$el.scrollTop = 0
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 // 判断当前选中日期是否为今天
