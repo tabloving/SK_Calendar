@@ -8,10 +8,10 @@ export default {
     extend: {
       colors: {
         'precept': {
-          'major': '#DC2626',  // 大罪 - 红色
-          'moderate': '#EA580C',  // 中罪 - 橙色
-          'minor': '#CA8A04',  // 小罪 - 黄色
-          'safe': '#16A34A'  // 安全 - 绿色
+          'major': '#DC2626',    // 大戒 - 红色
+          'moderate': '#7C3AED', // 中戒 - 紫色
+          'minor': '#3B82F6',    // 宜戒 - 蓝色
+          'safe': '#16A34A'      // 安全 - 绿色
         }
       }
     },

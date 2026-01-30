@@ -105,7 +105,8 @@ import { useCalendarStore } from '@/stores/calendar'
 import { CalendarUtil } from '@/utils/calendar'
 import { LunarCalendarUtil } from '@/utils/lunar'
 import * as lunar from 'lunar-javascript'
-import { SOLAR_TERM_ICONS } from '@/constants'
+import { SOLAR_TERM_ICONS, getPreceptLevelHexColor, PRECEPT_COLORS_RGB } from '@/constants'
+import { PreceptLevel } from '@/types'
 
 const calendarStore = useCalendarStore()
 
@@ -192,47 +193,23 @@ const getMonthYear = (date: Date) => {
 }
 
 // 获取当前选中日期的最高戒期等级
-const highestPreceptLevel = computed(() => {
-  if (!selectedDayInfo.value) return 'safe'
+const highestPreceptLevel = computed((): PreceptLevel => {
+  if (!selectedDayInfo.value) return PreceptLevel.SAFE
   return CalendarUtil.getHighestPreceptLevel(selectedDayInfo.value.preceptInfos)
 })
 
 // 根据戒期等级返回对应颜色
 const preceptLevelColor = computed(() => {
-  const colorMap: Record<string, string> = {
-    major: '#DC2626',     // 红色
-    moderate: '#8B5CF6',  // 紫色
-    minor: '#3B82F6',     // 蓝色
-    safe: '#16A34A'       // 绿色
-  }
-  return colorMap[highestPreceptLevel.value] || '#374151'
+  return getPreceptLevelHexColor(highestPreceptLevel.value)
 })
 
 // 卡片样式（背景渐变、边框颜色）
 const cardStyle = computed(() => {
   const level = highestPreceptLevel.value
-  const styleMap: Record<string, { background: string; border: string }> = {
-    major: {
-      background: 'linear-gradient(to right, rgba(220, 38, 38, 0.08), rgba(220, 38, 38, 0.03))',
-      border: '1px solid rgba(220, 38, 38, 0.2)'
-    },
-    moderate: {
-      background: 'linear-gradient(to right, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.03))',
-      border: '1px solid rgba(139, 92, 246, 0.2)'
-    },
-    minor: {
-      background: 'linear-gradient(to right, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.03))',
-      border: '1px solid rgba(59, 130, 246, 0.2)'
-    },
-    safe: {
-      background: 'linear-gradient(to right, rgba(22, 163, 74, 0.08), rgba(22, 163, 74, 0.03))',
-      border: '1px solid rgba(22, 163, 74, 0.2)'
-    }
-  }
-  const style = styleMap[level] || styleMap.safe
+  const rgb = PRECEPT_COLORS_RGB[level]
   return {
-    background: style.background,
-    border: style.border
+    background: `linear-gradient(to right, rgba(${rgb}, 0.08), rgba(${rgb}, 0.03))`,
+    border: `1px solid rgba(${rgb}, 0.2)`
   }
 })
 

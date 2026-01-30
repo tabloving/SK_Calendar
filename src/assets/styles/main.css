@@ -10,6 +10,12 @@
   --paper-warm: #f2ead8;         /* 暖宣纸 - 边框/分隔 */
   --paper-border: #e8dfc9;       /* 边框色 */
   --paper-shadow: rgba(139, 115, 85, 0.08); /* 阴影色 */
+
+  /* 戒期等级颜色系统 */
+  --color-major: 220, 38, 38;       /* #DC2626 - 大戒红色 */
+  --color-moderate: 124, 58, 237;   /* #7C3AED - 中戒紫色 */
+  --color-minor: 59, 130, 246;      /* #3B82F6 - 宜戒蓝色 */
+  --color-safe: 22, 163, 74;        /* #16A34A - 安全绿色 */
 }
 
 .bg-paper {
@@ -52,11 +58,11 @@
 }
 
 .precept-moderate {
-  @apply bg-orange-100 text-orange-800 border-orange-300;
+  @apply bg-purple-100 text-purple-800 border-purple-300;
 }
 
 .precept-minor {
-  @apply bg-yellow-100 text-yellow-800 border-yellow-300;
+  @apply bg-blue-100 text-blue-800 border-blue-300;
 }
 
 .precept-safe {
@@ -73,11 +79,11 @@
 }
 
 .calendar-day.precept-moderate {
-  @apply bg-orange-50 border-orange-300;
+  @apply bg-purple-50 border-purple-300;
 }
 
 .calendar-day.precept-minor {
-  @apply bg-yellow-50 border-yellow-300;
+  @apply bg-blue-50 border-blue-300;
 }
 
 .calendar-day.today {
@@ -94,11 +100,11 @@
 }
 
 .precept-indicator.moderate {
-  @apply bg-orange-500;
+  @apply bg-purple-500;
 }
 
 .precept-indicator.minor {
-  @apply bg-yellow-500;
+  @apply bg-blue-500;
 }
 
 /* 响应式设计 */
@@ -126,15 +132,15 @@
 }
 
 .precept-moderate-theme {
-  --precept-color: #EA580C;
-  --precept-bg: #FFF7ED;
-  --precept-border: #FDBA74;
+  --precept-color: #7C3AED;
+  --precept-bg: #FAF5FF;
+  --precept-border: #C4B5FD;
 }
 
 .precept-minor-theme {
-  --precept-color: #CA8A04;
-  --precept-bg: #FEFCE8;
-  --precept-border: #FDE047;
+  --precept-color: #3B82F6;
+  --precept-bg: #EFF6FF;
+  --precept-border: #93C5FD;
 }
 
 .precept-safe-theme {

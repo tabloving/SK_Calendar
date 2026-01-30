@@ -130,7 +130,7 @@
     </div>
 
     <!-- 既无戒期也无斋日时的提示 -->
-    <div v-if="!(hasPreceptDays || filteredPreceptInfos.length > 0)" class="precept-item border rounded-lg p-4" :class="getPreceptItemClass('safe')">
+    <div v-if="!(hasPreceptDays || filteredPreceptInfos.length > 0)" class="precept-item border rounded-lg p-4" :class="getPreceptItemClass(PreceptLevel.SAFE)">
       <div class="flex items-start justify-between">
         <div class="flex-1">
           <div class="flex items-center mb-2">
@@ -139,7 +139,7 @@
             <el-tag
               size="small"
               class="ml-2"
-              :style="getPreceptLevelStyle('safe')"
+              :style="getPreceptLevelStyle(PreceptLevel.SAFE)"
             >
               安泰
             </el-tag>
@@ -163,8 +163,9 @@ import { useCalendarStore } from '@/stores/calendar'
 import { useSettingsStore } from '@/stores/settings'
 import { CalendarUtil } from '@/utils/calendar'
 import { PreceptDataManager } from '@/utils/precept'
-import { PreceptType } from '@/types'
+import { PreceptType, PreceptLevel } from '@/types'
 import { getPreceptLevelText } from '@/data/precept/precept-config'
+import { getPreceptLevelStyle, getPreceptItemClass } from '@/constants'
 import * as lunar from 'lunar-javascript'
 import { View, Star, WarningFilled, WarnTriangleFilled } from '@element-plus/icons-vue'
 
@@ -209,33 +210,6 @@ const getPreceptTypeText = (type: string) => {
   return typeMap[type as keyof typeof typeMap] || '未知类型'
 }
 
-const getPreceptItemClass = (level: string) => {
-  const classMap = {
-    major: 'bg-red-50 border-red-200',
-    moderate: 'bg-purple-50 border-purple-200',
-    minor: 'bg-blue-50 border-blue-200',
-    safe: 'bg-green-50 border-green-200'
-  }
-  return classMap[level as keyof typeof classMap] || 'bg-gray-50 border-gray-200'
-}
-
-const getPreceptLevelStyle = (level: string) => {
-  const colorMap = {
-    major: '220, 38, 38',
-    moderate: '124, 58, 237',
-    minor: '59, 130, 246',
-    safe: '22, 163, 74'
-  }
-
-  const rgb = colorMap[level as keyof typeof colorMap] || colorMap.minor
-
-  return {
-    backgroundColor: `rgba(${rgb}, 0.85)`,
-    borderColor: `rgb(${rgb})`,
-    color: '#ffffff'
-  }
-}
-
 /**
  * 获取戒期标题
  * 对于三伏日，统一显示为"三伏日"
@@ -276,16 +250,6 @@ const getSolsticeWarningText = (precept: any) => {
   return '二至日'
 }
 </script>
-
-<style>
-/* 全局CSS变量 - 用于戒期等级颜色系统 */
-:root {
-  --color-major: 220, 38, 38;       /* #DC2626 */
-  --color-moderate: 124, 58, 237;   /* #7C3AED */
-  --color-minor: 59, 130, 246;     /* #3B82F6 */
-  --color-safe: 22, 163, 74;       /* #16A34A */
-}
-</style>
 
 <style scoped>
 .precept-indicator {

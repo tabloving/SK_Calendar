@@ -200,16 +200,6 @@ const getWeekdayText = (date: Date) => {
 }
 </script>
 
-<style>
-/* 全局CSS变量 - 用于戒期等级颜色系统 */
-:root {
-  --color-major: 220, 38, 38;       /* #DC2626 */
-  --color-moderate: 124, 58, 237;   /* #7C3AED */
-  --color-minor: 59, 130, 246;     /* #3B82F6 */
-  --color-safe: 22, 163, 74;       /* #16A34A */
-}
-</style>
-
 <style scoped>
 /* 近期戒期提醒卡片样式 */
 .precept-reminder-card {

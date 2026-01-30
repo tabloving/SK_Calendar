@@ -3,3 +3,4 @@
  */
 
 export * from './solar-term'
+export * from './precept-colors'

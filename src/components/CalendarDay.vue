@@ -87,7 +87,7 @@ import * as lunar from 'lunar-javascript'
 import { Calendar, Bell } from '@element-plus/icons-vue'
 import type { CalendarDayInfo } from '@/types'
 import { PreceptLevel } from '@/types'
-import { SOLAR_TERM_ICONS } from '@/constants'
+import { SOLAR_TERM_ICONS, getPreceptLevelColor as _getPreceptLevelColor } from '@/constants'
 
 interface Props {
   dayInfo: CalendarDayInfo
@@ -187,14 +187,8 @@ const getPreceptLevelText = (level: PreceptLevel) => {
   return CalendarUtil.getPreceptLevelText(level)
 }
 
-const getPreceptLevelColor = (level: string) => {
-  const colorMap = {
-    major: 'red',
-    moderate: 'purple',
-    minor: 'blue',
-    safe: 'green'
-  }
-  return colorMap[level as keyof typeof colorMap] || 'gray'
+const getPreceptLevelColor = (level: PreceptLevel) => {
+  return _getPreceptLevelColor(level)
 }
 
 const getDisplayReason = (reason: string): string => {

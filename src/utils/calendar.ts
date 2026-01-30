@@ -146,8 +146,8 @@ export class CalendarUtil {
   /**
    * 获取最高戒期等级
    */
-  static getHighestPreceptLevel(preceptInfos: PreceptInfo[]): 'major' | 'moderate' | 'minor' | 'safe' {
-    if (preceptInfos.length === 0) return 'safe'
+  static getHighestPreceptLevel(preceptInfos: PreceptInfo[]): PreceptLevel {
+    if (preceptInfos.length === 0) return PreceptLevel.SAFE
 
     const levels = preceptInfos.map(info => info.level)
     if (levels.includes(PreceptLevel.MAJOR)) return PreceptLevel.MAJOR
@@ -159,7 +159,7 @@ export class CalendarUtil {
   /**
    * 获取戒期等级的CSS类名
    */
-  static getPreceptLevelClass(level: 'major' | 'moderate' | 'minor' | 'safe'): string {
+  static getPreceptLevelClass(level: PreceptLevel): string {
     const classMap = {
       major: 'precept-major',
       moderate: 'precept-moderate',
